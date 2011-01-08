@@ -23,7 +23,7 @@ public class WikipediaDataSource extends DataSource {
         "?lat=" + lat +
         "&lng=" + lon +
         "&radius="+ radius +
-        "&maxRows=" + MAX_JSON_OBJECTS +
+        "&maxRows=" + MAX +
         "&lang=" + locale;
 
 	}
@@ -36,7 +36,7 @@ public class WikipediaDataSource extends DataSource {
 		try {
 			if(root.has("geonames")) dataArray = root.getJSONArray("geonames");
 			if (dataArray == null) return markers;
-				int top = Math.min(MAX_JSON_OBJECTS, dataArray.length());
+				int top = Math.min(MAX, dataArray.length());
 				for (int i = 0; i < top; i++) {					
 					jo = dataArray.getJSONObject(i);
 					Marker ma = processJSONObject(jo);

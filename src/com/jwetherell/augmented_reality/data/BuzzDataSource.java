@@ -19,7 +19,7 @@ import com.jwetherell.augmented_reality.ui.Marker;
 public class BuzzDataSource extends DataSource {
 	private Logger logger = Logger.getLogger(getClass().getSimpleName());
 	
-	private static final String BASE_URL = "https://www.googleapis.com/buzz/v1/activities/search?alt=json&max-results="+MAX_JSON_OBJECTS;
+	private static final String BASE_URL = "https://www.googleapis.com/buzz/v1/activities/search?alt=json&max-results="+MAX;
 
 	private static Bitmap icon = null;
 	
@@ -50,7 +50,7 @@ public class BuzzDataSource extends DataSource {
 		try {
 			if(root.has("data") && root.getJSONObject("data").has("items")) dataArray = root.getJSONObject("data").getJSONArray("items");
 			if (dataArray == null) return markers;
-				int top = Math.min(MAX_JSON_OBJECTS, dataArray.length());
+				int top = Math.min(MAX, dataArray.length());
 				for (int i = 0; i < top; i++) {					
 					jo = dataArray.getJSONObject(i);
 					Marker ma = processJSONObject(jo);

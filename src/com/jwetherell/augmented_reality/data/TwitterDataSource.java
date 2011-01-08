@@ -68,7 +68,7 @@ public class TwitterDataSource extends DataSource {
 		try {
 			if(root.has("results")) dataArray = root.getJSONArray("results");
 			if (dataArray == null) return markers;
-				int top = Math.min(MAX_JSON_OBJECTS, dataArray.length());
+				int top = Math.min(MAX, dataArray.length());
 				for (int i = 0; i < top; i++) {					
 					jo = dataArray.getJSONObject(i);
 					Marker ma = processJSONObject(jo);
