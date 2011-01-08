@@ -62,9 +62,11 @@ public abstract class ARData {
     //DataHandler
     public static void addMarkers(List<Marker> markers) {
     	logger.info("Marker before: "+markerList.size());
-        for(Marker ma:markers) {
-            ma.calcRelativePosition(ARData.getCurrentLocation());
-            markerList.put(ma.getName(),ma);
+        for(Marker ma : markers) {
+            if (!markerList.containsKey(ma)) {
+            	ma.calcRelativePosition(ARData.getCurrentLocation());
+            	markerList.put(ma.getName(),ma);
+            }
         }
         logger.info("Marker count: "+markerList.size());
     }

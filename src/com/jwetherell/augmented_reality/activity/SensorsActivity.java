@@ -46,6 +46,9 @@ public class SensorsActivity extends Activity implements SensorEventListener,Loc
     private static int minTime = 30*1000;
     private static int minDistance = 0;
     
+    private static int updateSensorCounter = 0;
+    private static int updateSensorMax = 10;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -194,6 +197,12 @@ public class SensorsActivity extends Activity implements SensorEventListener,Loc
     
     @Override
     public void onSensorChanged(SensorEvent evt) {
+    	if (updateSensorCounter>updateSensorMax) {
+    		updateSensorCounter=0;
+    		return;
+    	}
+    	
+    	updateSensorCounter++;
         if (evt.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             grav[0] = evt.values[0];
             grav[1] = evt.values[1];

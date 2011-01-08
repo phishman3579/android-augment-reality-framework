@@ -28,7 +28,7 @@ public class AugmentedView extends View {
     private static final int leftBound = 11;
     private static final int rightBound = 83;
     private static final int conflictHeight = 74;
-    
+
     public AugmentedView(Context context) {
         super(context);
 
@@ -84,10 +84,10 @@ public class AugmentedView extends View {
         currentTxtContainter.paint(canvas);
 
         //Draw AR markers
-        for (int i=0; i<ARData.getMarkerCount(); i++) {
-            Marker marker = ARData.getMarker(i);
-            marker.draw(canvas);
-        }
+	    for (int i=0; i<ARData.getMarkerCount(); i++) {
+	        Marker marker = ARData.getMarker(i);
+	        marker.draw(canvas);
+	    }
         
         //Radar circle and radar markers
         radar.draw(canvas);

@@ -19,7 +19,7 @@ import com.jwetherell.augmented_reality.ui.Marker;
 public abstract class DataSource {
 	private static Logger logger = Logger.getLogger(DataSource.class.getSimpleName());
 
-	protected static final int MAX = 10;
+	protected static final int MAX = 5;
 	
 	public abstract String createRequestURL(	double lat, 
 												double lon, 
