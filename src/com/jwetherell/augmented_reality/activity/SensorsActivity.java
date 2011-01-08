@@ -43,6 +43,9 @@ public class SensorsActivity extends Activity implements SensorEventListener,Loc
     private static Sensor sensorMag = null;
     private static LocationManager locationMgr = null;
     
+    private static int minTime = 30*1000;
+    private static int minDistance = 30;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +106,7 @@ public class SensorsActivity extends Activity implements SensorEventListener,Loc
             sensorMgr.registerListener(this, sensorMag, SensorManager.SENSOR_DELAY_GAME);
 
             locationMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000,10, this);
+            locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, this);
 
             try {
                 /*defaulting to our place*/

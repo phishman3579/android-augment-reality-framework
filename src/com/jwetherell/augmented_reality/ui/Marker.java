@@ -8,13 +8,14 @@ import com.jwetherell.augmented_reality.common.MixVector;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.PhysicalLocation;
 import com.jwetherell.augmented_reality.ui.objects.PaintableBoxedText;
+import com.jwetherell.augmented_reality.ui.objects.PaintableGps;
 import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.location.Location;
 
-public abstract class Marker implements Comparable<Marker> {
+public class Marker implements Comparable<Marker> {
     private static final int MAX_OBJECTS = 100;
     
     //Unique identifier of Marker
@@ -31,10 +32,13 @@ public abstract class Marker implements Comparable<Marker> {
     protected MixVector locationVector = new MixVector();
     protected MixVector originVector = new MixVector(0, 0, 0);
     protected MixVector upVector = new MixVector(0, 1, 0);
+    
+    protected int color = Color.WHITE;
 	
-	public Marker(String name, double latitude, double longitude, double altitude) {
+	public Marker(String name, double latitude, double longitude, double altitude, int color) {
 		this.name = name;
 		this.physicalLocation = new PhysicalLocation(latitude,longitude,altitude);
+		this.color = color;
 	}
 	
 	public String getName(){
@@ -64,9 +68,13 @@ public abstract class Marker implements Comparable<Marker> {
     public int getMaxObjects() {
         return MAX_OBJECTS;
     }
-
+    
+    public void setColor(int color) {
+    	this.color = color;
+    }
+    
     public int getColor() {
-    	return Color.WHITE;
+    	return color;
     }
     
     @Override
@@ -141,8 +149,13 @@ public abstract class Marker implements Comparable<Marker> {
 	    drawIcon(canvas);
 	    drawText(canvas);
 	}
-	
-	public abstract void drawIcon(Canvas canvas);
+
+    public void drawIcon(Canvas canvas) {
+        float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
+        PaintableGps gps = new PaintableGps((maxHeight / 1.5f), (maxHeight / 10f), true, getColor());
+        PaintablePosition gpsContainter = new PaintablePosition(gps, circleVector.x, circleVector.y, 0, 1);
+        gpsContainter.paint(canvas);
+    }
 
 	public void drawText(Canvas canvas) {
 	    String textStr="";

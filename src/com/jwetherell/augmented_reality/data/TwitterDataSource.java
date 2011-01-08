@@ -15,29 +15,29 @@ import com.jwetherell.augmented_reality.ui.IconMarker;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 
 public class TwitterDataSource extends DataSource {
 	private Logger logger = Logger.getLogger(getClass().getSimpleName());
 	
-	private static final String TWITTER_BASE_URL = "http://search.twitter.com/search.json";
-	private static final int MAX_JSON_OBJECTS = 20;
+	private static final String URL = "http://search.twitter.com/search.json";
 
-	private static Bitmap twitterIcon = null;
+	private static Bitmap icon = null;
 
 	public TwitterDataSource(Resources res) {
 		createIcon(res);
 	}
 	
 	protected void createIcon(Resources res) {
-		twitterIcon=BitmapFactory.decodeResource(res, R.drawable.twitter);
+		icon=BitmapFactory.decodeResource(res, R.drawable.twitter);
 	}
 	
 	public Bitmap getBitmap() {
-		return twitterIcon;
+		return icon;
 	}
 	
 	public String createRequestURL(double lat, double lon, double alt, float radius, String locale) {
-		return TWITTER_BASE_URL+"?geocode=" + lat + "%2C" + lon + "%2C" + Math.max(radius, 1.0) + "km";
+		return URL+"?geocode=" + lat + "%2C" + lon + "%2C" + Math.max(radius, 1.0) + "km";
 	}
 	
 	public List<Marker> parse(String url) {
@@ -60,7 +60,7 @@ public class TwitterDataSource extends DataSource {
     	return parse(json);
 	}
 	
-	private List<Marker> parse(JSONObject root) {
+	public List<Marker> parse(JSONObject root) {
 		JSONObject jo = null;
 		JSONArray dataArray = null;
     	List<Marker> markers=new ArrayList<Marker>();
@@ -109,7 +109,8 @@ public class TwitterDataSource extends DataSource {
 						lat, 
 						lon, 
 						0,
-						twitterIcon);
+						Color.RED,
+						icon);
 			}
 		} catch (Exception e) {
 			logger.info("Exception: "+e.getMessage());

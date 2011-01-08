@@ -48,7 +48,7 @@ public class AugmentedReality extends SensorsActivity {
                                                     LayoutParams.WRAP_CONTENT);
         addContentView(augmentedView,augLayout);
         
-        updateData();
+        updateDataOnZoom();
     }
     
     @Override
@@ -82,7 +82,7 @@ public class AugmentedReality extends SensorsActivity {
     
     private OnSeekBarChangeListener myZoomBarOnSeekBarChangeListener = new OnSeekBarChangeListener() {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            updateData();
+            updateDataOnZoom();
             camScreen.invalidate();
         }
 
@@ -91,7 +91,7 @@ public class AugmentedReality extends SensorsActivity {
         }
 
         public void onStopTrackingTouch(SeekBar seekBar) {
-            updateData();
+            updateDataOnZoom();
             camScreen.invalidate();
         }
     };
@@ -117,7 +117,7 @@ public class AugmentedReality extends SensorsActivity {
         return myout;
     }
 
-    private static void updateData() {
+    protected void updateDataOnZoom() {
         float zoomLevel = calcZoomLevel();
         ARData.setRadius(zoomLevel);
         ARData.setZoomLevel(String.valueOf(zoomLevel));

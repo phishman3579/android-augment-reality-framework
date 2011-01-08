@@ -10,24 +10,24 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.logging.Logger;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.jwetherell.augmented_reality.ui.Marker;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
 
 public abstract class DataSource {
 	private static Logger logger = Logger.getLogger(DataSource.class.getSimpleName());
-	
-	protected abstract void createIcon(Resources res);
-	
-	public abstract Bitmap getBitmap();
+
+	protected static final int MAX_JSON_OBJECTS = 5;
 	
 	public abstract String createRequestURL(	double lat, 
 												double lon, 
 												double alt, 
 												float radius, 
 												String locale);
-    
-	public abstract List<Marker> parse(String url);
+
+	public abstract List<Marker> parse(JSONObject root);
 	
     protected static InputStream getHttpGETInputStream(String urlStr) {
     	InputStream is = null;
@@ -81,4 +81,25 @@ public abstract class DataSource {
     	}
     	return sb.toString();
     }
+    
+	
+	public List<Marker> parse(String url) {
+		InputStream stream = null;
+    	stream = getHttpGETInputStream(url);
+    	if (stream==null) return null;
+    	
+    	String string = null;
+    	string = getHttpInputString(stream);
+    	if (string==null) return null;
+    	
+    	JSONObject json = null;
+    	try {
+    		json = new JSONObject(string);
+    	} catch (JSONException e) {
+    		logger.info("Exception: "+e.getMessage());
+    	}
+    	if (json==null) return null;
+    	
+    	return parse(json);
+	}
 }
