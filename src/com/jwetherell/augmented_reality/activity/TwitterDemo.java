@@ -3,6 +3,7 @@ package com.jwetherell.augmented_reality.activity;
 import java.util.List;
 import java.util.Locale;
 import com.jwetherell.augmented_reality.data.ARData;
+import com.jwetherell.augmented_reality.data.DataSource;
 import com.jwetherell.augmented_reality.data.TwitterDataSource;
 import com.jwetherell.augmented_reality.ui.Marker;
 import android.location.Location;
@@ -12,7 +13,7 @@ import android.os.Bundle;
 public class TwitterDemo extends AugmentedReality {
 	private static final String locale = Locale.getDefault().getLanguage();
 	
-	private static TwitterDataSource source = null;
+	private static DataSource source = null;
 	
     /** Called when the activity is first created. */
     @Override
@@ -21,7 +22,6 @@ public class TwitterDemo extends AugmentedReality {
         
         source = new TwitterDataSource(this.getResources());
     }
-    
 
     @Override
     public void onStart() {
