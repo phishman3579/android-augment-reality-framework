@@ -23,7 +23,7 @@ public class WikipediaDataSource extends DataSource {
         "?lat=" + lat +
         "&lng=" + lon +
         "&radius="+ radius +
-        "&maxRows=50" +
+        "&maxRows=" + MAX_JSON_OBJECTS +
         "&lang=" + locale;
 
 	}
