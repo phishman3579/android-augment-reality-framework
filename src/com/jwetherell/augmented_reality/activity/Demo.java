@@ -52,14 +52,22 @@ public class Demo extends AugmentedReality {
         updateData(location.getLatitude(),location.getLongitude(),location.getAltitude());
     }
     
+    private static Thread thread = null;
     private void updateData(final double lat, final double lon, final double alt) {
-    	Thread thread = new Thread(
+    	if (thread!=null && thread.isAlive()) {
+    		logger.info("Not updating since in the process");
+    		return;
+    	}
+    	
+    	thread = new Thread(
     		new Runnable(){
 				@Override
 				public void run() {
+					logger.info("Start");
 					for (DataSource source : sources) {
 						download(source, lat, lon, alt);
 					}
+					logger.info("Stop");
 				}
 			}
     	);
@@ -75,6 +83,8 @@ public class Demo extends AugmentedReality {
     	
     	List<Marker> markers = source.parse(url);
     	if (markers==null) return false;
+    	
+    	logger.info(source.getClass().getSimpleName()+" size="+markers.size());
     	
     	ARData.addMarkers(markers);
     	return true;

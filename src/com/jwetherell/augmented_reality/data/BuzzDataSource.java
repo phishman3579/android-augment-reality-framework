@@ -19,7 +19,7 @@ import com.jwetherell.augmented_reality.ui.Marker;
 public class BuzzDataSource extends DataSource {
 	private Logger logger = Logger.getLogger(getClass().getSimpleName());
 	
-	private static final String BASE_URL = "https://www.googleapis.com/buzz/v1/activities/search?alt=json&max-results="+MAX;
+	private static final String BASE_URL = "https://www.googleapis.com/buzz/v1/activities/search?alt=json&max-results=40";
 
 	private static Bitmap icon = null;
 	

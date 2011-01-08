@@ -44,7 +44,7 @@ public class SensorsActivity extends Activity implements SensorEventListener,Loc
     private static LocationManager locationMgr = null;
     
     private static int minTime = 30*1000;
-    private static int minDistance = 30;
+    private static int minDistance = 0;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -38,8 +38,8 @@ public abstract class DataSource {
 
     		URL url = new URL(urlStr);
     		conn =  url.openConnection();
-    		conn.setReadTimeout(10000);
-    		conn.setConnectTimeout(10000);
+    		conn.setReadTimeout(2000);
+    		conn.setConnectTimeout(2000);
 
     		is = conn.getInputStream();
 
