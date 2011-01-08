@@ -1,5 +1,7 @@
 package com.jwetherell.augmented_reality.activity;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -16,18 +18,23 @@ public class Demo extends AugmentedReality {
 	private static final Logger logger = Logger.getLogger(Demo.class.getSimpleName());
 	private static final String locale = Locale.getDefault().getLanguage();
 	
-	private static DataSource twitter = null;
-	private static DataSource wikipedia = null;
-	private static DataSource buzz = null;
-	
+	private static Collection<DataSource> sources = null;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        twitter = new TwitterDataSource(this.getResources());
-        wikipedia = new WikipediaDataSource();
-        buzz = new BuzzDataSource(this.getResources());
+        if (sources==null) {
+        	sources = new ArrayList<DataSource>();
+            
+            DataSource twitter = new TwitterDataSource(this.getResources());
+            sources.add(twitter);
+            DataSource wikipedia = new WikipediaDataSource();
+            sources.add(wikipedia);
+            DataSource buzz = new BuzzDataSource(this.getResources());
+            sources.add(buzz);
+        }
     }
 
     @Override
@@ -50,9 +57,9 @@ public class Demo extends AugmentedReality {
     		new Runnable(){
 				@Override
 				public void run() {
-			    	download(twitter, lat, lon, alt);
-			    	download(wikipedia, lat, lon, alt);
-			    	download(buzz, lat, lon, alt);
+					for (DataSource source : sources) {
+						download(source, lat, lon, alt);
+					}
 				}
 			}
     	);
