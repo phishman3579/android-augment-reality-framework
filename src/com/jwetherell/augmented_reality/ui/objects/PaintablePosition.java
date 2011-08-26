@@ -2,6 +2,11 @@ package com.jwetherell.augmented_reality.ui.objects;
 
 import android.graphics.Canvas;
 
+/**
+ * This class extends PaintableObject and adds the ability to rotate and scale.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class PaintablePosition extends PaintableObject {
     private float myX=0, myY=0, width=0, height=0;
     private PaintableObject obj = null;

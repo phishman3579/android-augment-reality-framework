@@ -16,9 +16,16 @@
  * You should have received a copy of the GNU General Public License along with 
  * this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 package com.jwetherell.augmented_reality.common;
 
+/**
+ * A state class used to calculate bearing and pitch given a Matrix.
+ * 
+ * This file was adapted from Mixare <http://www.mixare.org/>
+ * 
+ * @author Daniele Gobbetti <info@mixare.org>
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class MixState {
     public float bearing;
     public float pitch;

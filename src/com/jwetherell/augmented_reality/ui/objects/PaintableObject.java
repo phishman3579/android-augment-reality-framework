@@ -7,6 +7,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 
+/**
+ * This abstract class provides many methods paint objects on a given Canvas.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public abstract class PaintableObject {
     private static final Logger logger = Logger.getLogger(PaintableObject.class.getSimpleName());
     private static final boolean DEBUG = false;

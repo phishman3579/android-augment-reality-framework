@@ -3,6 +3,11 @@ package com.jwetherell.augmented_reality.ui.objects;
 import android.graphics.Canvas;
 import android.graphics.Color;
 
+/**
+ * This class extends PaintableObject to draw text.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class PaintableText extends PaintableObject {
     private static final float WIDTH_PAD = 4;
     private static final float HEIGHT_PAD = 2;

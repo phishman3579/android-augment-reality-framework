@@ -2,6 +2,11 @@ package com.jwetherell.augmented_reality.ui.objects;
 
 import android.graphics.Canvas;
 
+/**
+ * This class extends PaintableObject and draws a small rectangle.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class PaintablePoint extends PaintableObject {
     private static int width=2;
     private static int height=2;

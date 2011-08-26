@@ -16,6 +16,12 @@ import org.json.JSONObject;
 
 import com.jwetherell.augmented_reality.ui.Marker;
 
+/**
+ * This abstract class should be extended for new data sources. It has many methods to get and parse data from numerous
+ * web sources.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public abstract class DataSource {
 	private static Logger logger = Logger.getLogger(DataSource.class.getSimpleName());
 

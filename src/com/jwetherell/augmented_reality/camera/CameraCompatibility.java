@@ -10,8 +10,10 @@ import android.hardware.Camera;
  * Ensures compatibility with older and newer versions of the API. 
  * See the SDK docs for comments
  * 
- * @author daniele
- *
+ * This file was adapted from Mixare <http://www.mixare.org/>
+ * 
+ * @author Daniele Gobbetti <info@mixare.org>
+ * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class CameraCompatibility {
 	private static Method getSupportedPreviewSizes;

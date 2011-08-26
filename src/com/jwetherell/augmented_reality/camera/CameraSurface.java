@@ -8,6 +8,14 @@ import android.hardware.Camera;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+/**
+ * Represents the camera's surface and all the initialization involved with it.
+ * 
+ * This file was adapted from Mixare <http://www.mixare.org/>
+ * 
+ * @author Daniele Gobbetti <info@mixare.org>
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class CameraSurface extends SurfaceView implements SurfaceHolder.Callback {
     private static final Logger logger = Logger.getLogger(CameraSurface.class.getSimpleName());
 

@@ -10,6 +10,11 @@ import com.jwetherell.augmented_reality.ui.Radar;
 import com.jwetherell.augmented_reality.ui.objects.PaintableBoxedText;
 import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
 
+/**
+ * This class extends the View class and is designed draw the zoom bar, radar circle, and markers on the View.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class AugmentedView extends View {
     private static Radar radar = null;
     
@@ -47,11 +52,7 @@ public class AugmentedView extends View {
             else
                 x = canvas.getWidth()/100*endLabelX;
         }
-        PaintablePosition container  = new PaintablePosition(currentTxtBlock, 
-                                                               x, 
-                                                               y, 
-                                                               0, 
-                                                               1);
+        PaintablePosition container  = new PaintablePosition(currentTxtBlock, x, y, 0, 1);
         return container;
     }
 

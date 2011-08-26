@@ -15,6 +15,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.location.Location;
 
+/**
+ * This class will represent a physical location and will calculate it's visibility and draw it's text and 
+ * visual representation accordingly. This should be extended if you want to change the way a Marker is viewed.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class Marker implements Comparable<Marker> {
     private static final int MAX_OBJECTS = 100;
     

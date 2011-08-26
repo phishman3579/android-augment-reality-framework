@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import android.graphics.Canvas;
 import android.graphics.Color;
 
+/**
+ * This class extends PaintableObject to draw text with a box surrounding it.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class PaintableBoxedText extends PaintableObject {
     private float width=0, height=0;
 	private float areaWidth=0, areaHeight=0;

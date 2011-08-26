@@ -16,9 +16,16 @@
  * You should have received a copy of the GNU General Public License along with 
  * this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 package com.jwetherell.augmented_reality.common;
 
+/**
+ * A Matrix representation which adds many of the mathematical operations involved in Matrices.
+ * 
+ * This file was adapted from Mixare <http://www.mixare.org/>
+ * 
+ * @author Daniele Gobbetti <info@mixare.org>
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class Matrix {
     public float a1, a2, a3;
     public float b1, b2, b3;

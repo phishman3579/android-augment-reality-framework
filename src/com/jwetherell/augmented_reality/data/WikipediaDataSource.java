@@ -11,6 +11,11 @@ import android.graphics.Color;
 
 import com.jwetherell.augmented_reality.ui.Marker;
 
+/**
+ * This class extends DataSource to fetch data from Wikipedia.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class WikipediaDataSource extends DataSource {
 	private Logger logger = Logger.getLogger(getClass().getSimpleName());
 	

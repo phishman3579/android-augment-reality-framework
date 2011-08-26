@@ -16,6 +16,11 @@ import com.jwetherell.augmented_reality.R;
 import com.jwetherell.augmented_reality.ui.IconMarker;
 import com.jwetherell.augmented_reality.ui.Marker;
 
+/**
+ * This class extends DataSource to fetch data from Google Buzz.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class BuzzDataSource extends DataSource {
 	private Logger logger = Logger.getLogger(getClass().getSimpleName());
 	

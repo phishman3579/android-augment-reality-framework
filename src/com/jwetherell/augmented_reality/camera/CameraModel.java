@@ -3,6 +3,14 @@ package com.jwetherell.augmented_reality.camera;
 import com.jwetherell.augmented_reality.common.Matrix;
 import com.jwetherell.augmented_reality.common.MixVector;
 
+/**
+ * Represents the camera and it's view. It also allows a user to project a point given this camera's view.
+ * 
+ * This file was adapted from Mixare <http://www.mixare.org/>
+ * 
+ * @author Daniele Gobbetti <info@mixare.org>
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class CameraModel {
 	public static final float DEFAULT_VIEW_ANGLE = (float) Math.toRadians(45);
 	public Matrix transform = new Matrix();

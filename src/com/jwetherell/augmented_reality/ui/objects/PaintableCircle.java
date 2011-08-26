@@ -2,6 +2,11 @@ package com.jwetherell.augmented_reality.ui.objects;
 
 import android.graphics.Canvas;
 
+/**
+ * This class extends PaintableObject to draw a circle with a given radius.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class PaintableCircle extends PaintableObject {
     private int color = 0;
     private float radius = 0;

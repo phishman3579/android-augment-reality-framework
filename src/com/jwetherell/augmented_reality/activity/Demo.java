@@ -14,11 +14,18 @@ import com.jwetherell.augmented_reality.ui.Marker;
 import android.location.Location;
 import android.os.Bundle;
 
+/**
+ * This class extends the AugmentedReality and is designed to be an example on how to extends the AugmentedReality
+ * class to show multiple data sources.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class Demo extends AugmentedReality {
 	private static final Logger logger = Logger.getLogger(Demo.class.getSimpleName());
 	private static final String locale = Locale.getDefault().getLanguage();
 	
-	private static Collection<DataSource> sources = null;
+	private static Collection<DataSource> sources = null;    
+    private static Thread thread = null;
 
     /** Called when the activity is first created. */
     @Override
@@ -51,8 +58,7 @@ public class Demo extends AugmentedReality {
         
         updateData(location.getLatitude(),location.getLongitude(),location.getAltitude());
     }
-    
-    private static Thread thread = null;
+
     private void updateData(final double lat, final double lon, final double alt) {
     	if (thread!=null && thread.isAlive()) {
     		logger.info("Not updating since in the process");

@@ -18,7 +18,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
-public class SensorsActivity extends Activity implements SensorEventListener,LocationListener {
+/**
+ * This class extends Activity and processes sensor data and location data.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
+public class SensorsActivity extends Activity implements SensorEventListener, LocationListener {
     private static final Logger logger = Logger.getLogger(SensorsActivity.class.getSimpleName());
     
     private static float RTmp[] = new float[9];

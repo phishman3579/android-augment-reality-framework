@@ -17,6 +17,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
+/**
+ * This class extends DataSource to fetch data from Twitter.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class TwitterDataSource extends DataSource {
 	private Logger logger = Logger.getLogger(getClass().getSimpleName());
 	

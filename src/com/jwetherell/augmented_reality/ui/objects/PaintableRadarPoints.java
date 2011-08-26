@@ -6,8 +6,13 @@ import com.jwetherell.augmented_reality.ui.Radar;
 
 import android.graphics.Canvas;
 
+/**
+ * This class extends PaintableObject to draw all the Markers at their appropriate locations.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class PaintableRadarPoints extends PaintableObject {
-    
+
     public void paint(Canvas canvas) {
         /** Radius is in KM. */
         float range = ARData.getRadius() * 1000;

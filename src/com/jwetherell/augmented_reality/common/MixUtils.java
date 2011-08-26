@@ -16,9 +16,16 @@
  * You should have received a copy of the GNU General Public License along with 
  * this program. If not, see <http://www.gnu.org/licenses/>
  */
-
 package com.jwetherell.augmented_reality.common;
 
+/**
+ * Some static functions useful in Matrices/Vectors.
+ * 
+ * This file was adapted from Mixare <http://www.mixare.org/>
+ * 
+ * @author Daniele Gobbetti <info@mixare.org>
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class MixUtils {
 
 	public static String formatDist(float meters) {
@@ -40,8 +47,8 @@ public class MixUtils {
 		return front + "." + back;
 	}
 
-	public static boolean pointInside(float P_x, float P_y, float r_x,
-		float r_y, float r_w, float r_h) {
+	public static boolean pointInside(	float P_x, float P_y, float r_x,
+										float r_y, float r_w, float r_h) {
 		return (P_x > r_x && P_x < r_x + r_w && P_y > r_y && P_y < r_y + r_h);
 	}
 

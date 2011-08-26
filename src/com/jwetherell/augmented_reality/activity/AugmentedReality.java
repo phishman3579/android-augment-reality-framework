@@ -12,6 +12,11 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import com.jwetherell.augmented_reality.camera.CameraSurface;
 import com.jwetherell.augmented_reality.data.ARData;
 
+/**
+ * This class extends the SensorsActivity and is designed tie the AugmentedView and zoom bar together.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class AugmentedReality extends SensorsActivity {
     private static final Logger logger = Logger.getLogger(AugmentedReality.class.getSimpleName());
 

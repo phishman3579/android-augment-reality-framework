@@ -2,6 +2,11 @@ package com.jwetherell.augmented_reality.ui.objects;
 
 import android.graphics.Canvas;
 
+/**
+ * This class extends PaintableObject to draw a line.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class PaintableLine extends PaintableObject {
     private int color = 0;
     private float x = 0;

@@ -2,6 +2,11 @@ package com.jwetherell.augmented_reality.ui.objects;
 
 import android.graphics.Canvas;
 
+/**
+ * This class extends PaintableObject to draw a circle with a given radius and a stroke width.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public class PaintableGps extends PaintableObject {
     private float radius = 0;
     private float strokeWidth = 0;

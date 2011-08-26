@@ -12,6 +12,11 @@ import com.jwetherell.augmented_reality.ui.Marker;
 import android.graphics.Bitmap;
 import android.location.Location;
 
+/**
+ * Abstract class which should be used to set global data.
+ * 
+ * @author Justin Wetherell <phishman3579@gmail.com>
+ */
 public abstract class ARData {
 	private static final Logger logger = Logger.getLogger(ARData.class.getSimpleName());
 	
