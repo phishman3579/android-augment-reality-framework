@@ -49,6 +49,8 @@ public class MixVector {
 
 	@Override
 	public boolean equals(Object obj) {
+		if (obj==null) return false;
+
 		MixVector v = (MixVector) obj;
 		return (v.x == x && v.y == y && v.z == z);
 	}
@@ -63,6 +65,8 @@ public class MixVector {
 	}
 
 	public void set(MixVector v) {
+		if (v==null) return;
+		
 		set(v.x, v.y, v.z);
 	}
 
@@ -79,6 +83,8 @@ public class MixVector {
 	}
 
 	public void add(MixVector v) {
+		if (v==null) return;
+		
 		add(v.x, v.y, v.z);
 	}
 
@@ -87,6 +93,8 @@ public class MixVector {
 	}
 
 	public void sub(MixVector v) {
+		if (v==null) return;
+		
 		add(-v.x, -v.y, -v.z);
 	}
 
@@ -115,10 +123,14 @@ public class MixVector {
 	}
 
 	public float dot(MixVector v) {
+		if (v==null) return 0;
+
 		return x * v.x + y * v.y + z * v.z;
 	}
 
 	public void cross(MixVector u, MixVector v) {
+		if (u==null || v==null) return;
+		
 		float x = u.y * v.z - u.z * v.y;
 		float y = u.z * v.x - u.x * v.z;
 		float z = u.x * v.y - u.y * v.x;
@@ -128,6 +140,8 @@ public class MixVector {
 	}
 
 	public void prod(Matrix m) {
+		if (m==null) return;
+		
 		float xTemp = m.a1 * x + m.a2 * y + m.a3 * z;
 		float yTemp = m.b1 * x + m.b2 * y + m.b3 * z;
 		float zTemp = m.c1 * x + m.c2 * y + m.c3 * z;

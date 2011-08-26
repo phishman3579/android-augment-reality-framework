@@ -34,6 +34,8 @@ public class WikipediaDataSource extends DataSource {
 	}
 	
 	public List<Marker> parse(JSONObject root) {
+		if (root==null) return null;
+		
 		JSONObject jo = null;
 		JSONArray dataArray = null;
     	List<Marker> markers=new ArrayList<Marker>();
@@ -54,6 +56,8 @@ public class WikipediaDataSource extends DataSource {
 	}
 	
 	public Marker processJSONObject(JSONObject jo) {
+		if (jo==null) return null;
+		
         Marker ma = null;
         if (	jo.has("title") && 
         		jo.has("lat") && 

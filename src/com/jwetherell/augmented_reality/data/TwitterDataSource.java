@@ -30,10 +30,14 @@ public class TwitterDataSource extends DataSource {
 	private static Bitmap icon = null;
 
 	public TwitterDataSource(Resources res) {
+		if (res==null) return;
+		
 		createIcon(res);
 	}
 	
 	protected void createIcon(Resources res) {
+		if (res==null) return;
+		
 		icon=BitmapFactory.decodeResource(res, R.drawable.twitter);
 	}
 	
@@ -46,6 +50,8 @@ public class TwitterDataSource extends DataSource {
 	}
 	
 	public List<Marker> parse(String url) {
+		if (url==null) return null;
+		
 		InputStream stream = null;
     	stream = getHttpGETInputStream(url);
     	if (stream==null) return null;
@@ -66,6 +72,8 @@ public class TwitterDataSource extends DataSource {
 	}
 	
 	public List<Marker> parse(JSONObject root) {
+		if (root==null) return null;
+		
 		JSONObject jo = null;
 		JSONArray dataArray = null;
     	List<Marker> markers=new ArrayList<Marker>();
@@ -86,6 +94,8 @@ public class TwitterDataSource extends DataSource {
 	}
 	
 	public Marker processJSONObject(JSONObject jo) {
+		if (jo==null) return null;
+		
 		if (!jo.has("geo")) return null;
 		
 		Marker ma = null;

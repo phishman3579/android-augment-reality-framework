@@ -90,10 +90,14 @@ public class Marker implements Comparable<Marker> {
 
     @Override
     public boolean equals (Object marker) {
+    	if(marker==null) return false;
+    	
         return this.name.equals(((Marker)marker).getName());
     }
 
     private void update(Canvas canvas, float addX, float addY) {
+    	if(canvas==null) return;
+    	
         CameraModel cam = new CameraModel(canvas.getWidth(), canvas.getHeight(), true);
         cam.setViewAngle(CameraModel.DEFAULT_VIEW_ANGLE);
         cam.transform = ARData.getRotationMatrix();
@@ -102,6 +106,8 @@ public class Marker implements Comparable<Marker> {
     }
 
 	private void populateMatrices(MixVector originalPoint, CameraModel cam, float addX, float addY) {
+		if(originalPoint==null || cam==null) return;
+		
 		// Temp properties
 		MixVector tmpa = new MixVector(originalPoint);
 		MixVector tmpc = new MixVector(upVector);
@@ -132,12 +138,16 @@ public class Marker implements Comparable<Marker> {
 	}
 
     private void updateDistance(Location location) {
+    	if (location==null) return;
+    	
         float[] dist=new float[3];
         Location.distanceBetween(getLatitude(), getLongitude(), location.getLatitude(), location.getLongitude(), dist);
         distance = dist[0];
     }
 
 	public void calcRelativePosition(Location location) {
+		if (location==null) return;
+		
 	    updateDistance(location);
 		// An elevation of 0.0 probably means that the elevation of the
 		// POI is not known and should be set to the users GPS height
@@ -148,6 +158,8 @@ public class Marker implements Comparable<Marker> {
 	}
 
 	public void draw(Canvas canvas) {
+		if (canvas==null) return;
+		
 	    update(canvas,0,0);
 	    
 	    if (!isVisible) return;
@@ -157,6 +169,8 @@ public class Marker implements Comparable<Marker> {
 	}
 
     public void drawIcon(Canvas canvas) {
+    	if (canvas==null) return;
+    	
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
         PaintableGps gps = new PaintableGps((maxHeight / 1.5f), (maxHeight / 10f), true, getColor());
         PaintablePosition gpsContainter = new PaintablePosition(gps, circleVector.x, circleVector.y, 0, 1);
@@ -164,6 +178,8 @@ public class Marker implements Comparable<Marker> {
     }
 
 	public void drawText(Canvas canvas) {
+		if (canvas==null) return;
+		
 	    String textStr="";
 	    DecimalFormat df = new DecimalFormat("@#");
 	    if (distance<1000.0) {

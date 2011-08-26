@@ -29,6 +29,8 @@ public abstract class ARData {
     private static ArrayList<Bitmap> icons = new ArrayList<Bitmap>();
 
     public static void setZoomLevel(String zoomLevel) {
+    	if (zoomLevel==null) return;
+    	
         ARData.zoomLevel = zoomLevel;
     }
     public static String getZoomLevel() {

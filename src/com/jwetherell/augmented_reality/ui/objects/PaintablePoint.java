@@ -31,6 +31,8 @@ public class PaintablePoint extends PaintableObject {
 
     @Override
     public void paint(Canvas canvas) {
+    	if (canvas==null) return;
+    	
         setFill(fill);
         setColor(color);
         paintRect(canvas, -1, -1, width, height);

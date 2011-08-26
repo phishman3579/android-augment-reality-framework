@@ -29,10 +29,14 @@ public class BuzzDataSource extends DataSource {
 	private static Bitmap icon = null;
 	
 	public BuzzDataSource(Resources res) {
+		if (res==null) return;
+		
 		createIcon(res);
 	}
 	
 	protected void createIcon(Resources res) {
+		if (res==null) return;
+		
 		icon=BitmapFactory.decodeResource(res, R.drawable.buzz);
 	}
 	
@@ -48,6 +52,8 @@ public class BuzzDataSource extends DataSource {
 	}
 	
 	public List<Marker> parse(JSONObject root) {
+		if (root==null) return null;
+		
 		JSONObject jo = null;
 		JSONArray dataArray = null;
     	List<Marker> markers=new ArrayList<Marker>();
@@ -68,6 +74,8 @@ public class BuzzDataSource extends DataSource {
 	}
 	
 	public Marker processJSONObject(JSONObject jo) {
+		if (jo==null) return null;
+		
         Marker ma = null;
         if (	jo.has("title") && 
         		jo.has("geocode") && 

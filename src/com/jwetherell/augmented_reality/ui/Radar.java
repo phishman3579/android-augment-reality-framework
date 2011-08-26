@@ -44,6 +44,8 @@ public class Radar {
     }
 
     public void draw(Canvas canvas) {
+    	if (canvas==null) return;
+    	
         state.calcPitchBearing(ARData.getRotationMatrix());
 
         drawRadarCircle(canvas);
@@ -53,6 +55,8 @@ public class Radar {
     }
     
     private void drawRadarCircle(Canvas canvas) {
+    	if (canvas==null) return;
+    	
         if (circleContainer==null) {
             PaintableCircle paintableCircle = new PaintableCircle(RADAR_COLOR,RADIUS,true);
             circleContainer = new PaintablePosition(paintableCircle,PAD_X+RADIUS,PAD_Y+RADIUS,0,1);
@@ -61,6 +65,8 @@ public class Radar {
     }
     
     private void drawRadarPoints(Canvas canvas) {
+    	if (canvas==null) return;
+    	
         if (radarPoints==null) radarPoints = new PaintableRadarPoints();
         
         PaintablePosition pointsContainer = new PaintablePosition(  radarPoints, 
@@ -72,6 +78,8 @@ public class Radar {
     }
     
     private void drawRadarLines(Canvas canvas) {
+    	if (canvas==null) return;
+    	
         //Left line
         if (leftLineContainer==null) {
             leftRadarLine.set(0, -RADIUS);
@@ -108,6 +116,8 @@ public class Radar {
     }
 
     private void drawRadarText(Canvas canvas) {
+    	if (canvas==null) return;
+    	
         //Direction text
         int range = (int) (state.bearing / (360f / 16f)); 
         String  dirTxt = "";
@@ -137,38 +147,36 @@ public class Radar {
     }
     
     private void radarText(Canvas canvas, String txt, float x, float y, boolean bg) {
+    	if (canvas==null || txt==null) return;
+    	
         PaintableText paintableText = new PaintableText(txt,TEXT_COLOR,TEXT_SIZE,bg);
         PaintablePosition paintedContainer = new PaintablePosition(paintableText,x,y,0,1);
         paintedContainer.paint(canvas);
     }
-}
 
-class ScreenLine {
-    public float x, y;
+    private class ScreenLine {
+        public float x, y;
 
-    public ScreenLine() {
-        set(0, 0);
-    }
+        public ScreenLine() {
+            set(0, 0);
+        }
 
-    public ScreenLine(float x, float y) {
-        set(x, y);
-    }
+        public void set(float x, float y) {
+            this.x = x;
+            this.y = y;
+        }
 
-    public void set(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
+        public void rotate(double t) {
+            float xp = (float) Math.cos(t) * x - (float) Math.sin(t) * y;
+            float yp = (float) Math.sin(t) * x + (float) Math.cos(t) * y;
 
-    public void rotate(double t) {
-        float xp = (float) Math.cos(t) * x - (float) Math.sin(t) * y;
-        float yp = (float) Math.sin(t) * x + (float) Math.cos(t) * y;
+            x = xp;
+            y = yp;
+        }
 
-        x = xp;
-        y = yp;
-    }
-
-    public void add(float x, float y) {
-        this.x += x;
-        this.y += y;
+        public void add(float x, float y) {
+            this.x += x;
+            this.y += y;
+        }
     }
 }

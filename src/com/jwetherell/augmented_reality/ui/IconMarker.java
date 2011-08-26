@@ -20,7 +20,7 @@ public class IconMarker extends Marker {
     
     @Override
     public void drawIcon(Canvas canvas) {
-    	if(bitmap==null) return;
+    	if(bitmap==null || canvas==null) return;
     	
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
         

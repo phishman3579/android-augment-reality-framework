@@ -44,6 +44,8 @@ public class PaintableBoxedText extends PaintableObject {
 	}
 
 	private void prepTxt(String txtInit, float fontSizeInit, float maxWidth) {
+		if (txtInit==null) return;
+		
 		setFontSize(fontSizeInit);
 
 		txt = txtInit;
@@ -96,6 +98,8 @@ public class PaintableBoxedText extends PaintableObject {
 	}
 
 	public void paint(Canvas canvas) {
+		if (canvas==null) return;
+		
 	    setFontSize(fontSize);
 
 		setFill(true);

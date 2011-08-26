@@ -30,6 +30,8 @@ public class PaintableCircle extends PaintableObject {
 
     @Override
     public void paint(Canvas canvas) {
+    	if (canvas==null) return;
+    	
         setFill(fill);
         setColor(color);
         paintCircle(canvas, 0, 0, radius);

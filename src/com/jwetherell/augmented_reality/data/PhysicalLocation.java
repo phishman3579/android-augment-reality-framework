@@ -72,6 +72,8 @@ public class PhysicalLocation {
 	}
 
 	public static void convLocToVec(Location org, PhysicalLocation gp, MixVector v) {
+		if (org==null || gp==null || v==null) return;
+		
 		float[] z = new float[1];
 		z[0] = 0;
 		Location.distanceBetween(org.getLatitude(), org.getLongitude(), gp
@@ -89,6 +91,8 @@ public class PhysicalLocation {
 	}
 
 	public static void convertVecToLoc(MixVector v, Location org, Location gp) {
+		if (v==null || org==null || gp==null) return;
+		
 		double brngNS = 0, brngEW = 90;
 		if (v.z > 0)
 			brngNS = 180;

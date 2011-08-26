@@ -40,6 +40,8 @@ public class PaintableText extends PaintableObject {
 
     @Override
     public void paint(Canvas canvas) {
+    	if (canvas==null || text==null) return;
+    	
         setColor(color);
         setFontSize(size);
         if (bg) {

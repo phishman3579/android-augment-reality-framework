@@ -12,8 +12,10 @@ import android.graphics.Canvas;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class PaintableRadarPoints extends PaintableObject {
-
+	@Override
     public void paint(Canvas canvas) {
+		if (canvas==null) return;
+		
         /** Radius is in KM. */
         float range = ARData.getRadius() * 1000;
 

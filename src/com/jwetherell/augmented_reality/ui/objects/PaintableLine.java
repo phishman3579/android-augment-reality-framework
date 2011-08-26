@@ -30,6 +30,8 @@ public class PaintableLine extends PaintableObject {
 
     @Override
     public void paint(Canvas canvas) {
+    	if (canvas==null) return;
+    	
         setFill(false);
         setColor(color); 
         paintLine(canvas, 0, 0, x, y);

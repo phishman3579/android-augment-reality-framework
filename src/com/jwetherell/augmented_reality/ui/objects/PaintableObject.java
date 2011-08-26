@@ -66,31 +66,46 @@ public abstract class PaintableObject {
     }
 
     public void paintLine(Canvas canvas, float x1, float y1, float x2, float y2) {
+    	if (canvas==null) return;
+    	
         if (DEBUG) logger.severe("paintLine: x1="+x1+" y1="+y1+" x2="+x2+" y2="+y2+" paint="+paint.toString());
         canvas.drawLine(x1, y1, x2, y2, paint);
     }
 
     public void paintRect(Canvas canvas, float x, float y, float width, float height) {
+    	if (canvas==null) return;
+    	
         if (DEBUG) logger.severe("paintRect: x="+x+" y="+y+" width="+(x + width)+" height="+(y + height)+" paint="+paint.toString());
         canvas.drawRect(x, y, x + width, y + height, paint);
     }
     
     public void paintBitmap(Canvas canvas, Bitmap bitmap, float left, float top) {
+    	if (canvas==null) return;
+    	
         if (DEBUG) logger.severe("paintBitmap: left="+left+" top="+top+" bitmap="+bitmap.toString());
         canvas.drawBitmap(bitmap, left, top, paint);
     }
 
     public void paintCircle(Canvas canvas, float x, float y, float radius) {
+    	if (canvas==null) return;
+    	
         if (DEBUG) logger.severe("paintCircle: x="+x+" y="+y+" radius="+radius);
         canvas.drawCircle(x, y, radius, paint);
     }
 
     public void paintText(Canvas canvas, float x, float y, String text) {
+    	if (canvas==null) return;
+    	
         if (DEBUG) logger.severe("paintText: x="+x+" y="+y+" text="+text);
         canvas.drawText(text, x, y, paint);
     }
 
-    public void paintObj(Canvas canvas, PaintableObject obj, float x, float y, float rotation, float scale) {
+    public void paintObj(	Canvas canvas, PaintableObject obj, 
+    						float x, float y, 
+    						float rotation, float scale) 
+    {
+    	if (canvas==null || obj==null) return;
+    	
         if (DEBUG) logger.severe("paintObj: x="+x+" y="+y+" rotation="+rotation+" scale="+scale);
         canvas.save();
         canvas.translate(x + obj.getWidth() / 2, y + obj.getHeight() / 2);
@@ -101,8 +116,13 @@ public abstract class PaintableObject {
         canvas.restore();
     }
     
-    public void paintPath(Canvas canvas, Path path, float x, float y, float width, float height, float rotation, float scale) {
-        if (DEBUG) logger.severe("paintPath: x="+x+" y="+y+" rotation="+rotation+" scale="+scale);
+    public void paintPath(	Canvas canvas, Path path, 
+    						float x, float y, float width, 
+    						float height, float rotation, float scale) 
+    {
+    	if (canvas==null || path==null) return;
+    	
+    	if (DEBUG) logger.severe("paintPath: x="+x+" y="+y+" rotation="+rotation+" scale="+scale);
         canvas.save();
         canvas.translate(x + width / 2, y + height / 2);
         canvas.rotate(rotation);

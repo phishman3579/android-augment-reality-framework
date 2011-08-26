@@ -32,6 +32,8 @@ public class PaintableGps extends PaintableObject {
 
     @Override
     public void paint(Canvas canvas) {
+    	if (canvas==null) return;
+    	
         setStrokeWidth(strokeWidth);
         setFill(fill);
         setColor(color);

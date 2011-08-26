@@ -31,6 +31,8 @@ public class MixState {
     public float pitch;
 
 	public void calcPitchBearing(Matrix rotationM) {
+		if (rotationM==null) return;
+		
 	    MixVector looking = new MixVector();
 		rotationM.transpose();
 		looking.set(1, 0, 0);

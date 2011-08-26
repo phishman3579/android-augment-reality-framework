@@ -36,6 +36,8 @@ public abstract class DataSource {
 	public abstract List<Marker> parse(JSONObject root);
 	
     protected static InputStream getHttpGETInputStream(String urlStr) {
+    	if (urlStr==null) return null;
+    	
     	InputStream is = null;
     	URLConnection conn = null;
 
@@ -68,6 +70,8 @@ public abstract class DataSource {
     }
     
     protected String getHttpInputString(InputStream is) {
+    	if (is==null) return null;
+    	
     	BufferedReader reader = new BufferedReader(new InputStreamReader(is), 8 * 1024);
     	StringBuilder sb = new StringBuilder();
 
@@ -90,6 +94,8 @@ public abstract class DataSource {
     
 	
 	public List<Marker> parse(String url) {
+		if (url==null) return null;
+		
 		InputStream stream = null;
     	stream = getHttpGETInputStream(url);
     	if (stream==null) return null;

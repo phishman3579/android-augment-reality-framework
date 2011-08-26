@@ -46,6 +46,8 @@ public class Matrix {
 	}
 
 	public void set(Matrix m) {
+		if (m==null) return;
+		
 		this.a1 = m.a1;
 		this.a2 = m.a2;
 		this.a3 = m.a3;
@@ -107,6 +109,8 @@ public class Matrix {
 	}
 
 	public void toAt(MixVector cam, MixVector obj) {
+		if (cam==null || obj==null) return;
+		
 		MixVector worldUp = new MixVector(0, 1, 0);
 
 		MixVector dir = new MixVector();
@@ -209,6 +213,8 @@ public class Matrix {
 	}
 
 	public void add(Matrix n) {
+		if (n==null) return;
+		
 		a1 += n.a1;
 		a2 += n.a2;
 		a3 += n.a3;
@@ -223,6 +229,8 @@ public class Matrix {
 	}
 
 	public void prod(Matrix n) {
+		if (n==null) return;
+		
 		Matrix m = new Matrix();
 		m.set(this);
 
