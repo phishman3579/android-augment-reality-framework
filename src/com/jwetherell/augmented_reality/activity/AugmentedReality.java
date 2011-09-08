@@ -31,15 +31,15 @@ public class AugmentedReality extends SensorsActivity {
         super.onCreate(savedInstanceState);
         logger.info("onCreate()");
 
-        camScreen = new CameraSurface(this);
+        if (camScreen==null) camScreen = new CameraSurface(this);
         setContentView(camScreen);
         
-        myZoomBar = new SeekBar(this);
+        if (myZoomBar==null) myZoomBar = new SeekBar(this);
         myZoomBar.setMax(100);
         myZoomBar.setProgress(25);
         myZoomBar.setOnSeekBarChangeListener(myZoomBarOnSeekBarChangeListener);
 
-        frameLayout = new FrameLayout(this);
+        if (frameLayout==null) frameLayout = new FrameLayout(this);
         frameLayout.setMinimumWidth(3000);
         frameLayout.addView(myZoomBar);
         frameLayout.setPadding(10, 0, 10, 10);
@@ -48,7 +48,7 @@ public class AugmentedReality extends SensorsActivity {
                                                                                     Gravity.BOTTOM);
         addContentView(frameLayout,frameLayoutParams);
 
-        augmentedView = new AugmentedView(this);
+        if (augmentedView==null) augmentedView = new AugmentedView(this);
         LayoutParams augLayout = new LayoutParams(  LayoutParams.WRAP_CONTENT, 
                                                     LayoutParams.WRAP_CONTENT);
         addContentView(augmentedView,augLayout);

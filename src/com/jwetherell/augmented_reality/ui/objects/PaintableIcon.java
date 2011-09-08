@@ -12,7 +12,18 @@ public class PaintableIcon extends PaintableObject {
     private Bitmap bitmap=null;
 
     public PaintableIcon(Bitmap bitmap) {
+    	set(bitmap);
+    }
+
+    public void set(Bitmap bitmap) {
         this.bitmap = bitmap;
+    }
+
+    @Override
+    public void paint(Canvas canvas) {
+    	assert(canvas!=null && bitmap!=null);
+    	
+        paintBitmap(canvas, bitmap, 0, 0);
     }
     
     @Override
@@ -23,12 +34,5 @@ public class PaintableIcon extends PaintableObject {
     @Override
     public float getHeight() {
         return bitmap.getHeight();
-    }
-
-    @Override
-    public void paint(Canvas canvas) {
-    	if (canvas==null || bitmap==null) return;
-    	
-        paintBitmap(canvas, bitmap, 0, 0);
     }
 }

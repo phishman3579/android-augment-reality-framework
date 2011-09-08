@@ -20,6 +20,10 @@ public class PaintableText extends PaintableObject {
     private boolean bg = false;
     
     public PaintableText(String text, int color, int size, boolean paintBackground) {
+    	set(text, color, size, paintBackground);
+    }
+    
+    public void set(String text, int color, int size, boolean paintBackground) {
         this.text = text;
         this.bg = paintBackground;
         this.color = color;
@@ -27,20 +31,10 @@ public class PaintableText extends PaintableObject {
         w = getTextWidth(text) + WIDTH_PAD * 2;
         h = getTextAsc() + getTextDesc() + HEIGHT_PAD * 2;
     }
-    
-    @Override
-    public float getWidth() {
-        return w;
-    }
-
-    @Override
-    public float getHeight() {
-        return h;
-    }
 
     @Override
     public void paint(Canvas canvas) {
-    	if (canvas==null || text==null) return;
+    	assert(canvas!=null && text!=null);
     	
         setColor(color);
         setFontSize(size);
@@ -53,5 +47,15 @@ public class PaintableText extends PaintableObject {
             paintRect(canvas, -(w/2), -(h/2), w, h);
         }
         paintText(canvas, (WIDTH_PAD - w/2), (HEIGHT_PAD + getTextAsc() - h/2), text);
+    }
+    
+    @Override
+    public float getWidth() {
+        return w;
+    }
+
+    @Override
+    public float getHeight() {
+        return h;
     }
 }

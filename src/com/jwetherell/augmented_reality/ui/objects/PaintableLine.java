@@ -13,9 +13,22 @@ public class PaintableLine extends PaintableObject {
     private float y = 0;
     
     public PaintableLine(int color, float x, float y) {
+    	set(color, x, y);
+    }
+    
+    public void set(int color, float x, float y) {
         this.color = color;
         this.x = x;
         this.y = y;
+    }
+
+    @Override
+    public void paint(Canvas canvas) {
+    	assert(canvas!=null);
+    	
+        setFill(false);
+        setColor(color); 
+        paintLine(canvas, 0, 0, x, y);
     }
     
     @Override
@@ -26,14 +39,5 @@ public class PaintableLine extends PaintableObject {
     @Override
     public float getHeight() {
         return y;
-    }
-
-    @Override
-    public void paint(Canvas canvas) {
-    	if (canvas==null) return;
-    	
-        setFill(false);
-        setColor(color); 
-        paintLine(canvas, 0, 0, x, y);
     }
 }

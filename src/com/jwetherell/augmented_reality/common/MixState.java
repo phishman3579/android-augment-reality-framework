@@ -27,21 +27,23 @@ package com.jwetherell.augmented_reality.common;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class MixState {
-    public float bearing;
-    public float pitch;
+	private MixVector looking = new MixVector();
+	
+	public float bearing = 0;
+	public float pitch = 0;
 
 	public void calcPitchBearing(Matrix rotationM) {
-		if (rotationM==null) return;
+		assert(rotationM!=null);
 		
-	    MixVector looking = new MixVector();
-		rotationM.transpose();
+		looking.set(0, 0, 0);
+	    rotationM.transpose();
 		looking.set(1, 0, 0);
 		looking.prod(rotationM);
-		this.bearing = (int) (MixUtils.getAngle(0, 0, looking.x, looking.z)  + 360 ) % 360;
+		bearing = ((int) (MixUtils.getAngle(0, 0, looking.x, looking.z)  + 360 ) % 360);
 
 		rotationM.transpose();
 		looking.set(0, 1, 0);
 		looking.prod(rotationM);
-		this.pitch = -MixUtils.getAngle(0, 0, looking.y, looking.z);
+		pitch = -MixUtils.getAngle(0, 0, looking.y, looking.z);
 	}
 }

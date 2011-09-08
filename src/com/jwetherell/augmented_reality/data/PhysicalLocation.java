@@ -17,10 +17,10 @@ public class PhysicalLocation {
 	public PhysicalLocation() { }
 
 	public PhysicalLocation(PhysicalLocation pl) {
-		this(pl.latitude, pl.longitude, pl.altitude);
+		set(pl.latitude, pl.longitude, pl.altitude);
 	}
 
-	public PhysicalLocation(double latitude, double longitude, double altitude) {
+	public void set(double latitude, double longitude, double altitude) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.altitude = altitude;

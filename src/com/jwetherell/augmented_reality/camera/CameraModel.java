@@ -29,10 +29,11 @@ public class CameraModel {
 		this.width = width;
 		this.height = height;
 
+		transform.set(0, 0, 0, 0, 0, 0, 0, 0, 0);
 		transform.toIdentity();
 		lco.set(0, 0, 0);
 	}
-
+	
 	public void setViewAngle(float viewAngle) {
 		this.viewAngle = viewAngle;
 		this.distance = (this.width / 2) / (float) Math.tan(viewAngle / 2);

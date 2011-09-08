@@ -1,15 +1,14 @@
 package com.jwetherell.augmented_reality.data;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import com.jwetherell.augmented_reality.common.Matrix;
 import com.jwetherell.augmented_reality.ui.Marker;
 
-import android.graphics.Bitmap;
 import android.location.Location;
 
 /**
@@ -25,11 +24,10 @@ public abstract class ARData {
     private static float radius = 20;
     private static Location currentLocation = null;
     private static Matrix rotationMatrix = null;
-    private static HashMap<String,Marker> markerList = new HashMap<String,Marker>();
-    private static ArrayList<Bitmap> icons = new ArrayList<Bitmap>();
+    private static Map<String,Marker> markerList = new ConcurrentHashMap<String,Marker>();
 
     public static void setZoomLevel(String zoomLevel) {
-    	if (zoomLevel==null) return;
+    	assert(zoomLevel!=null);
     	
         ARData.zoomLevel = zoomLevel;
     }
@@ -68,6 +66,8 @@ public abstract class ARData {
 
     //DataHandler
     public static void addMarkers(List<Marker> markers) {
+    	assert(markers!=null);
+    	
     	logger.info("Marker before: "+markerList.size());
         for(Marker ma : markers) {
             if (!markerList.containsKey(ma)) {
@@ -79,25 +79,12 @@ public abstract class ARData {
     }
         
     public static void onLocationChanged(Location location) {
-        for(Marker ma: markerList.values()) {
+    	for(Marker ma: markerList.values()) {
             ma.calcRelativePosition(location);
         }
     }
 
-    public static int getMarkerCount() {
-        return markerList.size();
-    }
-    
-    public static Marker getMarker(int index) {
-        String key = (String)markerList.keySet().toArray()[index];
-        return markerList.get(key);
-    }
-    
-    public static void setBitmaps(Collection<Bitmap> icons) {
-        ARData.icons.addAll(icons);
-    }
-    
-    public static Bitmap getBitmap(int index) {
-        return ARData.icons.get(index);
+    public static Collection<Marker> getMarkers() {
+        return markerList.values();
     }
 }

@@ -44,9 +44,23 @@ public class MixVector {
 	}
 
 	public MixVector(float x, float y, float z) {
-		set(x, y, z);
+		this.x = x;
+		this.y = y;
+		this.z = z;
 	}
 
+	public void set(MixVector v) {
+		assert(v!=null);
+		
+		set(v.x, v.y, v.z);
+	}
+
+	public void set(float x, float y, float z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj==null) return false;
@@ -64,18 +78,6 @@ public class MixVector {
 		return "<" + x + ", " + y + ", " + z + ">";
 	}
 
-	public void set(MixVector v) {
-		if (v==null) return;
-		
-		set(v.x, v.y, v.z);
-	}
-
-	public void set(float x, float y, float z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-
 	public void add(float x, float y, float z) {
 		this.x += x;
 		this.y += y;
@@ -83,7 +85,7 @@ public class MixVector {
 	}
 
 	public void add(MixVector v) {
-		if (v==null) return;
+		assert(v!=null);
 		
 		add(v.x, v.y, v.z);
 	}
@@ -93,7 +95,7 @@ public class MixVector {
 	}
 
 	public void sub(MixVector v) {
-		if (v==null) return;
+		assert(v!=null);
 		
 		add(-v.x, -v.y, -v.z);
 	}
@@ -123,13 +125,13 @@ public class MixVector {
 	}
 
 	public float dot(MixVector v) {
-		if (v==null) return 0;
+		assert(v!=null);
 
 		return x * v.x + y * v.y + z * v.z;
 	}
 
 	public void cross(MixVector u, MixVector v) {
-		if (u==null || v==null) return;
+		assert(v!=null && u!=null);
 		
 		float x = u.y * v.z - u.z * v.y;
 		float y = u.z * v.x - u.x * v.z;
@@ -140,7 +142,7 @@ public class MixVector {
 	}
 
 	public void prod(Matrix m) {
-		if (m==null) return;
+		assert(m!=null);
 		
 		float xTemp = m.a1 * x + m.a2 * y + m.a3 * z;
 		float yTemp = m.b1 * x + m.b2 * y + m.b3 * z;

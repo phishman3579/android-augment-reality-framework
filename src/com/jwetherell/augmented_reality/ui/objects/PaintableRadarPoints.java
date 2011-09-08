@@ -12,37 +12,47 @@ import android.graphics.Canvas;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class PaintableRadarPoints extends PaintableObject {
+	private PaintablePoint paintablePoint = null;
+	private PaintablePosition pointContainer = null;
+	
 	@Override
     public void paint(Canvas canvas) {
-		if (canvas==null) return;
+		assert(canvas!=null);
 		
         /** Radius is in KM. */
         float range = ARData.getRadius() * 1000;
 
         //Draw the markers in the circle
         float scale = range / Radar.RADIUS;
-        for (int i = 0; i < ARData.getMarkerCount(); i++) {
-            Marker pm = ARData.getMarker(i);
+        for (Marker pm : ARData.getMarkers()) {
             float x = pm.getLocationVector().x / scale;
             float y = pm.getLocationVector().z / scale;
             if ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS)) {
-                PaintablePoint paintablePoint = new PaintablePoint(pm.getColor(),true);
-                PaintablePosition pointContainer = new PaintablePosition( paintablePoint, 
-                                                                          (x+Radar.RADIUS-1), 
-                                                                          (y+Radar.RADIUS-1), 
-                                                                          0, 
-                                                                          1);
+                if (paintablePoint==null) paintablePoint = new PaintablePoint(pm.getColor(),true);
+                else paintablePoint.set(pm.getColor(),true);
+                
+                if (pointContainer==null) pointContainer = new PaintablePosition( 	paintablePoint, 
+                                                                          			(x+Radar.RADIUS-1), 
+                                                                          			(y+Radar.RADIUS-1), 
+                                                                          			0, 
+                                                                          			1);
+                else pointContainer.set(paintablePoint, 
+              							(x+Radar.RADIUS-1), 
+              							(y+Radar.RADIUS-1), 
+              							0, 
+              							1);
+                
                 pointContainer.paint(canvas);
             }
         }
     }
 
-    /** Width on screen */
+    @Override
     public float getWidth() {
         return Radar.RADIUS * 2;
     }
 
-    /** Height on screen */
+    @Override
     public float getHeight() {
         return Radar.RADIUS * 2;
     }

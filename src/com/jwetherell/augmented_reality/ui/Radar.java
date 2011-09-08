@@ -35,7 +35,12 @@ public class Radar {
     private static PaintablePosition leftLineContainer = null;
     private static PaintablePosition rightLineContainer = null;
     private static PaintablePosition circleContainer = null;
+    
     private static PaintableRadarPoints radarPoints = null;
+    private static PaintablePosition pointsContainer = null;
+    
+    private static PaintableText paintableText = null;
+    private static PaintablePosition paintedContainer = null;
 
     public Radar() {
         if (state==null) state = new MixState();
@@ -44,7 +49,7 @@ public class Radar {
     }
 
     public void draw(Canvas canvas) {
-    	if (canvas==null) return;
+    	assert(canvas!=null);
     	
         state.calcPitchBearing(ARData.getRotationMatrix());
 
@@ -55,7 +60,7 @@ public class Radar {
     }
     
     private void drawRadarCircle(Canvas canvas) {
-    	if (canvas==null) return;
+    	assert(canvas!=null);
     	
         if (circleContainer==null) {
             PaintableCircle paintableCircle = new PaintableCircle(RADAR_COLOR,RADIUS,true);
@@ -65,20 +70,28 @@ public class Radar {
     }
     
     private void drawRadarPoints(Canvas canvas) {
-    	if (canvas==null) return;
+    	assert(canvas!=null);
     	
         if (radarPoints==null) radarPoints = new PaintableRadarPoints();
         
-        PaintablePosition pointsContainer = new PaintablePosition(  radarPoints, 
-                                                                    PAD_X, 
-                                                                    PAD_Y, 
-                                                                    -state.bearing, 
-                                                                    1);
+        if (pointsContainer==null) 
+        	pointsContainer = new PaintablePosition( radarPoints, 
+                                                     PAD_X, 
+                                                     PAD_Y, 
+                                                     -state.bearing, 
+                                                     1);
+        else 
+        	pointsContainer.set(radarPoints, 
+                    			PAD_X, 
+                    			PAD_Y, 
+                    			-state.bearing, 
+                    			1);
+        
         pointsContainer.paint(canvas);
     }
     
     private void drawRadarLines(Canvas canvas) {
-    	if (canvas==null) return;
+    	assert(canvas!=null);
     	
         //Left line
         if (leftLineContainer==null) {
@@ -116,7 +129,7 @@ public class Radar {
     }
 
     private void drawRadarText(Canvas canvas) {
-    	if (canvas==null) return;
+    	assert(canvas!=null);
     	
         //Direction text
         int range = (int) (state.bearing / (360f / 16f)); 
@@ -147,10 +160,14 @@ public class Radar {
     }
     
     private void radarText(Canvas canvas, String txt, float x, float y, boolean bg) {
-    	if (canvas==null || txt==null) return;
+    	assert(canvas!=null && txt!=null);
     	
-        PaintableText paintableText = new PaintableText(txt,TEXT_COLOR,TEXT_SIZE,bg);
-        PaintablePosition paintedContainer = new PaintablePosition(paintableText,x,y,0,1);
+        if (paintableText==null) paintableText = new PaintableText(txt,TEXT_COLOR,TEXT_SIZE,bg);
+        else paintableText.set(txt,TEXT_COLOR,TEXT_SIZE,bg);
+        
+        if (paintedContainer==null) paintedContainer = new PaintablePosition(paintableText,x,y,0,1);
+        else paintedContainer.set(paintableText,x,y,0,1);
+        
         paintedContainer.paint(canvas);
     }
 

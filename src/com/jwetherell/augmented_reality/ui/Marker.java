@@ -22,12 +22,20 @@ import android.location.Location;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Marker implements Comparable<Marker> {
-    private static final int MAX_OBJECTS = 100;
+    private static final int MAX_OBJECTS = 50;
+    
+    private static final MixVector originVector = new MixVector(0, 0, 0);
+    private static final MixVector upVector = new MixVector(0, 1, 0);
+    
+    private CameraModel cam = null;
+    private MixVector tmpa = new MixVector();
+    private MixVector tmpb = new MixVector();
+    private MixVector tmpc = new MixVector();
     
     //Unique identifier of Marker
     protected String name = null;
 	//Marker's physical location
-    protected PhysicalLocation physicalLocation = null;
+    protected PhysicalLocation physicalLocation = new PhysicalLocation();
 	// distance from user to PhysicalLocation in meters
     protected double distance = 0.0;
 
@@ -36,15 +44,21 @@ public class Marker implements Comparable<Marker> {
     protected MixVector circleVector = new MixVector();
     protected MixVector signVector = new MixVector();
     protected MixVector locationVector = new MixVector();
-    protected MixVector originVector = new MixVector(0, 0, 0);
-    protected MixVector upVector = new MixVector(0, 1, 0);
     
     protected int color = Color.WHITE;
 	
 	public Marker(String name, double latitude, double longitude, double altitude, int color) {
+		set(name, latitude, longitude, altitude, color);
+	}
+	
+	public void set(String name, double latitude, double longitude, double altitude, int color) {
 		this.name = name;
-		this.physicalLocation = new PhysicalLocation(latitude,longitude,altitude);
+		this.physicalLocation.set(latitude,longitude,altitude);
 		this.color = color;
+		isVisible = false;
+		circleVector.set(0, 0, 0);
+		signVector.set(0, 0, 0);
+		locationVector.set(0, 0, 0);
 	}
 	
 	public String getName(){
@@ -85,20 +99,22 @@ public class Marker implements Comparable<Marker> {
     
     @Override
     public int compareTo(Marker another) {
+    	assert(another!=null) ;
+    	
         return Double.compare(this.getDistance(), another.getDistance());
     }
 
     @Override
     public boolean equals (Object marker) {
-    	if(marker==null) return false;
+    	if(marker==null || name==null) return false;
     	
-        return this.name.equals(((Marker)marker).getName());
+        return name.equals(((Marker)marker).getName());
     }
 
     private void update(Canvas canvas, float addX, float addY) {
-    	if(canvas==null) return;
+    	assert(canvas!=null) ;
     	
-        CameraModel cam = new CameraModel(canvas.getWidth(), canvas.getHeight(), true);
+        cam = new CameraModel(canvas.getWidth(), canvas.getHeight(), true);
         cam.setViewAngle(CameraModel.DEFAULT_VIEW_ANGLE);
         cam.transform = ARData.getRotationMatrix();
         populateMatrices(originVector, cam, addX, addY);
@@ -106,11 +122,11 @@ public class Marker implements Comparable<Marker> {
     }
 
 	private void populateMatrices(MixVector originalPoint, CameraModel cam, float addX, float addY) {
-		if(originalPoint==null || cam==null) return;
+		assert(originalPoint!=null && cam!=null);
 		
 		// Temp properties
-		MixVector tmpa = new MixVector(originalPoint);
-		MixVector tmpc = new MixVector(upVector);
+		tmpa.set(originalPoint.x, originalPoint.y, originalPoint.z);
+		tmpc.set(upVector.x, upVector.y, upVector.z);
 		tmpa.add(locationVector); //3 
 		tmpc.add(locationVector); //3
 		tmpa.sub(cam.lco); //4
@@ -118,11 +134,11 @@ public class Marker implements Comparable<Marker> {
 		tmpa.prod(cam.transform); //5
 		tmpc.prod(cam.transform); //5
 
-		MixVector tmpb = new MixVector();
+		tmpb.set(0, 0, 0);
 		cam.projectPoint(tmpa, tmpb, addX, addY); //6
-		circleVector.set(tmpb); //7
+		circleVector.set(tmpb.x, tmpb.y, tmpb.z); //7
 		cam.projectPoint(tmpc, tmpb, addX, addY); //6
-		signVector.set(tmpb); //7
+		signVector.set(tmpb.x, tmpb.y, tmpb.z); //7
 	}
 
 	private void calcVisibility() {
@@ -138,27 +154,27 @@ public class Marker implements Comparable<Marker> {
 	}
 
     private void updateDistance(Location location) {
-    	if (location==null) return;
+    	assert(location!=null);
     	
-        float[] dist=new float[3];
+        float[] dist=new float[1];
         Location.distanceBetween(getLatitude(), getLongitude(), location.getLatitude(), location.getLongitude(), dist);
         distance = dist[0];
     }
 
 	public void calcRelativePosition(Location location) {
-		if (location==null) return;
+		assert(location!=null);
 		
 	    updateDistance(location);
 		// An elevation of 0.0 probably means that the elevation of the
 		// POI is not known and should be set to the users GPS height
-		if(physicalLocation.getAltitude()==0.0) physicalLocation.setAltitude(location.getAltitude());
+		if (physicalLocation.getAltitude()==0.0) physicalLocation.setAltitude(location.getAltitude());
 		 
 		// compute the relative position vector from user position to POI location
 		PhysicalLocation.convLocToVec(location, physicalLocation, locationVector);
 	}
 
 	public void draw(Canvas canvas) {
-		if (canvas==null) return;
+		assert(canvas!=null);
 		
 	    update(canvas,0,0);
 	    
@@ -169,7 +185,7 @@ public class Marker implements Comparable<Marker> {
 	}
 
     public void drawIcon(Canvas canvas) {
-    	if (canvas==null) return;
+    	assert(canvas!=null);
     	
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
         PaintableGps gps = new PaintableGps((maxHeight / 1.5f), (maxHeight / 10f), true, getColor());
@@ -178,9 +194,9 @@ public class Marker implements Comparable<Marker> {
     }
 
 	public void drawText(Canvas canvas) {
-		if (canvas==null) return;
+		assert(canvas!=null);
 		
-	    String textStr="";
+	    String textStr = null;
 	    DecimalFormat df = new DecimalFormat("@#");
 	    if (distance<1000.0) {
 	        textStr = name + " ("+ df.format(distance) + "m)";          

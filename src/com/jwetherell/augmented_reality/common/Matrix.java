@@ -27,6 +27,11 @@ package com.jwetherell.augmented_reality.common;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Matrix {
+	private MixVector worldUp = new MixVector(0, 1, 0);
+	private MixVector dir = new MixVector();
+	private MixVector right = new MixVector();
+	private MixVector up = new MixVector();
+
     public float a1, a2, a3;
     public float b1, b2, b3;
     public float c1, c2, c3;
@@ -46,7 +51,7 @@ public class Matrix {
 	}
 
 	public void set(Matrix m) {
-		if (m==null) return;
+		assert(m!=null);
 		
 		this.a1 = m.a1;
 		this.a2 = m.a2;
@@ -109,21 +114,19 @@ public class Matrix {
 	}
 
 	public void toAt(MixVector cam, MixVector obj) {
-		if (cam==null || obj==null) return;
-		
-		MixVector worldUp = new MixVector(0, 1, 0);
+		assert(cam!=null && obj!=null);
 
-		MixVector dir = new MixVector();
+		dir.set(0, 0, 0);
 		dir.set(obj);
 		dir.sub(cam);
 		dir.mult(-1f);
 		dir.norm();
 
-		MixVector right = new MixVector();
+		right.set(0, 0, 0);
 		right.cross(worldUp, dir);
 		right.norm();
 
-		MixVector up = new MixVector();
+		up.set(0, 0, 0);
 		up.cross(dir, right);
 		up.norm();
 
@@ -186,7 +189,6 @@ public class Matrix {
 		a1 = a11;
 		b2 = a22;
 		c3 = a33;
-		
 	}
 
 	private float det2x2(float a, float b, float c, float d) {
@@ -213,7 +215,7 @@ public class Matrix {
 	}
 
 	public void add(Matrix n) {
-		if (n==null) return;
+		assert(n!=null);
 		
 		a1 += n.a1;
 		a2 += n.a2;
@@ -229,22 +231,21 @@ public class Matrix {
 	}
 
 	public void prod(Matrix n) {
-		if (n==null) return;
-		
-		Matrix m = new Matrix();
-		m.set(this);
+		assert(n!=null);
 
-		a1 = (m.a1 * n.a1) + (m.a2 * n.b1) + (m.a3 * n.c1);
-		a2 = (m.a1 * n.a2) + (m.a2 * n.b2) + (m.a3 * n.c2);
-		a3 = (m.a1 * n.a3) + (m.a2 * n.b3) + (m.a3 * n.c3);
+		Matrix tmp = new Matrix();
+		tmp.set(this);
+		a1 = (tmp.a1 * n.a1) + (tmp.a2 * n.b1) + (tmp.a3 * n.c1);
+		a2 = (tmp.a1 * n.a2) + (tmp.a2 * n.b2) + (tmp.a3 * n.c2);
+		a3 = (tmp.a1 * n.a3) + (tmp.a2 * n.b3) + (tmp.a3 * n.c3);
 
-		b1 = (m.b1 * n.a1) + (m.b2 * n.b1) + (m.b3 * n.c1);
-		b2 = (m.b1 * n.a2) + (m.b2 * n.b2) + (m.b3 * n.c2);
-		b3 = (m.b1 * n.a3) + (m.b2 * n.b3) + (m.b3 * n.c3);
+		b1 = (tmp.b1 * n.a1) + (tmp.b2 * n.b1) + (tmp.b3 * n.c1);
+		b2 = (tmp.b1 * n.a2) + (tmp.b2 * n.b2) + (tmp.b3 * n.c2);
+		b3 = (tmp.b1 * n.a3) + (tmp.b2 * n.b3) + (tmp.b3 * n.c3);
 
-		c1 = (m.c1 * n.a1) + (m.c2 * n.b1) + (m.c3 * n.c1);
-		c2 = (m.c1 * n.a2) + (m.c2 * n.b2) + (m.c3 * n.c2);
-		c3 = (m.c1 * n.a3) + (m.c2 * n.b3) + (m.c3 * n.c3);
+		c1 = (tmp.c1 * n.a1) + (tmp.c2 * n.b1) + (tmp.c3 * n.c1);
+		c2 = (tmp.c1 * n.a2) + (tmp.c2 * n.b2) + (tmp.c3 * n.c2);
+		c3 = (tmp.c1 * n.a3) + (tmp.c2 * n.b3) + (tmp.c3 * n.c3);
 	}
 
 	@Override

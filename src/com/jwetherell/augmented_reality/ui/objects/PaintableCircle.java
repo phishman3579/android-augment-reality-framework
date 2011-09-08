@@ -13,9 +13,22 @@ public class PaintableCircle extends PaintableObject {
     private boolean fill = false;
     
     public PaintableCircle(int color, float radius, boolean fill) {
+    	set(color, radius, fill);
+    }
+    
+    public void set(int color, float radius, boolean fill) {
         this.color = color;
         this.radius = radius;
         this.fill = fill;
+    }
+
+    @Override
+    public void paint(Canvas canvas) {
+    	assert(canvas!=null);
+    	
+        setFill(fill);
+        setColor(color);
+        paintCircle(canvas, 0, 0, radius);
     }
     
     @Override
@@ -27,14 +40,4 @@ public class PaintableCircle extends PaintableObject {
     public float getHeight() {
         return radius;
     }
-
-    @Override
-    public void paint(Canvas canvas) {
-    	if (canvas==null) return;
-    	
-        setFill(fill);
-        setColor(color);
-        paintCircle(canvas, 0, 0, radius);
-    }
-
 }

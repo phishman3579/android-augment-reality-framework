@@ -1,7 +1,10 @@
 package com.jwetherell.augmented_reality.activity;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.View;
 
 import com.jwetherell.augmented_reality.data.ARData;
@@ -16,24 +19,24 @@ import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class AugmentedView extends View {
-    private static Radar radar = null;
+    private static final int fontSize = 14;
+    private static final int startLabelX = 4;
+    private static final int endLabelX = 95;
+    private static final int labelY = 85;
+    private static final String startKM = "0km";
+    private static final String endKM = "80km";
+    private static final int leftBound = 11;
+    private static final int rightBound = 88;
+    private static final int conflictHeight = 74;
     
+    private static Radar radar = null;
     private static PaintablePosition startTxtContainter = null;
     private static PaintablePosition endTxtContainter = null;
     private static PaintablePosition currentTxtContainter = null;
     private static int lastZoom = 0;
     
-    private static final int fontSize = 14;
-    private static final int startLabelX = 4;
-    private static final int endLabelX = 90;
-    private static final int labelY = 85;
-    private static final String startKM = "0km";
-    private static final String endKM = "80km";
+    private static AtomicBoolean drawing = new AtomicBoolean(false);
     
-    private static final int leftBound = 11;
-    private static final int rightBound = 83;
-    private static final int conflictHeight = 74;
-
     public AugmentedView(Context context) {
         super(context);
 
@@ -58,39 +61,44 @@ public class AugmentedView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (startTxtContainter==null) {
-            PaintableBoxedText startTextBlock = new PaintableBoxedText(startKM, fontSize, 30);
-            startTxtContainter = new PaintablePosition( startTextBlock, 
-                                                         (canvas.getWidth()/100*startLabelX), 
-                                                         (canvas.getHeight()/100*labelY), 
-                                                         0, 
-                                                         1);
+    	assert(canvas!=null);
+        
+        Log.d("JUSTIN", "onDraw");
+        if (drawing.compareAndSet(false, true)) { 
+        	Log.d("JUSTIN", "drawing..");
+        	
+	        if (startTxtContainter==null) {
+	            PaintableBoxedText startTextBlock = new PaintableBoxedText(startKM, fontSize, 30);
+	            startTxtContainter = new PaintablePosition( startTextBlock, 
+	                                                         (canvas.getWidth()/100*startLabelX), 
+	                                                         (canvas.getHeight()/100*labelY), 
+	                                                         0, 
+	                                                         1);
+	        }
+	        startTxtContainter.paint(canvas);
+	        
+	        if (endTxtContainter==null) {
+	            PaintableBoxedText endTextBlock = new PaintableBoxedText(endKM, fontSize, 30);
+	            endTxtContainter = new PaintablePosition( endTextBlock, 
+	                                                       (canvas.getWidth()/100*endLabelX), 
+	                                                       (canvas.getHeight()/100*labelY), 
+	                                                       0, 
+	                                                       1);
+	        }
+	        endTxtContainter.paint(canvas);
+        	
+	        //Re-factor zoom text, if it has changed.
+	        if (lastZoom != ARData.getZoomProgress()) currentTxtContainter = generateCurrentZoom(canvas);
+	        currentTxtContainter.paint(canvas);
+	
+	        //Draw AR markers
+		    for (Marker marker : ARData.getMarkers()) {
+		        marker.draw(canvas);
+		    }
+	        
+	        //Radar circle and radar markers
+	        radar.draw(canvas);
+	        drawing.set(false);
         }
-        startTxtContainter.paint(canvas);
-        
-        if (endTxtContainter==null) {
-            PaintableBoxedText endTextBlock = new PaintableBoxedText(endKM, fontSize, 30);
-            endTxtContainter = new PaintablePosition( endTextBlock, 
-                                                       (canvas.getWidth()/100*endLabelX), 
-                                                       (canvas.getHeight()/100*labelY), 
-                                                       0, 
-                                                       1);
-            
-            currentTxtContainter = generateCurrentZoom(canvas);
-        }
-        endTxtContainter.paint(canvas);
-        
-        //Re-factor zoom text, if it has changed.
-        if (lastZoom != ARData.getZoomProgress()) currentTxtContainter = generateCurrentZoom(canvas);
-        currentTxtContainter.paint(canvas);
-
-        //Draw AR markers
-	    for (int i=0; i<ARData.getMarkerCount(); i++) {
-	        Marker marker = ARData.getMarker(i);
-	        marker.draw(canvas);
-	    }
-        
-        //Radar circle and radar markers
-        radar.draw(canvas);
     }
 }

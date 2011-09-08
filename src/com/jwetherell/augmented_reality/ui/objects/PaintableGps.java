@@ -14,10 +14,24 @@ public class PaintableGps extends PaintableObject {
     private int color = 0;
     
     public PaintableGps(float radius, float strokeWidth, boolean fill, int color) {
+    	set(radius, strokeWidth, fill, color);
+    }
+    
+    public void set(float radius, float strokeWidth, boolean fill, int color) {
         this.radius = radius;
         this.strokeWidth = strokeWidth;
         this.fill = fill;
         this.color = color;
+    }
+
+    @Override
+    public void paint(Canvas canvas) {
+    	assert(canvas!=null);
+    	
+        setStrokeWidth(strokeWidth);
+        setFill(fill);
+        setColor(color);
+        paintCircle(canvas, 0, 0, radius);
     }
 
     @Override
@@ -28,15 +42,5 @@ public class PaintableGps extends PaintableObject {
     @Override
     public float getHeight() {
         return radius;
-    }
-
-    @Override
-    public void paint(Canvas canvas) {
-    	if (canvas==null) return;
-    	
-        setStrokeWidth(strokeWidth);
-        setFill(fill);
-        setColor(color);
-        paintCircle(canvas, 0, 0, radius);
     }
 }

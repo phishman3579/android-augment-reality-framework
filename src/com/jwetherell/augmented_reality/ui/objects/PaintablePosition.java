@@ -13,6 +13,10 @@ public class PaintablePosition extends PaintableObject {
     private float objX=0, objY=0, objRotation=0, objScale=0;
 
     public PaintablePosition(PaintableObject drawObj, float x, float y, float rotation, float scale) {
+    	set(drawObj, x, y, rotation, scale);
+    }
+
+    public void set(PaintableObject drawObj, float x, float y, float rotation, float scale) {
         obj = drawObj;
         objX = x;
         objY = y;
@@ -34,7 +38,7 @@ public class PaintablePosition extends PaintableObject {
     }
 
     public void paint(Canvas canvas) {
-    	if (canvas==null || obj==null) return;
+    	assert(canvas!=null && obj!=null);
     	
         paintObj(canvas, obj, objX, objY, objRotation, objScale);
     }
@@ -47,10 +51,12 @@ public class PaintablePosition extends PaintableObject {
         return myY;
     }
 
+    @Override
     public float getWidth() {
         return width;
     }
 
+    @Override
     public float getHeight() {
         return height;
     }
