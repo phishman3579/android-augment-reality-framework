@@ -248,6 +248,24 @@ public class Matrix {
 		c3 = (tmp.c1 * n.a3) + (tmp.c2 * n.b3) + (tmp.c3 * n.c3);
 	}
 
+	public boolean equals(Matrix n) {
+		if (n==null) return false;
+		
+		if (a1 != n.a1) return false;
+		if (a2 != n.a2) return false;
+		if (a3 != n.a3) return false;
+
+		if (b1 != n.b1) return false;
+		if (b2 != n.b2) return false;
+		if (b3 != n.b3) return false;
+
+		if (c1 != n.c1) return false;
+		if (c2 != n.c2) return false;
+		if (c3 != n.c3) return false;
+		
+		return true;
+	}
+	
 	@Override
 	public String toString() {
 		return "[ (" + a1 + "," + a2 + "," + a3 + ")"+

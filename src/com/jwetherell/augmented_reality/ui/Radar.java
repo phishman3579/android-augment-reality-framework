@@ -13,6 +13,7 @@ import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
 import com.jwetherell.augmented_reality.ui.objects.PaintableRadarPoints;
 import com.jwetherell.augmented_reality.ui.objects.PaintableText;
 
+
 /**
  * This class will visually represent a radar screen with a radar radius and blips on the screen in their appropriate
  * locations. 
@@ -50,9 +51,11 @@ public class Radar {
 
     public void draw(Canvas canvas) {
     	if (canvas==null) return;
-    	
+
+    	//Update the pitch and bearing using the phone's rotation matrix
         state.calcPitchBearing(ARData.getRotationMatrix());
 
+        //Update the radar graphics and text based upon the new pitch and bearing
         drawRadarCircle(canvas);
         drawRadarPoints(canvas);
         drawRadarLines(canvas);

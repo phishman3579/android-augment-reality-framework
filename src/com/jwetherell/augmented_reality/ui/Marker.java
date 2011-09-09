@@ -15,6 +15,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.location.Location;
 
+
 /**
  * This class will represent a physical location and will calculate it's visibility and draw it's text and 
  * visual representation accordingly. This should be extended if you want to change the way a Marker is viewed.
@@ -31,7 +32,7 @@ public class Marker implements Comparable<Marker> {
     private MixVector tmpa = new MixVector();
     private MixVector tmpb = new MixVector();
     private MixVector tmpc = new MixVector();
-    
+
     //Unique identifier of Marker
     protected String name = null;
 	//Marker's physical location
@@ -175,11 +176,14 @@ public class Marker implements Comparable<Marker> {
 
 	public void draw(Canvas canvas) {
 		if (canvas==null) return;
-		
+
+		//Calculate the visibility of this Marker
 	    update(canvas,0,0);
 	    
+	    //If not visible then do nothing
 	    if (!isVisible) return;
 	    
+	    //Draw the Icon and Text
 	    drawIcon(canvas);
 	    drawText(canvas);
 	}
