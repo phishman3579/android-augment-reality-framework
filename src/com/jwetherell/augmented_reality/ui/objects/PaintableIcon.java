@@ -21,7 +21,7 @@ public class PaintableIcon extends PaintableObject {
 
     @Override
     public void paint(Canvas canvas) {
-    	assert(canvas!=null && bitmap!=null);
+    	if (canvas==null || bitmap==null) return;
     	
         paintBitmap(canvas, bitmap, 0, 0);
     }

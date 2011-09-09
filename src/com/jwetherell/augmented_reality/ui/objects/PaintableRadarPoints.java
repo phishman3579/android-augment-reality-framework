@@ -17,7 +17,7 @@ public class PaintableRadarPoints extends PaintableObject {
 	
 	@Override
     public void paint(Canvas canvas) {
-		assert(canvas!=null);
+		if (canvas==null) return;
 		
         /** Radius is in KM. */
         float range = ARData.getRadius() * 1000;

@@ -38,7 +38,7 @@ public class PaintablePosition extends PaintableObject {
     }
 
     public void paint(Canvas canvas) {
-    	assert(canvas!=null && obj!=null);
+    	if (canvas==null || obj==null) return;
     	
         paintObj(canvas, obj, objX, objY, objRotation, objScale);
     }

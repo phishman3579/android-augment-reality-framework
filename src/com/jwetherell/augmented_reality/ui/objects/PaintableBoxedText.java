@@ -35,7 +35,7 @@ public class PaintableBoxedText extends PaintableObject {
 	}
 	
 	public void set(String txtInit, float fontSizeInit, float maxWidth, int borderColor, int bgColor, int textColor) {
-		assert(txtInit!=null);
+		if (txtInit==null) return;
 		
 		this.borderColor = borderColor;
 		this.backgroundColor = bgColor;
@@ -51,7 +51,7 @@ public class PaintableBoxedText extends PaintableObject {
 	}
 
 	private void prepTxt(String txtInit, float fontSizeInit, float maxWidth) {
-		assert(txtInit!=null);
+		if (txtInit==null) return;
 		
 		setFontSize(fontSizeInit);
 
@@ -106,7 +106,7 @@ public class PaintableBoxedText extends PaintableObject {
 	}
 
 	public void paint(Canvas canvas) {
-		assert(canvas!=null);
+		if (canvas==null) return;
 		
 	    setFontSize(fontSize);
 

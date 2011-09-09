@@ -24,7 +24,7 @@ public class PaintableLine extends PaintableObject {
 
     @Override
     public void paint(Canvas canvas) {
-    	assert(canvas!=null);
+    	if (canvas==null) return;
     	
         setFill(false);
         setColor(color); 

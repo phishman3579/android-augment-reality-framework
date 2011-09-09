@@ -25,7 +25,7 @@ public class PaintablePoint extends PaintableObject {
 
     @Override
     public void paint(Canvas canvas) {
-    	assert(canvas!=null);
+    	if (canvas==null) return;
     	
         setFill(fill);
         setColor(color);

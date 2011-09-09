@@ -23,7 +23,7 @@ public class IconMarker extends Marker {
     
     @Override
     public void drawIcon(Canvas canvas) {
-    	assert(canvas!=null && bitmap!=null) ;
+    	if (canvas==null || bitmap==null) return;
     	
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
         

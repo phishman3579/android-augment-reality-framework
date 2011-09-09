@@ -50,7 +50,7 @@ public class MixVector {
 	}
 
 	public void set(MixVector v) {
-		assert(v!=null);
+		if (v==null) return;
 		
 		set(v.x, v.y, v.z);
 	}
@@ -85,7 +85,7 @@ public class MixVector {
 	}
 
 	public void add(MixVector v) {
-		assert(v!=null);
+		if (v==null) return;
 		
 		add(v.x, v.y, v.z);
 	}
@@ -95,7 +95,7 @@ public class MixVector {
 	}
 
 	public void sub(MixVector v) {
-		assert(v!=null);
+		if (v==null) return;
 		
 		add(-v.x, -v.y, -v.z);
 	}
@@ -125,13 +125,13 @@ public class MixVector {
 	}
 
 	public float dot(MixVector v) {
-		assert(v!=null);
+		if (v==null) return 0f;
 
 		return x * v.x + y * v.y + z * v.z;
 	}
 
 	public void cross(MixVector u, MixVector v) {
-		assert(v!=null && u!=null);
+		if (v==null || u==null) return;
 		
 		float x = u.y * v.z - u.z * v.y;
 		float y = u.z * v.x - u.x * v.z;
@@ -142,7 +142,7 @@ public class MixVector {
 	}
 
 	public void prod(Matrix m) {
-		assert(m!=null);
+		if (m==null) return;
 		
 		float xTemp = m.a1 * x + m.a2 * y + m.a3 * z;
 		float yTemp = m.b1 * x + m.b2 * y + m.b3 * z;

@@ -4,7 +4,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.View;
 
 import com.jwetherell.augmented_reality.data.ARData;
@@ -61,12 +60,9 @@ public class AugmentedView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-    	assert(canvas!=null);
-        
-        Log.d("JUSTIN", "onDraw");
+    	if (canvas==null) return;
+
         if (drawing.compareAndSet(false, true)) { 
-        	Log.d("JUSTIN", "drawing..");
-        	
 	        if (startTxtContainter==null) {
 	            PaintableBoxedText startTextBlock = new PaintableBoxedText(startKM, fontSize, 30);
 	            startTxtContainter = new PaintablePosition( startTextBlock, 

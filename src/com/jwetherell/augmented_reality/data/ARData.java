@@ -27,7 +27,7 @@ public abstract class ARData {
     private static Map<String,Marker> markerList = new ConcurrentHashMap<String,Marker>();
 
     public static void setZoomLevel(String zoomLevel) {
-    	assert(zoomLevel!=null);
+    	if (zoomLevel==null) return;
     	
         ARData.zoomLevel = zoomLevel;
     }
@@ -66,7 +66,7 @@ public abstract class ARData {
 
     //DataHandler
     public static void addMarkers(List<Marker> markers) {
-    	assert(markers!=null);
+    	if (markers==null) return;
     	
     	logger.info("Marker before: "+markerList.size());
         for(Marker ma : markers) {

@@ -51,7 +51,7 @@ public class Matrix {
 	}
 
 	public void set(Matrix m) {
-		assert(m!=null);
+		if (m==null) return;
 		
 		this.a1 = m.a1;
 		this.a2 = m.a2;
@@ -114,7 +114,7 @@ public class Matrix {
 	}
 
 	public void toAt(MixVector cam, MixVector obj) {
-		assert(cam!=null && obj!=null);
+		if (cam==null || obj==null) return;
 
 		dir.set(0, 0, 0);
 		dir.set(obj);
@@ -215,7 +215,7 @@ public class Matrix {
 	}
 
 	public void add(Matrix n) {
-		assert(n!=null);
+		if (n==null) return;
 		
 		a1 += n.a1;
 		a2 += n.a2;
@@ -231,7 +231,7 @@ public class Matrix {
 	}
 
 	public void prod(Matrix n) {
-		assert(n!=null);
+		if (n==null) return;
 
 		Matrix tmp = new Matrix();
 		tmp.set(this);

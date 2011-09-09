@@ -99,7 +99,7 @@ public class Marker implements Comparable<Marker> {
     
     @Override
     public int compareTo(Marker another) {
-    	assert(another!=null) ;
+    	if (another==null) throw new NullPointerException();
     	
         return Double.compare(this.getDistance(), another.getDistance());
     }
@@ -112,7 +112,7 @@ public class Marker implements Comparable<Marker> {
     }
 
     private void update(Canvas canvas, float addX, float addY) {
-    	assert(canvas!=null) ;
+    	if (canvas==null) return;
     	
         cam = new CameraModel(canvas.getWidth(), canvas.getHeight(), true);
         cam.setViewAngle(CameraModel.DEFAULT_VIEW_ANGLE);
@@ -122,7 +122,7 @@ public class Marker implements Comparable<Marker> {
     }
 
 	private void populateMatrices(MixVector originalPoint, CameraModel cam, float addX, float addY) {
-		assert(originalPoint!=null && cam!=null);
+		if (originalPoint==null || cam==null) return;
 		
 		// Temp properties
 		tmpa.set(originalPoint.x, originalPoint.y, originalPoint.z);
@@ -154,7 +154,7 @@ public class Marker implements Comparable<Marker> {
 	}
 
     private void updateDistance(Location location) {
-    	assert(location!=null);
+    	if (location==null) return;
     	
         float[] dist=new float[1];
         Location.distanceBetween(getLatitude(), getLongitude(), location.getLatitude(), location.getLongitude(), dist);
@@ -162,7 +162,7 @@ public class Marker implements Comparable<Marker> {
     }
 
 	public void calcRelativePosition(Location location) {
-		assert(location!=null);
+		if (location==null) return;
 		
 	    updateDistance(location);
 		// An elevation of 0.0 probably means that the elevation of the
@@ -174,7 +174,7 @@ public class Marker implements Comparable<Marker> {
 	}
 
 	public void draw(Canvas canvas) {
-		assert(canvas!=null);
+		if (canvas==null) return;
 		
 	    update(canvas,0,0);
 	    
@@ -185,7 +185,7 @@ public class Marker implements Comparable<Marker> {
 	}
 
     public void drawIcon(Canvas canvas) {
-    	assert(canvas!=null);
+    	if (canvas==null) return;
     	
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
         PaintableGps gps = new PaintableGps((maxHeight / 1.5f), (maxHeight / 10f), true, getColor());
@@ -194,7 +194,7 @@ public class Marker implements Comparable<Marker> {
     }
 
 	public void drawText(Canvas canvas) {
-		assert(canvas!=null);
+		if (canvas==null) return;
 		
 	    String textStr = null;
 	    DecimalFormat df = new DecimalFormat("@#");

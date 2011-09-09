@@ -1,6 +1,7 @@
 package com.jwetherell.augmented_reality.activity;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 import com.jwetherell.augmented_reality.common.Matrix;
@@ -49,11 +50,10 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static LocationManager locationMgr = null;
     
     private static int minTime = 30*1000;
-    private static int minDistance = 0;
+    private static int minDistance = 10;
     
-    private static int updateSensorCounter = 0;
-    private static int updateSensorMax = 10;
-    
+    private static AtomicBoolean computing = new AtomicBoolean(false); 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -202,12 +202,8 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     
     @Override
     public void onSensorChanged(SensorEvent evt) {
-    	if (updateSensorCounter>updateSensorMax) {
-    		updateSensorCounter=0;
-    		return;
-    	}
+    	if (!computing.compareAndSet(false, true)) return;
     	
-    	updateSensorCounter++;
         if (evt.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             grav[0] = evt.values[0];
             grav[1] = evt.values[1];
@@ -243,6 +239,8 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         smoothR.mult(1 / (float) histR.length);
         
         ARData.setRotationMatrix(smoothR);
+        
+        computing.set(false);
     }
 
     @Override
