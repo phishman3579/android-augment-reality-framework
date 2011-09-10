@@ -18,13 +18,13 @@ import android.location.Location;
  */
 public abstract class ARData {
 	private static final Logger logger = Logger.getLogger(ARData.class.getSimpleName());
+    private static final Map<String,Marker> markerList = new ConcurrentHashMap<String,Marker>();
 	
     private static String zoomLevel = null;
     private static int zoomProgress = 0;
     private static float radius = 20;
     private static Location currentLocation = null;
     private static Matrix rotationMatrix = null;
-    private static Map<String,Marker> markerList = new ConcurrentHashMap<String,Marker>();
 
     public static void setZoomLevel(String zoomLevel) {
     	if (zoomLevel==null) return;

@@ -42,6 +42,12 @@ public class PaintableBoxedText extends PaintableObject {
 		this.textColor = textColor;
 		this.pad = getTextAsc();
 
+		set(txtInit, fontSizeInit, maxWidth);
+	}
+	
+	public void set(String txtInit, float fontSizeInit, float maxWidth) {
+		if (txtInit==null) return;
+
 		try {
 			prepTxt(txtInit, fontSizeInit, maxWidth);
 		} catch (Exception ex) {
@@ -49,7 +55,7 @@ public class PaintableBoxedText extends PaintableObject {
 			prepTxt("TEXT PARSE ERROR", 12, 200);
 		}
 	}
-
+	
 	private void prepTxt(String txtInit, float fontSizeInit, float maxWidth) {
 		if (txtInit==null) return;
 		

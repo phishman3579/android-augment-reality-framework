@@ -27,10 +27,11 @@ package com.jwetherell.augmented_reality.common;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Matrix {
-	private MixVector worldUp = new MixVector(0, 1, 0);
-	private MixVector dir = new MixVector();
-	private MixVector right = new MixVector();
-	private MixVector up = new MixVector();
+	private final static MixVector worldUp = new MixVector(0, 1, 0);
+	private final static MixVector dir = new MixVector();
+	private final static MixVector right = new MixVector();
+	private final static MixVector up = new MixVector();
+	private final static Matrix tmp = new Matrix();
 
     public float a1, a2, a3;
     public float b1, b2, b3;
@@ -233,7 +234,6 @@ public class Matrix {
 	public void prod(Matrix n) {
 		if (n==null) return;
 
-		Matrix tmp = new Matrix();
 		tmp.set(this);
 		a1 = (tmp.a1 * n.a1) + (tmp.a2 * n.b1) + (tmp.a3 * n.c1);
 		a2 = (tmp.a1 * n.a2) + (tmp.a2 * n.b2) + (tmp.a3 * n.c2);

@@ -24,15 +24,20 @@ import android.location.Location;
  */
 public class Marker implements Comparable<Marker> {
     private static final int MAX_OBJECTS = 50;
-    
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("@#");
+        
     private static final MixVector originVector = new MixVector(0, 0, 0);
     private static final MixVector upVector = new MixVector(0, 1, 0);
+
+    private static CameraModel cam = null;
     
-    private CameraModel cam = null;
     private MixVector tmpa = new MixVector();
     private MixVector tmpb = new MixVector();
     private MixVector tmpc = new MixVector();
 
+    private PaintableBoxedText textBlock = null;
+    private PaintablePosition txtContainter = null;
+    
     //Unique identifier of Marker
     protected String name = null;
 	//Marker's physical location
@@ -115,9 +120,9 @@ public class Marker implements Comparable<Marker> {
     private void update(Canvas canvas, float addX, float addY) {
     	if (canvas==null) return;
     	
-        cam = new CameraModel(canvas.getWidth(), canvas.getHeight(), true);
+    	if (cam==null) cam = new CameraModel(canvas.getWidth(), canvas.getHeight(), true);
         cam.setViewAngle(CameraModel.DEFAULT_VIEW_ANGLE);
-        cam.transform = ARData.getRotationMatrix();
+        cam.setTransform(ARData.getRotationMatrix());
         populateMatrices(originVector, cam, addX, addY);
         calcVisibility();
     }
@@ -130,10 +135,10 @@ public class Marker implements Comparable<Marker> {
 		tmpc.set(upVector.x, upVector.y, upVector.z);
 		tmpa.add(locationVector); //3 
 		tmpc.add(locationVector); //3
-		tmpa.sub(cam.lco); //4
-		tmpc.sub(cam.lco); //4
-		tmpa.prod(cam.transform); //5
-		tmpc.prod(cam.transform); //5
+		tmpa.sub(cam.getLco()); //4
+		tmpc.sub(cam.getLco()); //4
+		tmpa.prod(cam.getTransform()); //5
+		tmpc.prod(cam.getTransform()); //5
 
 		tmpb.set(0, 0, 0);
 		cam.projectPoint(tmpa, tmpb, addX, addY); //6
@@ -201,21 +206,22 @@ public class Marker implements Comparable<Marker> {
 		if (canvas==null) return;
 		
 	    String textStr = null;
-	    DecimalFormat df = new DecimalFormat("@#");
 	    if (distance<1000.0) {
-	        textStr = name + " ("+ df.format(distance) + "m)";          
+	        textStr = name + " ("+ DECIMAL_FORMAT.format(distance) + "m)";          
 	    } else {
 	        double d=distance/1000.0;
-	        textStr = name + " (" + df.format(d) + "km)";
+	        textStr = name + " (" + DECIMAL_FORMAT.format(d) + "km)";
 	    }
 
 	    float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
-	    PaintableBoxedText textBlock = new PaintableBoxedText(textStr, Math.round(maxHeight / 2f) + 1, 300);
+	    if (textBlock==null) textBlock = new PaintableBoxedText(textStr, Math.round(maxHeight / 2f) + 1, 300);
+	    else textBlock.set(textStr, Math.round(maxHeight / 2f) + 1, 300);
 	    float x = signVector.x - textBlock.getWidth() / 2;
 	    float y = signVector.y + maxHeight;
 	    float currentAngle = MixUtils.getAngle(circleVector.x, circleVector.y, signVector.x, signVector.y);
 	    float angle = currentAngle + 90;
-	    PaintablePosition txtContainter = new PaintablePosition(textBlock, x, y, angle, 1);
+	    if (txtContainter==null) txtContainter = new PaintablePosition(textBlock, x, y, angle, 1);
+	    else txtContainter.set(textBlock, x, y, angle, 1);
 	    txtContainter.paint(canvas);
 	}
 }

@@ -13,8 +13,9 @@ import com.jwetherell.augmented_reality.common.MixVector;
  */
 public class CameraModel {
 	public static final float DEFAULT_VIEW_ANGLE = (float) Math.toRadians(45);
-	public Matrix transform = new Matrix();
-	public MixVector lco = new MixVector();
+	
+	private Matrix transform = new Matrix();
+	private MixVector lco = new MixVector();
 	
 	private int width = 0; 
 	private int height = 0;
@@ -26,19 +27,38 @@ public class CameraModel {
 	}
 
 	public CameraModel(int width, int height, boolean init) {
+		set(width, height, init);
+	}
+	
+	public void set(int width, int height, boolean init) {
 		this.width = width;
 		this.height = height;
 
-		transform.set(0, 0, 0, 0, 0, 0, 0, 0, 0);
-		transform.toIdentity();
-		lco.set(0, 0, 0);
+		if (init) {
+			transform.set(0, 0, 0, 0, 0, 0, 0, 0, 0);
+			transform.toIdentity();
+			lco.set(0, 0, 0);
+		}
+	}
+	
+	public Matrix getTransform() {
+		return transform;
+	}
+	public void setTransform(Matrix transform) {
+		this.transform = transform;
+	}
+
+	public MixVector getLco() {
+		return lco;
+	}
+	public void setLco(MixVector lco) {
+		this.lco = lco;
 	}
 	
 	public void setViewAngle(float viewAngle) {
 		this.viewAngle = viewAngle;
 		this.distance = (this.width / 2) / (float) Math.tan(viewAngle / 2);
 	}
-
 	public void setViewAngle(int width, int height, float viewAngle) {
 		this.viewAngle = viewAngle;
 		this.distance = (width / 2) / (float) Math.tan(viewAngle / 2);

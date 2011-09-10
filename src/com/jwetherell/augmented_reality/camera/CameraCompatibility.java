@@ -16,7 +16,7 @@ import android.hardware.Camera;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class CameraCompatibility {
-	private static Method getSupportedPreviewSizes;
+	private static Method getSupportedPreviewSizes = null;
 
 	static {
 		initCompatibility();

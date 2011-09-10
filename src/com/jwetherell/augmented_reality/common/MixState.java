@@ -27,7 +27,7 @@ package com.jwetherell.augmented_reality.common;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class MixState {
-	private MixVector looking = new MixVector();
+	private static final MixVector looking = new MixVector();
 	
 	public float bearing = 0;
 	public float pitch = 0;

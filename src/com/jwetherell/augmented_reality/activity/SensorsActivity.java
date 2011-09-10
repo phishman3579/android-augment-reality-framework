@@ -28,21 +28,25 @@ import android.os.Bundle;
 public class SensorsActivity extends Activity implements SensorEventListener, LocationListener {
     private static final Logger logger = Logger.getLogger(SensorsActivity.class.getSimpleName());
     
-    private static float RTmp[] = new float[9]; //Temporary rotation matrix in Android format
-    private static float Rot[] = new float[9]; //Final rotation matrix in Android format
-    private static float I[] = new float[9]; //Inclination matrix
-    private static float grav[] = new float[3]; //Gravity (a.k.a accelerometer data)
-    private static float mag[] = new float[3]; //Magnetic 
+    private static final float RTmp[] = new float[9]; //Temporary rotation matrix in Android format
+    private static final float Rot[] = new float[9]; //Final rotation matrix in Android format
+    private static final float grav[] = new float[3]; //Gravity (a.k.a accelerometer data)
+    private static final float mag[] = new float[3]; //Magnetic 
 
     private static int rHistIdx = 0;
-    private static Matrix tempR = new Matrix();
-    private static Matrix finalR = new Matrix();
-    private static Matrix smoothR = new Matrix();
-    private static Matrix histR[] = new Matrix[10];
-    private static Matrix m1 = new Matrix();
-    private static Matrix m2 = new Matrix();
-    private static Matrix m3 = new Matrix();
-    private static Matrix m4 = new Matrix();
+    private static final Matrix tempR = new Matrix();
+    private static final Matrix finalR = new Matrix();
+    private static final Matrix smoothR = new Matrix();
+    private static final Matrix histR[] = new Matrix[10];
+    private static final Matrix m1 = new Matrix();
+    private static final Matrix m2 = new Matrix();
+    private static final Matrix m3 = new Matrix();
+    private static final Matrix m4 = new Matrix();
+
+    private static final int minTime = 30*1000;
+    private static final int minDistance = 10;
+    
+    private static AtomicBoolean computing = new AtomicBoolean(false); 
 
     private static SensorManager sensorMgr = null;
     private static List<Sensor> sensors = null;
@@ -50,11 +54,6 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static Sensor sensorMag = null;
     private static LocationManager locationMgr = null;
     
-    private static int minTime = 30*1000;
-    private static int minDistance = 10;
-    
-    private static AtomicBoolean computing = new AtomicBoolean(false); 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -240,29 +239,35 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         }
 
         //Get rotation and inclination matrices given the gravity and geomagnetic matrices
-        SensorManager.getRotationMatrix(RTmp, I, grav, mag);
-        
+        SensorManager.getRotationMatrix(RTmp, null, grav, mag);
+
         //Translate the rotation matrices from X and -Z (landscape)
         SensorManager.remapCoordinateSystem(RTmp, SensorManager.AXIS_X, SensorManager.AXIS_MINUS_Z, Rot);
 
         //Convert from float[9] to Matrix
         tempR.set(Rot[0], Rot[1], Rot[2], Rot[3], Rot[4], Rot[5], Rot[6], Rot[7], Rot[8]);
-
+ 
         //Identity matrix
         // [ 1, 0, 0 ]
         // [ 0, 1, 0 ]
         // [ 0, 0, 1 ]
         finalR.toIdentity();
+
         //Multiply by the counter-clockwise rotation at the negative declination around the y-axis
         finalR.prod(m4);
+
         //Multiply by the counter-clockwise rotation at -90 degrees around the x-axis
         finalR.prod(m1);
+
         //Multiply by the translated rotation matrix
         finalR.prod(tempR);
+
         //Multiply by the counter-clockwise rotation at -90 degrees around the y-axis
         finalR.prod(m3);
+
         //Multiply by the counter-clockwise rotation at -90 degrees around the x-axis
         finalR.prod(m2);
+
         finalR.invert(); 
 
         //Start to smooth the data (catch a boundary case)
