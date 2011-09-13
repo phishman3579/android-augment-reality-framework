@@ -38,6 +38,9 @@ public class Marker implements Comparable<Marker> {
     private PaintableBoxedText textBlock = null;
     private PaintablePosition txtContainter = null;
     
+    private PaintableGps gps = null;
+    private PaintablePosition gpsContainter = null;
+    
     //Unique identifier of Marker
     protected String name = null;
 	//Marker's physical location
@@ -197,8 +200,10 @@ public class Marker implements Comparable<Marker> {
     	if (canvas==null) return;
     	
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
-        PaintableGps gps = new PaintableGps((maxHeight / 1.5f), (maxHeight / 10f), true, getColor());
-        PaintablePosition gpsContainter = new PaintablePosition(gps, circleVector.x, circleVector.y, 0, 1);
+        if (gps==null) gps = new PaintableGps((maxHeight / 1.5f), (maxHeight / 10f), true, getColor());
+        
+        if (gpsContainter==null) gpsContainter = new PaintablePosition(gps, circleVector.x, circleVector.y, 0, 1);
+        else gpsContainter.set(gps, circleVector.x, circleVector.y, 0, 1);
         gpsContainter.paint(canvas);
     }
 

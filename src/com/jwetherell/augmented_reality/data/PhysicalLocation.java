@@ -76,11 +76,13 @@ public class PhysicalLocation {
 		
 		float[] z = new float[1];
 		z[0] = 0;
-		Location.distanceBetween(org.getLatitude(), org.getLongitude(), gp
-				.getLatitude(), org.getLongitude(), z);
+		Location.distanceBetween(	org.getLatitude(), org.getLongitude(), 
+									gp.getLatitude(), org.getLongitude(), 
+									z);
 		float[] x = new float[1];
-		Location.distanceBetween(org.getLatitude(), org.getLongitude(), org
-				.getLatitude(), gp.getLongitude(), x);
+		Location.distanceBetween(	org.getLatitude(), org.getLongitude(), 
+									org.getLatitude(), gp.getLongitude(), 
+									x);
 		double y = gp.getAltitude() - org.getAltitude();
 		if (org.getLatitude() < gp.getLatitude())
 			z[0] *= -1;
@@ -101,10 +103,10 @@ public class PhysicalLocation {
 
 		PhysicalLocation tmp1Loc = new PhysicalLocation();
 		PhysicalLocation tmp2Loc = new PhysicalLocation();
-		PhysicalLocation.calcDestination(org.getLatitude(), org.getLongitude(), brngNS,
-				Math.abs(v.z), tmp1Loc);
-		PhysicalLocation.calcDestination(tmp1Loc.getLatitude(), tmp1Loc.getLongitude(),
-				brngEW, Math.abs(v.x), tmp2Loc);
+		PhysicalLocation.calcDestination(	org.getLatitude(), org.getLongitude(), 
+											brngNS, Math.abs(v.z), tmp1Loc);
+		PhysicalLocation.calcDestination(	tmp1Loc.getLatitude(), tmp1Loc.getLongitude(),
+											brngEW, Math.abs(v.x), tmp2Loc);
 
 		gp.setLatitude(tmp2Loc.getLatitude());
 		gp.setLongitude(tmp2Loc.getLongitude());
