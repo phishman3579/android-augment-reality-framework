@@ -23,7 +23,7 @@ import com.jwetherell.augmented_reality.ui.Marker;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public abstract class DataSource {
-	private static Logger logger = Logger.getLogger(DataSource.class.getSimpleName());
+	private static final Logger logger = Logger.getLogger(DataSource.class.getSimpleName());
 
 	protected static final int MAX = 5;
 	

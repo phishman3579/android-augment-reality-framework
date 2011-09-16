@@ -23,8 +23,7 @@ import android.graphics.Color;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class TwitterDataSource extends DataSource {
-	private Logger logger = Logger.getLogger(getClass().getSimpleName());
-	
+	private static final Logger logger = Logger.getLogger(TwitterDataSource.class.getSimpleName());
 	private static final String URL = "http://search.twitter.com/search.json";
 
 	private static Bitmap icon = null;

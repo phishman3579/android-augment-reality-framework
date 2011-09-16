@@ -27,11 +27,11 @@ package com.jwetherell.augmented_reality.common;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Matrix {
-	private final static MixVector worldUp = new MixVector(0, 1, 0);
-	private final static MixVector dir = new MixVector();
-	private final static MixVector right = new MixVector();
-	private final static MixVector up = new MixVector();
-	private final static Matrix tmp = new Matrix();
+	private static final MixVector worldUp = new MixVector(0, 1, 0);
+	private static final MixVector dir = new MixVector();
+	private static final MixVector right = new MixVector();
+	private static final MixVector up = new MixVector();
+	private static final Matrix tmp = new Matrix();
 
     public float a1, a2, a3;
     public float b1, b2, b3;

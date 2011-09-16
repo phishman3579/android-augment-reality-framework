@@ -17,7 +17,9 @@ import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class AugmentedView extends View {
+public class AugmentedView extends View {    
+    private static final AtomicBoolean drawing = new AtomicBoolean(false);
+    
     private static final int fontSize = 14;
     private static final int startLabelX = 4;
     private static final int endLabelX = 95;
@@ -27,19 +29,15 @@ public class AugmentedView extends View {
     private static final int leftBound = 11;
     private static final int rightBound = 88;
     private static final int conflictHeight = 74;
+    private static final Radar radar = new Radar();
     
-    private static Radar radar = null;
     private static PaintablePosition startTxtContainter = null;
     private static PaintablePosition endTxtContainter = null;
     private static PaintablePosition currentTxtContainter = null;
     private static int lastZoom = 0;
-    
-    private static AtomicBoolean drawing = new AtomicBoolean(false);
-    
+
     public AugmentedView(Context context) {
         super(context);
-
-        if (radar==null) radar = new Radar();
     }
 
     private static PaintablePosition generateCurrentZoom(Canvas canvas) {

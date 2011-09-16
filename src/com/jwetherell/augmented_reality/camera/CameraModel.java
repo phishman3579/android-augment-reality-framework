@@ -12,16 +12,16 @@ import com.jwetherell.augmented_reality.common.MixVector;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class CameraModel {
-	public static final float DEFAULT_VIEW_ANGLE = (float) Math.toRadians(45);
-	
-	private Matrix transform = new Matrix();
-	private MixVector lco = new MixVector();
-	
+	private static Matrix transform = new Matrix();
+	private static MixVector lco = new MixVector();
+
 	private int width = 0; 
 	private int height = 0;
 	private float viewAngle = 0F;
 	private float distance = 0F;
-
+	
+	public static final float DEFAULT_VIEW_ANGLE = (float) Math.toRadians(45);
+	
 	public CameraModel(int width, int height) {
 		this(width, height, true);
 	}
@@ -45,14 +45,14 @@ public class CameraModel {
 		return transform;
 	}
 	public void setTransform(Matrix transform) {
-		this.transform = transform;
+		CameraModel.transform = transform;
 	}
 
 	public MixVector getLco() {
 		return lco;
 	}
 	public void setLco(MixVector lco) {
-		this.lco = lco;
+		CameraModel.lco = lco;
 	}
 	
 	public void setViewAngle(float viewAngle) {

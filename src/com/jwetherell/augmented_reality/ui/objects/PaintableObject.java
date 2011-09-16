@@ -16,7 +16,7 @@ public abstract class PaintableObject {
     private static final Logger logger = Logger.getLogger(PaintableObject.class.getSimpleName());
     private static final boolean DEBUG = false;
     
-    private Paint paint = new Paint();
+    private Paint paint = null;
 
     public PaintableObject() {
         if (paint==null) {

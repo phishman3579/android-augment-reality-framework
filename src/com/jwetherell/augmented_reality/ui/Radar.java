@@ -29,8 +29,8 @@ public class Radar {
     private static final int RADAR_COLOR = Color.argb(100, 0, 0, 200);
     private static final int TEXT_COLOR = Color.rgb(255,255,255);
     private static final int TEXT_SIZE = 12;
-
-    private static MixState state = null;
+    private static final MixState state = new MixState();
+    
     private static ScreenLine leftRadarLine = null;
     private static ScreenLine rightRadarLine = null;
     private static PaintablePosition leftLineContainer = null;
@@ -44,7 +44,6 @@ public class Radar {
     private static PaintablePosition paintedContainer = null;
 
     public Radar() {
-        if (state==null) state = new MixState();
         if (leftRadarLine==null) leftRadarLine = new ScreenLine();
         if (rightRadarLine==null) rightRadarLine = new ScreenLine();
     }

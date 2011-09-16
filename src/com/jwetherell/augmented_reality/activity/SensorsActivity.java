@@ -26,8 +26,12 @@ import android.os.Bundle;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class SensorsActivity extends Activity implements SensorEventListener, LocationListener {
-    private static final Logger logger = Logger.getLogger(SensorsActivity.class.getSimpleName());
-    
+    private static final Logger logger = Logger.getLogger(SensorsActivity.class.getSimpleName());    
+    private static final AtomicBoolean computing = new AtomicBoolean(false); 
+
+    private static final int MIN_TIME = 30*1000;
+    private static final int MIN_DISTANCE = 10;
+
     private static final float RTmp[] = new float[9]; //Temporary rotation matrix in Android format
     private static final float Rot[] = new float[9]; //Final rotation matrix in Android format
     private static final float grav[] = new float[3]; //Gravity (a.k.a accelerometer data)
@@ -42,11 +46,6 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static final Matrix m2 = new Matrix();
     private static final Matrix m3 = new Matrix();
     private static final Matrix m4 = new Matrix();
-
-    private static final int minTime = 30*1000;
-    private static final int minDistance = 10;
-    
-    private static AtomicBoolean computing = new AtomicBoolean(false); 
 
     private static SensorManager sensorMgr = null;
     private static List<Sensor> sensors = null;
@@ -131,7 +130,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
             sensorMgr.registerListener(this, sensorMag, SensorManager.SENSOR_DELAY_NORMAL);
 
             locationMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, this);
+            locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
 
             try {
                 /*defaulting to our place*/

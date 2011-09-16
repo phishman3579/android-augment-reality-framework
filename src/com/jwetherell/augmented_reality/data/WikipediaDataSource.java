@@ -17,8 +17,7 @@ import com.jwetherell.augmented_reality.ui.Marker;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class WikipediaDataSource extends DataSource {
-	private Logger logger = Logger.getLogger(getClass().getSimpleName());
-	
+	private static final Logger logger = Logger.getLogger(WikipediaDataSource.class.getSimpleName());
 	private static final String BASE_URL = "http://ws.geonames.org/findNearbyWikipediaJSON";
 
 	public WikipediaDataSource() {}

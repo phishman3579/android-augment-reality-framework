@@ -31,9 +31,9 @@ public class Marker implements Comparable<Marker> {
 
     private static CameraModel cam = null;
     
-    private MixVector tmpa = new MixVector();
-    private MixVector tmpb = new MixVector();
-    private MixVector tmpc = new MixVector();
+    private final MixVector tmpa = new MixVector();
+    private final MixVector tmpb = new MixVector();
+    private final MixVector tmpc = new MixVector();
 
     private PaintableBoxedText textBlock = null;
     private PaintablePosition txtContainter = null;
