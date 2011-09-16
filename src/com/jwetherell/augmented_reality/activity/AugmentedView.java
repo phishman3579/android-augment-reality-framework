@@ -23,12 +23,12 @@ public class AugmentedView extends View {
     private static final int fontSize = 14;
     private static final int startLabelX = 4;
     private static final int endLabelX = 95;
-    private static final int labelY = 85;
+    private static final int labelY = 95;
     private static final String startKM = "0km";
     private static final String endKM = "80km";
-    private static final int leftBound = 11;
-    private static final int rightBound = 88;
-    private static final int conflictHeight = 74;
+    private static final int leftBound = 12;
+    private static final int rightBound = 87;
+    private static final int conflictHeight = 82;
     private static final Radar radar = new Radar();
     
     private static PaintablePosition startTxtContainter = null;
@@ -52,7 +52,7 @@ public class AugmentedView extends View {
             else
                 x = canvas.getWidth()/100*endLabelX;
         }
-        PaintablePosition container  = new PaintablePosition(currentTxtBlock, x, y, 0, 1);
+        PaintablePosition container = new PaintablePosition(currentTxtBlock, x, y, 0, 1);
         return container;
     }
 

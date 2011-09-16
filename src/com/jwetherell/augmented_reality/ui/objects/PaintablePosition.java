@@ -9,9 +9,9 @@ import android.graphics.Canvas;
  */
 public class PaintablePosition extends PaintableObject {
     private float myX=0, myY=0, width=0, height=0;
-    private PaintableObject obj = null;
     private float objX=0, objY=0, objRotation=0, objScale=0;
-
+    private PaintableObject obj = null;
+    
     public PaintablePosition(PaintableObject drawObj, float x, float y, float rotation, float scale) {
     	set(drawObj, x, y, rotation, scale);
     }

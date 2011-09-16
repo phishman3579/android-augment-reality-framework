@@ -1,5 +1,6 @@
 package com.jwetherell.augmented_reality.activity;
 
+import java.text.DecimalFormat;
 import java.util.logging.Logger;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -19,6 +20,7 @@ import com.jwetherell.augmented_reality.data.ARData;
  */
 public class AugmentedReality extends SensorsActivity {
     private static final Logger logger = Logger.getLogger(AugmentedReality.class.getSimpleName());
+    private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
 
     private static CameraSurface camScreen = null;    
     private static SeekBar myZoomBar = null;
@@ -125,7 +127,7 @@ public class AugmentedReality extends SensorsActivity {
     protected void updateDataOnZoom() {
         float zoomLevel = calcZoomLevel();
         ARData.setRadius(zoomLevel);
-        ARData.setZoomLevel(String.valueOf(zoomLevel));
+        ARData.setZoomLevel(FORMAT.format(zoomLevel));
         ARData.setZoomProgress(myZoomBar.getProgress());
     };
 }
