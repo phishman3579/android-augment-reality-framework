@@ -2,9 +2,13 @@ package com.jwetherell.augmented_reality.activity;
 
 import java.text.DecimalFormat;
 import java.util.logging.Logger;
+
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.view.Gravity;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
@@ -12,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import com.jwetherell.augmented_reality.camera.CameraSurface;
 import com.jwetherell.augmented_reality.data.ARData;
+
 
 /**
  * This class extends the SensorsActivity and is designed tie the AugmentedView and zoom bar together.
@@ -21,7 +26,8 @@ import com.jwetherell.augmented_reality.data.ARData;
 public class AugmentedReality extends SensorsActivity {
     private static final Logger logger = Logger.getLogger(AugmentedReality.class.getSimpleName());
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
-
+    
+    private static WakeLock wakeLock = null;
     private static CameraSurface camScreen = null;    
     private static SeekBar myZoomBar = null;
     private static FrameLayout frameLayout = null;
@@ -56,6 +62,9 @@ public class AugmentedReality extends SensorsActivity {
         addContentView(augmentedView,augLayout);
         
         updateDataOnZoom();
+
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
     }
     
     @Override
@@ -75,7 +84,21 @@ public class AugmentedReality extends SensorsActivity {
     	super.onStop();
     	logger.info("onStop()");
     }
-    
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		wakeLock.acquire();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+
+		wakeLock.release();
+	}
+	
     @Override
     public void onSensorChanged(SensorEvent evt) {
         super.onSensorChanged(evt);
