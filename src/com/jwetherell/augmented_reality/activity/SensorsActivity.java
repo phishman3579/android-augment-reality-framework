@@ -45,7 +45,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static final Matrix m1 = new Matrix();
     private static final Matrix m2 = new Matrix();
     private static final Matrix m3 = new Matrix();
-    private static final Matrix m4 = new Matrix();
+    private static final Matrix mageticNorthCompensation = new Matrix();
 
     private static SensorManager sensorMgr = null;
     private static List<Sensor> sensors = null;
@@ -110,7 +110,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         // [ 1, 0, 0 ]
         // [ 0, 1, 0 ]
         // [ 0, 0, 1 ]
-        m4.toIdentity();
+        mageticNorthCompensation.toIdentity();
 
         //Historic matrices to "smooth" the data
         for (int i = 0; i < histR.length; i++) {
@@ -162,10 +162,11 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                 //note: declination of the horizontal component of the magnetic field
                 //      from true north, in degrees (i.e. positive means the magnetic 
                 //      field is rotated east that much from true north). 
+                //note2: declination is the difference between true north and magnetic north
                 // [ cos,  0, sin ]
                 // [ 0,    1, 0   ]
                 // [ -sin, 0, cos ]
-                m4.set( (float) Math.cos(angleY), 
+                mageticNorthCompensation.set( (float) Math.cos(angleY), 
                         0f, 
                         (float) Math.sin(angleY), 
                         0f, 
@@ -253,7 +254,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         finalR.toIdentity();
 
         //Multiply by the counter-clockwise rotation at the negative declination around the y-axis
-        finalR.prod(m4);
+        finalR.prod(mageticNorthCompensation);
 
         //Multiply by the counter-clockwise rotation at -90 degrees around the x-axis
         finalR.prod(m1);

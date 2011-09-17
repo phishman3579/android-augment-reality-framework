@@ -59,7 +59,7 @@ public class AugmentedView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
     	if (canvas==null) return;
-
+    	
         if (drawing.compareAndSet(false, true)) { 
 	        if (startTxtContainter==null) {
 	            PaintableBoxedText startTextBlock = new PaintableBoxedText(startKM, fontSize, 30);

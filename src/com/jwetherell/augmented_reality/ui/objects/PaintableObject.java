@@ -16,7 +16,7 @@ public abstract class PaintableObject {
     private static final Logger logger = Logger.getLogger(PaintableObject.class.getSimpleName());
     private static final boolean DEBUG = false;
     
-    private Paint paint = null;
+    private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public PaintableObject() {
         if (paint==null) {
