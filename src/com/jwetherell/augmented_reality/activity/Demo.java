@@ -27,8 +27,10 @@ public class Demo extends AugmentedReality {
 	private static Collection<DataSource> sources = null;    
     private static Thread thread = null;
 
-    /** Called when the activity is first created. */
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -44,15 +46,21 @@ public class Demo extends AugmentedReality {
         }
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onStart() {
         super.onStart();
         
         Location last = ARData.getCurrentLocation();
-        if (last!=null) updateData(last.getLatitude(),last.getLongitude(),last.getAltitude());
+        updateData(last.getLatitude(),last.getLongitude(),last.getAltitude());
     }
-    
-    @Override
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onLocationChanged(Location location) {
         super.onLocationChanged(location);
         
@@ -83,12 +91,20 @@ public class Demo extends AugmentedReality {
     private static boolean download(DataSource source, double lat, double lon, double alt) {
 		if (source==null) return false;
 		
-		String url = source.createRequestURL(lat, lon, alt, ARData.getRadius(), locale);    	
-    	logger.info(url);
-    	if (url==null) return false;
+		String url = null;
+		try {
+			url = source.createRequestURL(lat, lon, alt, ARData.getRadius(), locale);    	
+			logger.info(url);
+		} catch (NullPointerException e) {
+			return false;
+		}
     	
-    	List<Marker> markers = source.parse(url);
-    	if (markers==null) return false;
+		List<Marker> markers = null;
+		try {
+			markers = source.parse(url);
+		} catch (NullPointerException e) {
+			return false;
+		}
     	
     	logger.info(source.getClass().getSimpleName()+" size="+markers.size());
     	

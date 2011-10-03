@@ -56,7 +56,10 @@ public class AugmentedView extends View {
         return container;
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     protected void onDraw(Canvas canvas) {
     	if (canvas==null) return;
     	

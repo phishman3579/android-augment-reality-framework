@@ -28,30 +28,28 @@ public class BuzzDataSource extends DataSource {
 	private static Bitmap icon = null;
 	
 	public BuzzDataSource(Resources res) {
-		if (res==null) return;
+		if (res==null) throw new NullPointerException();
 		
 		createIcon(res);
 	}
-	
-	protected void createIcon(Resources res) {
-		if (res==null) return;
-		
-		icon=BitmapFactory.decodeResource(res, R.drawable.buzz);
-	}
-	
-	public Bitmap getBitmap() {
-		return icon;
-	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String createRequestURL(double lat, double lon, double alt, float radius, String locale) {
 		return BASE_URL+
 		"&lat=" + lat+
         "&lon=" + lon +
         "&radius="+ radius*1000;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public List<Marker> parse(JSONObject root) {
-		if (root==null) return null;
+		if (root==null) throw new NullPointerException();
 		
 		JSONObject jo = null;
 		JSONArray dataArray = null;
@@ -72,8 +70,14 @@ public class BuzzDataSource extends DataSource {
 		return markers;
 	}
 	
-	public Marker processJSONObject(JSONObject jo) {
-		if (jo==null) return null;
+	private void createIcon(Resources res) {
+		if (res==null) throw new NullPointerException();
+		
+		icon=BitmapFactory.decodeResource(res, R.drawable.buzz);
+	}
+
+	private Marker processJSONObject(JSONObject jo) {
+		if (jo==null) throw new NullPointerException();
 		
         Marker ma = null;
         if (	jo.has("title") && 

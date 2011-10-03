@@ -34,8 +34,18 @@ public class PaintableBoxedText extends PaintableObject {
 		set(txtInit, fontSizeInit, maxWidth, borderColor, bgColor, textColor);
 	}
 	
+	/**
+	 * Set this objects parameters. This should be used instead of creating new objects.
+	 * @param txtInit String to paint.
+	 * @param fontSizeInit Font size to use.
+	 * @param maxWidth max width of the text.
+	 * @param borderColor Color of the border.
+	 * @param bgColor Background color of the surrounding box.
+	 * @param textColor Color of the text.
+	 * @throws NullPointerException if String param is NULL.
+	 */
 	public void set(String txtInit, float fontSizeInit, float maxWidth, int borderColor, int bgColor, int textColor) {
-		if (txtInit==null) return;
+		if (txtInit==null) throw new NullPointerException();
 		
 		this.borderColor = borderColor;
 		this.backgroundColor = bgColor;
@@ -45,8 +55,16 @@ public class PaintableBoxedText extends PaintableObject {
 		set(txtInit, fontSizeInit, maxWidth);
 	}
 	
+	/**
+	 * Set this objects parameters. This should be used instead of creating new objects.
+	 * Note: This uses previously set or default values for border color, background color, and text color.
+	 * @param txtInit String to paint.
+	 * @param fontSizeInit Font size to use.
+	 * @param maxWidth max width of the text.
+	 * @throws NullPointerException if String param is NULL.
+	 */
 	public void set(String txtInit, float fontSizeInit, float maxWidth) {
-		if (txtInit==null) return;
+		if (txtInit==null) throw new NullPointerException();
 
 		try {
 			prepTxt(txtInit, fontSizeInit, maxWidth);
@@ -57,7 +75,7 @@ public class PaintableBoxedText extends PaintableObject {
 	}
 	
 	private void prepTxt(String txtInit, float fontSizeInit, float maxWidth) {
-		if (txtInit==null) return;
+		if (txtInit==null) throw new NullPointerException();
 		
 		setFontSize(fontSizeInit);
 
@@ -111,8 +129,12 @@ public class PaintableBoxedText extends PaintableObject {
 		height = areaHeight + pad * 2;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void paint(Canvas canvas) {
-		if (canvas==null) return;
+		if (canvas==null) throw new NullPointerException();
 		
 	    setFontSize(fontSize);
 
@@ -133,11 +155,17 @@ public class PaintableBoxedText extends PaintableObject {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public float getWidth() {
 		return width;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public float getHeight() {
 		return height;

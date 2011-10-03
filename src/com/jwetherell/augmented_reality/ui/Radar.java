@@ -48,8 +48,13 @@ public class Radar {
         if (rightRadarLine==null) rightRadarLine = new ScreenLine();
     }
 
+    /**
+     * Draw the radar on the given Canvas.
+     * @param canvas Canvas to draw on.
+     * @throws NullPointerException if Canvas is NULL.
+     */
     public void draw(Canvas canvas) {
-    	if (canvas==null) return;
+    	if (canvas==null) throw new NullPointerException();
 
     	//Update the pitch and bearing using the phone's rotation matrix
         state.calcPitchBearing(ARData.getRotationMatrix());
@@ -62,7 +67,7 @@ public class Radar {
     }
     
     private void drawRadarCircle(Canvas canvas) {
-    	if (canvas==null) return;
+    	if (canvas==null) throw new NullPointerException();
     	
         if (circleContainer==null) {
             PaintableCircle paintableCircle = new PaintableCircle(RADAR_COLOR,RADIUS,true);
@@ -72,7 +77,7 @@ public class Radar {
     }
     
     private void drawRadarPoints(Canvas canvas) {
-    	if (canvas==null) return;
+    	if (canvas==null) throw new NullPointerException();
     	
         if (radarPoints==null) radarPoints = new PaintableRadarPoints();
         
@@ -93,7 +98,7 @@ public class Radar {
     }
     
     private void drawRadarLines(Canvas canvas) {
-    	if (canvas==null) return;
+    	if (canvas==null) throw new NullPointerException();
     	
         //Left line
         if (leftLineContainer==null) {
@@ -131,7 +136,7 @@ public class Radar {
     }
 
     private void drawRadarText(Canvas canvas) {
-    	if (canvas==null) return;
+    	if (canvas==null) throw new NullPointerException();
     	
         //Direction text
         int range = (int) (state.bearing / (360f / 16f)); 
@@ -162,7 +167,7 @@ public class Radar {
     }
     
     private void radarText(Canvas canvas, String txt, float x, float y, boolean bg) {
-    	if (canvas==null || txt==null) return;
+    	if (canvas==null || txt==null) throw new NullPointerException();
     	
         if (paintableText==null) paintableText = new PaintableText(txt,TEXT_COLOR,TEXT_SIZE,bg);
         else paintableText.set(txt,TEXT_COLOR,TEXT_SIZE,bg);

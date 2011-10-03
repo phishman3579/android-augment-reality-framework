@@ -52,7 +52,7 @@ public class Matrix {
 	}
 
 	public void set(Matrix m) {
-		if (m==null) return;
+		if (m==null) throw new NullPointerException();
 		
 		this.a1 = m.a1;
 		this.a2 = m.a2;
@@ -115,7 +115,7 @@ public class Matrix {
 	}
 
 	public void toAt(MixVector cam, MixVector obj) {
-		if (cam==null || obj==null) return;
+		if (cam==null || obj==null) throw new NullPointerException();
 
 		dir.set(0, 0, 0);
 		dir.set(obj);
@@ -216,7 +216,7 @@ public class Matrix {
 	}
 
 	public void add(Matrix n) {
-		if (n==null) return;
+		if (n==null) throw new NullPointerException();
 		
 		a1 += n.a1;
 		a2 += n.a2;
@@ -232,7 +232,7 @@ public class Matrix {
 	}
 
 	public void prod(Matrix n) {
-		if (n==null) return;
+		if (n==null) throw new NullPointerException();
 
 		tmp.set(this);
 		a1 = (tmp.a1 * n.a1) + (tmp.a2 * n.b1) + (tmp.a3 * n.c1);
@@ -265,7 +265,10 @@ public class Matrix {
 		
 		return true;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return "[ (" + a1 + "," + a2 + "," + a3 + ")"+

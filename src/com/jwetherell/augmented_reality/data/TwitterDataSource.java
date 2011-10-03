@@ -29,35 +29,39 @@ public class TwitterDataSource extends DataSource {
 	private static Bitmap icon = null;
 
 	public TwitterDataSource(Resources res) {
-		if (res==null) return;
+		if (res==null) throw new NullPointerException();
 		
 		createIcon(res);
 	}
 	
 	protected void createIcon(Resources res) {
-		if (res==null) return;
+		if (res==null) throw new NullPointerException();
 		
 		icon=BitmapFactory.decodeResource(res, R.drawable.twitter);
 	}
-	
-	public Bitmap getBitmap() {
-		return icon;
-	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String createRequestURL(double lat, double lon, double alt, float radius, String locale) {
 		return URL+"?geocode=" + lat + "%2C" + lon + "%2C" + Math.max(radius, 1.0) + "km";
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public List<Marker> parse(String url) {
-		if (url==null) return null;
+		if (url==null) throw new NullPointerException();
 		
 		InputStream stream = null;
     	stream = getHttpGETInputStream(url);
-    	if (stream==null) return null;
+    	if (stream==null) throw new NullPointerException();
     	
     	String string = null;
     	string = getHttpInputString(stream);
-    	if (string==null) return null;
+    	if (string==null) throw new NullPointerException();
     	
     	JSONObject json = null;
     	try {
@@ -65,13 +69,17 @@ public class TwitterDataSource extends DataSource {
     	} catch (JSONException e) {
     		logger.info("Exception: "+e.getMessage());
     	}
-    	if (json==null) return null;
+    	if (json==null) throw new NullPointerException();
     	
     	return parse(json);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public List<Marker> parse(JSONObject root) {
-		if (root==null) return null;
+		if (root==null) throw new NullPointerException();
 		
 		JSONObject jo = null;
 		JSONArray dataArray = null;
@@ -92,10 +100,10 @@ public class TwitterDataSource extends DataSource {
 		return markers;
 	}
 	
-	public Marker processJSONObject(JSONObject jo) {
-		if (jo==null) return null;
+	private Marker processJSONObject(JSONObject jo) {
+		if (jo==null) throw new NullPointerException();
 		
-		if (!jo.has("geo")) return null;
+		if (!jo.has("geo")) throw new NullPointerException();
 		
 		Marker ma = null;
 		try {
@@ -127,7 +135,7 @@ public class TwitterDataSource extends DataSource {
 						icon);
 			}
 		} catch (Exception e) {
-			logger.info("Exception: "+e.getMessage());
+			e.printStackTrace();
 		}
 		return ma;
 	}

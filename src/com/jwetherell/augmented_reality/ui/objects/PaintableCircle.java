@@ -16,26 +16,41 @@ public class PaintableCircle extends PaintableObject {
     	set(color, radius, fill);
     }
     
+    /**
+     * Set the objects parameters. This should be used instead of creating new objects.
+     * @param color Color of the circle.
+     * @param radius Radius of the circle.
+     * @param fill Fill color of the circle.
+     */
     public void set(int color, float radius, boolean fill) {
         this.color = color;
         this.radius = radius;
         this.fill = fill;
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
     @Override
     public void paint(Canvas canvas) {
-    	if (canvas==null) return;
+    	if (canvas==null) throw new NullPointerException();
     	
         setFill(fill);
         setColor(color);
         paintCircle(canvas, 0, 0, radius);
     }
-    
+
+	/**
+	 * {@inheritDoc}
+	 */
     @Override
     public float getWidth() {
         return radius;
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
     @Override
     public float getHeight() {
         return radius;

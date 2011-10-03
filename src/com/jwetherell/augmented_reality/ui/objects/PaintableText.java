@@ -23,7 +23,17 @@ public class PaintableText extends PaintableObject {
     	set(text, color, size, paintBackground);
     }
     
+    /**
+     * Set this objects parameters. This should be used instead of creating new objects.
+     * @param text String representing this object.
+     * @param color Color of the object.
+     * @param size Size of the object.
+     * @param paintBackground Should the background get rendered.
+     * @throws NullPointerException if String param is NULL.
+     */
     public void set(String text, int color, int size, boolean paintBackground) {
+    	if (text==null) throw new NullPointerException();
+    	
         this.text = text;
         this.bg = paintBackground;
         this.color = color;
@@ -32,9 +42,12 @@ public class PaintableText extends PaintableObject {
         h = getTextAsc() + getTextDesc() + HEIGHT_PAD * 2;
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void paint(Canvas canvas) {
-    	if (canvas==null || text==null) return;
+    	if (canvas==null || text==null) throw new NullPointerException();
     	
         setColor(color);
         setFontSize(size);
@@ -48,13 +61,19 @@ public class PaintableText extends PaintableObject {
         }
         paintText(canvas, (WIDTH_PAD - w/2), (HEIGHT_PAD + getTextAsc() - h/2), text);
     }
-    
-    @Override
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getWidth() {
         return w;
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getHeight() {
         return h;
     }

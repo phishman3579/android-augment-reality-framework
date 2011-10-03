@@ -14,10 +14,13 @@ import android.graphics.Canvas;
 public class PaintableRadarPoints extends PaintableObject {
 	private PaintablePoint paintablePoint = null;
 	private PaintablePosition pointContainer = null;
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
     public void paint(Canvas canvas) {
-		if (canvas==null) return;
+		if (canvas==null) throw new NullPointerException();
 		
         /** Radius is in KM. */
         float range = ARData.getRadius() * 1000;
@@ -47,12 +50,18 @@ public class PaintableRadarPoints extends PaintableObject {
         }
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getWidth() {
         return Radar.RADIUS * 2;
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getHeight() {
         return Radar.RADIUS * 2;
     }

@@ -15,23 +15,39 @@ public class PaintableIcon extends PaintableObject {
     	set(bitmap);
     }
 
+    /**
+     * Set the bitmap. This should be used instead of creating new objects.
+     * @param bitmap Bitmap that should be rendered.
+     * @throws NullPointerException if Bitmap is NULL.
+     */
     public void set(Bitmap bitmap) {
+    	if (bitmap==null) throw new NullPointerException();
+    	
         this.bitmap = bitmap;
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void paint(Canvas canvas) {
-    	if (canvas==null || bitmap==null) return;
+    	if (canvas==null || bitmap==null) throw new NullPointerException();
     	
         paintBitmap(canvas, bitmap, 0, 0);
     }
-    
-    @Override
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getWidth() {
         return bitmap.getWidth();
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getHeight() {
         return bitmap.getHeight();
     }

@@ -52,13 +52,19 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static Sensor sensorGrav = null;
     private static Sensor sensorMag = null;
     private static LocationManager locationMgr = null;
-    
-    @Override
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onStart() {
         super.onStart();
         
@@ -177,7 +183,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                         (float) Math.cos(angleY));
 
             } catch (Exception ex) {
-                logger.info("Exception: "+ex);
+            	ex.printStackTrace();
             }
         } catch (Exception ex1) {
             try {
@@ -191,12 +197,15 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                     locationMgr = null;
                 }
             } catch (Exception ex2) {
-                logger.info("Exception: "+ex2);
+            	ex2.printStackTrace();
             }
         }
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     protected void onStop() {
         super.onStop();
 
@@ -204,27 +213,30 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
             try {
                 sensorMgr.unregisterListener(this, sensorGrav);
             } catch (Exception ex) {
-                logger.info("Exception: "+ex);
+            	ex.printStackTrace();
             }
             try {
                 sensorMgr.unregisterListener(this, sensorMag);
             } catch (Exception ex) {
-                logger.info("Exception: "+ex);
+            	ex.printStackTrace();
             }
             sensorMgr = null;
 
             try {
                 locationMgr.removeUpdates(this);
             } catch (Exception ex) {
-                logger.info("Exception: "+ex);
+            	ex.printStackTrace();
             }
             locationMgr = null;
         } catch (Exception ex) {
-            logger.info("Exception: "+ex);
+        	ex.printStackTrace();
         }
     }
-    
-    @Override
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onSensorChanged(SensorEvent evt) {
     	if (!computing.compareAndSet(false, true)) return;
     	
@@ -291,28 +303,45 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         computing.set(false);
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onProviderDisabled(String provider) {
         //Ignore
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onProviderEnabled(String provider) {
         //Ignore
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         //Ignore
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onLocationChanged(Location location) {
         ARData.setCurrentLocation(location);
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		if (sensor==null) throw new NullPointerException();
+		
         if(sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD && accuracy==SensorManager.SENSOR_STATUS_UNRELIABLE) {
             logger.info("Compass data unreliable");
         }

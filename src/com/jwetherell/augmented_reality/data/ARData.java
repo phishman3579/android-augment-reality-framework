@@ -26,47 +26,104 @@ public abstract class ARData {
     private static Location currentLocation = null;
     private static Matrix rotationMatrix = null;
 
+    /**
+     * Set the zoom level.
+     * @param zoomLevel String representing the zoom level.
+     */
     public static void setZoomLevel(String zoomLevel) {
-    	if (zoomLevel==null) return;
+    	if (zoomLevel==null) throw new NullPointerException();
     	
         ARData.zoomLevel = zoomLevel;
     }
+    
+    /**
+     * Get the zoom level.
+     * @return String representing the zoom level.
+     */
     public static String getZoomLevel() {
         return zoomLevel;
     }
     
+    /**
+     * Set the zoom progress.
+     * @param zoomProgress int representing the zoom progress.
+     */
     public static void setZoomProgress(int zoomProgress) {
         ARData.zoomProgress = zoomProgress;
     }
+    
+    /**
+     * Get the zoom progress.
+     * @return int representing the zoom progress.
+     */
     public static int getZoomProgress() {
         return zoomProgress;
     }
     
+    /**
+     * Set the radius of the radar screen.
+     * @param radius float representing the radar screen.
+     */
     public static void setRadius(float radius) {
         ARData.radius = radius;
     }
+    
+    /**
+     * Get the radius of the radar screen.
+     * @return float representing the radar screen.
+     */
     public static float getRadius() {
         return radius;
     }
     
+    /**
+     * Set the current location.
+     * @param currentLocation Location to set.
+     * @throws NullPointerException if Location param is NULL.
+     */
     public static void setCurrentLocation(Location currentLocation) {
+    	if (currentLocation==null) throw new NullPointerException();
+    	
         ARData.currentLocation = currentLocation;
         onLocationChanged(currentLocation);
     }
+    
+    private static void onLocationChanged(Location location) {
+    	for(Marker ma: markerList.values()) {
+            ma.calcRelativePosition(location);
+        }
+    }
+    
+    /**
+     * Get the current Location.
+     * @return Location representing the current location.
+     */
     public static Location getCurrentLocation() {
         return currentLocation;
     }
     
+    /**
+     * Set the rotation matrix.
+     * @param rotationMatrix Matrix to use for rotation.
+     */
     public static void setRotationMatrix(Matrix rotationMatrix) {
         ARData.rotationMatrix = rotationMatrix;
     }
+    
+    /**
+     * Get the rotation matrix.
+     * @return Matrix representing the rotation matrix.
+     */
     public static Matrix getRotationMatrix() {
         return rotationMatrix;
     }
 
-    //DataHandler
+    /**
+     * Add a List of Markers to our Collection.
+     * @param markers List of Markers to add.
+     */
     public static void addMarkers(List<Marker> markers) {
-    	if (markers==null) return;
+    	if (markers==null) throw new NullPointerException();
     	
     	logger.info("Marker before: "+markerList.size());
         for(Marker ma : markers) {
@@ -77,13 +134,11 @@ public abstract class ARData {
         }
         logger.info("Marker count: "+markerList.size());
     }
-        
-    public static void onLocationChanged(Location location) {
-    	for(Marker ma: markerList.values()) {
-            ma.calcRelativePosition(location);
-        }
-    }
 
+    /**
+     * Get the Markers collection.
+     * @return Collection of Markers.
+     */
     public static Collection<Marker> getMarkers() {
         return markerList.values();
     }

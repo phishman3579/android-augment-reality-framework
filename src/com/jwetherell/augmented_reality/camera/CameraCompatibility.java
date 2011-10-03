@@ -22,7 +22,9 @@ public class CameraCompatibility {
 		initCompatibility();
 	};
 
-	/** this will fail on older phones (Android version < 2.0) */
+	/** 
+	 * This will fail on older phones (Android version < 2.0) 
+	 */
 	private static void initCompatibility() {
 		try {
 			getSupportedPreviewSizes = Camera.Parameters.class.getMethod("getSupportedPreviewSizes", new Class[] { } );
@@ -32,7 +34,12 @@ public class CameraCompatibility {
 		}
 	}
 
-	/** If it's running on a new phone, let's get the supported preview sizes, before it was fixed to 480 x 320*/
+	/**
+	 * If it's running on a new phone, let's get the supported preview sizes, before it was fixed to 480 x 320
+	 * @param params Camera's parameters.
+	 * @return List of supported Camera viewer sizes.
+	 * @throws RuntimeException if supported size fails.
+	 */
 	@SuppressWarnings("unchecked")
 	public static List<Camera.Size> getSupportedPreviewSizes(Camera.Parameters params) {
 		List<Camera.Size> retList = null;
@@ -42,8 +49,7 @@ public class CameraCompatibility {
 			if (retObj != null) {
 				retList = (List<Camera.Size>)retObj;
 			}
-		}
-		catch (InvocationTargetException ite) {
+		} catch (InvocationTargetException ite) {
 			/* unpack original exception when possible */
 			Throwable cause = ite.getCause();
 			if (cause instanceof RuntimeException) {
@@ -55,7 +61,7 @@ public class CameraCompatibility {
 				throw new RuntimeException(ite);
 			}
 		} catch (IllegalAccessException ie) {
-			//System.err.println("unexpected " + ie);
+			ie.printStackTrace();
 		}
 		return retList;
 	}

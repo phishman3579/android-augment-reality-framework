@@ -17,6 +17,13 @@ public class PaintableGps extends PaintableObject {
     	set(radius, strokeWidth, fill, color);
     }
     
+    /**
+     * Set this objects parameters. This should be used instead of creating new objects.
+     * @param radius Radius of the circle representing the GPS position.
+     * @param strokeWidth Stroke width of the text representing the GPS position.
+     * @param fill Fill color of the circle representing the GPS position.
+     * @param color Color of the circle representing the GPS position.
+     */
     public void set(float radius, float strokeWidth, boolean fill, int color) {
         this.radius = radius;
         this.strokeWidth = strokeWidth;
@@ -24,9 +31,12 @@ public class PaintableGps extends PaintableObject {
         this.color = color;
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void paint(Canvas canvas) {
-    	if (canvas==null) return;
+    	if (canvas==null) throw new NullPointerException();
     	
         setStrokeWidth(strokeWidth);
         setFill(fill);
@@ -34,12 +44,18 @@ public class PaintableGps extends PaintableObject {
         paintCircle(canvas, 0, 0, radius);
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getWidth() {
         return radius;
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getHeight() {
         return radius;
     }

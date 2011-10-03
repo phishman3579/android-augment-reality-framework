@@ -30,22 +30,26 @@ public class CameraSurface extends SurfaceView implements SurfaceHolder.Callback
             holder.addCallback(this);
             holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         } catch (Exception ex) {
-            logger.info("Exception: "+ex.getLocalizedMessage());
+        	ex.printStackTrace();
         }
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void surfaceCreated(SurfaceHolder holder) {
         try {
             if (camera != null) {
                 try {
                     camera.stopPreview();
                 } catch (Exception ex) {
-                    logger.info("Exception: "+ex.getLocalizedMessage());
+                	ex.printStackTrace();
                 }
                 try {
                     camera.release();
                 } catch (Exception ex) {
-                    logger.info("Exception: "+ex.getLocalizedMessage());
+                	ex.printStackTrace();
                 }
                 camera = null;
             }
@@ -58,41 +62,49 @@ public class CameraSurface extends SurfaceView implements SurfaceHolder.Callback
                     try {
                         camera.stopPreview();
                     } catch (Exception ex1) {
-                        logger.info("Exception: "+ex1.getLocalizedMessage());
+                    	ex.printStackTrace();
                     }
                     try {
                         camera.release();
                     } catch (Exception ex2) {
-                        logger.info("Exception: "+ex2.getLocalizedMessage());
+                    	ex.printStackTrace();
                     }
                     camera = null;
                 }
             } catch (Exception ex3) {
-                logger.info("Exception: "+ex3.getLocalizedMessage());
+            	ex.printStackTrace();
             }
         }
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         try {
             if (camera != null) {
                 try {
                     camera.stopPreview();
                 } catch (Exception ex) {
-                    logger.info("Exception: "+ex.getLocalizedMessage());
+                	ex.printStackTrace();
                 }
                 try {
                     camera.release();
                 } catch (Exception ex) {
-                    logger.info("Exception: "+ex.getLocalizedMessage());
+                	ex.printStackTrace();
                 }
                 camera = null;
             }
         } catch (Exception ex) {
-            logger.info("Exception: "+ex.getLocalizedMessage());
+        	ex.printStackTrace();
         }
     }
-    
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
         try {
             Camera.Parameters parameters = camera.getParameters();
@@ -150,7 +162,7 @@ public class CameraSurface extends SurfaceView implements SurfaceHolder.Callback
             camera.setParameters(parameters);
             camera.startPreview();
         } catch (Exception ex) {
-            logger.info("Exception: "+ex.getLocalizedMessage());
+        	ex.printStackTrace();
         }
     }
 }

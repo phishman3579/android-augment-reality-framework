@@ -21,7 +21,11 @@ public class WikipediaDataSource extends DataSource {
 	private static final String BASE_URL = "http://ws.geonames.org/findNearbyWikipediaJSON";
 
 	public WikipediaDataSource() {}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String createRequestURL(double lat, double lon, double alt, float radius, String locale) {
 		return BASE_URL+
         "?lat=" + lat +
@@ -31,7 +35,11 @@ public class WikipediaDataSource extends DataSource {
         "&lang=" + locale;
 
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public List<Marker> parse(JSONObject root) {
 		if (root==null) return null;
 		
@@ -54,7 +62,7 @@ public class WikipediaDataSource extends DataSource {
 		return markers;
 	}
 	
-	public Marker processJSONObject(JSONObject jo) {
+	private Marker processJSONObject(JSONObject jo) {
 		if (jo==null) return null;
 		
         Marker ma = null;

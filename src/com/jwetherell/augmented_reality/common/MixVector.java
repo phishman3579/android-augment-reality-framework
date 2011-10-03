@@ -73,11 +73,6 @@ public class MixVector {
 		return (this.x == x && this.y == y && this.z == z);
 	}
 
-	@Override
-	public String toString() {
-		return "<" + x + ", " + y + ", " + z + ">";
-	}
-
 	public void add(float x, float y, float z) {
 		this.x += x;
 		this.y += y;
@@ -151,5 +146,13 @@ public class MixVector {
 		x = xTemp;
 		y = yTemp;
 		z = zTemp;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "<" + x + ", " + y + ", " + z + ">";
 	}
 }

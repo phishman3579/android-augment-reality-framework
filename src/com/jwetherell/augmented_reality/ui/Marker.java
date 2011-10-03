@@ -23,7 +23,6 @@ import android.location.Location;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Marker implements Comparable<Marker> {
-    private static final int MAX_OBJECTS = 50;
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("@#");
         
     private static final MixVector originVector = new MixVector(0, 0, 0);
@@ -60,7 +59,17 @@ public class Marker implements Comparable<Marker> {
 		set(name, latitude, longitude, altitude, color);
 	}
 	
+	/**
+	 * Set the objects parameters. This should be used instead of creating new objects.
+	 * @param name String representing the Marker.
+	 * @param latitude Latitude of the Marker.
+	 * @param longitude Longitude of the Marker.
+	 * @param altitude Altitude of the Marker.
+	 * @param color Color of the Marker.
+	 */
 	public void set(String name, double latitude, double longitude, double altitude, int color) {
+		if (name==null) throw new NullPointerException();
+		
 		this.name = name;
 		this.physicalLocation.set(latitude,longitude,altitude);
 		this.color = color;
@@ -70,58 +79,64 @@ public class Marker implements Comparable<Marker> {
 		locationVector.set(0, 0, 0);
 	}
 	
+	/**
+	 * Get the name of the Marker.
+	 * @return String representing the new of the Marker.
+	 */
 	public String getName(){
 		return name;
 	}
 
-	public double getLatitude() {
-		return physicalLocation.getLatitude();
-	}
-	
-	public double getLongitude() {
-		return physicalLocation.getLongitude();
-	}
-	
-	public double getAltitude() {
-		return physicalLocation.getAltitude();
-	}
-	
+	/**
+	 * Get the the location of the Marker.
+	 * @return MixVector representing the location of the Marker.
+	 */
 	public MixVector getLocationVector() {
 		return locationVector;
 	}
 
-    public double getDistance() {
-        return distance;
-    }
-
-    public int getMaxObjects() {
-        return MAX_OBJECTS;
-    }
-    
-    public void setColor(int color) {
-    	this.color = color;
-    }
-    
+    /**
+     * Get the color of this Marker.
+     * @return int representing the Color of this Marker.
+     */
     public int getColor() {
     	return color;
     }
-    
-    @Override
+
+	private double getLatitude() {
+		return physicalLocation.getLatitude();
+	}
+
+	private double getLongitude() {
+		return physicalLocation.getLongitude();
+	}
+
+	private double getDistance() {
+        return distance;
+    }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public int compareTo(Marker another) {
     	if (another==null) throw new NullPointerException();
     	
         return Double.compare(this.getDistance(), another.getDistance());
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public boolean equals (Object marker) {
-    	if(marker==null || name==null) return false;
+    	if(marker==null || name==null) throw new NullPointerException();
     	
         return name.equals(((Marker)marker).getName());
     }
 
     private void update(Canvas canvas, float addX, float addY) {
-    	if (canvas==null) return;
+    	if (canvas==null) throw new NullPointerException();
     	
     	if (cam==null) cam = new CameraModel(canvas.getWidth(), canvas.getHeight(), true);
         cam.setViewAngle(CameraModel.DEFAULT_VIEW_ANGLE);
@@ -131,7 +146,7 @@ public class Marker implements Comparable<Marker> {
     }
 
 	private void populateMatrices(MixVector originalPoint, CameraModel cam, float addX, float addY) {
-		if (originalPoint==null || cam==null) return;
+		if (originalPoint==null || cam==null) throw new NullPointerException();
 		
 		// Temp properties
 		tmpa.set(originalPoint.x, originalPoint.y, originalPoint.z);
@@ -163,15 +178,20 @@ public class Marker implements Comparable<Marker> {
 	}
 
     private void updateDistance(Location location) {
-    	if (location==null) return;
+    	if (location==null) throw new NullPointerException();
     	
         float[] dist=new float[1];
         Location.distanceBetween(getLatitude(), getLongitude(), location.getLatitude(), location.getLongitude(), dist);
         distance = dist[0];
     }
 
-	public void calcRelativePosition(Location location) {
-		if (location==null) return;
+    /**
+     * Calculate the relative position of this Marker from the given Location.
+     * @param location Location to use in the relative position.
+     * @throws NullPointerException if Location is NULL.
+     */
+    public void calcRelativePosition(Location location) {
+		if (location==null) throw new NullPointerException();
 		
 	    updateDistance(location);
 		// An elevation of 0.0 probably means that the elevation of the
@@ -179,11 +199,16 @@ public class Marker implements Comparable<Marker> {
 		if (physicalLocation.getAltitude()==0.0) physicalLocation.setAltitude(location.getAltitude());
 		 
 		// compute the relative position vector from user position to POI location
-		PhysicalLocation.convLocToVec(location, physicalLocation, locationVector);
+		PhysicalLocation.convLocationToMixVector(location, physicalLocation, locationVector);
 	}
 
-	public void draw(Canvas canvas) {
-		if (canvas==null) return;
+    /**
+     * Draw this Marker on the Canvas
+     * @param canvas Canvas to draw on.
+     * @throws NullPointerException if the Canvas is NULL.
+     */
+    public void draw(Canvas canvas) {
+		if (canvas==null) throw new NullPointerException();
 
 		//Calculate the visibility of this Marker
 	    update(canvas,0,0);
@@ -196,8 +221,8 @@ public class Marker implements Comparable<Marker> {
 	    drawText(canvas);
 	}
 
-    public void drawIcon(Canvas canvas) {
-    	if (canvas==null) return;
+    protected void drawIcon(Canvas canvas) {
+    	if (canvas==null) throw new NullPointerException();
     	
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
         if (gps==null) gps = new PaintableGps((maxHeight / 1.5f), (maxHeight / 10f), true, getColor());
@@ -207,8 +232,8 @@ public class Marker implements Comparable<Marker> {
         gpsContainter.paint(canvas);
     }
 
-	public void drawText(Canvas canvas) {
-		if (canvas==null) return;
+    private void drawText(Canvas canvas) {
+		if (canvas==null) throw new NullPointerException();
 		
 	    String textStr = null;
 	    if (distance<1000.0) {

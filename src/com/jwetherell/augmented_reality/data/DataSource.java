@@ -9,12 +9,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jwetherell.augmented_reality.ui.Marker;
+
 
 /**
  * This abstract class should be extended for new data sources. It has many methods to get and parse data from numerous
@@ -23,8 +23,6 @@ import com.jwetherell.augmented_reality.ui.Marker;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public abstract class DataSource {
-	private static final Logger logger = Logger.getLogger(DataSource.class.getSimpleName());
-
 	protected static final int MAX = 5;
 	
 	public abstract String createRequestURL(	double lat, 
@@ -36,7 +34,7 @@ public abstract class DataSource {
 	public abstract List<Marker> parse(JSONObject root);
 	
     protected static InputStream getHttpGETInputStream(String urlStr) {
-    	if (urlStr==null) return null;
+    	if (urlStr==null) throw new NullPointerException();
     	
     	InputStream is = null;
     	URLConnection conn = null;
@@ -63,14 +61,14 @@ public abstract class DataSource {
     		} catch (Exception e) {
     			// Ignore
     		}
-    		logger.info("Exception: "+ex.getMessage());
+    		ex.printStackTrace();
     	}
     	
     	return null;
     }
     
     protected String getHttpInputString(InputStream is) {
-    	if (is==null) return null;
+    	if (is==null) throw new NullPointerException();
     	
     	BufferedReader reader = new BufferedReader(new InputStreamReader(is), 8 * 1024);
     	StringBuilder sb = new StringBuilder();
@@ -91,26 +89,31 @@ public abstract class DataSource {
     	}
     	return sb.toString();
     }
-    
-	
+
+    /**
+     * Parse the given URL for JSON Objects.
+     * @param url URL to parse.
+     * @return List of Marker's from the URL.
+     * @throws NullPointerException if the String URL is NULL.
+     */
 	public List<Marker> parse(String url) {
-		if (url==null) return null;
+		if (url==null) throw new NullPointerException();
 		
 		InputStream stream = null;
     	stream = getHttpGETInputStream(url);
-    	if (stream==null) return null;
+    	if (stream==null) throw new NullPointerException();
     	
     	String string = null;
     	string = getHttpInputString(stream);
-    	if (string==null) return null;
+    	if (string==null) throw new NullPointerException();
     	
     	JSONObject json = null;
     	try {
     		json = new JSONObject(string);
     	} catch (JSONException e) {
-    		logger.info("Exception: "+e.getMessage());
+    		e.printStackTrace();
     	}
-    	if (json==null) return null;
+    	if (json==null) throw new NullPointerException();
     	
     	return parse(json);
 	}

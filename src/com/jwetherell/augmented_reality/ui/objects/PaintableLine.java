@@ -16,27 +16,42 @@ public class PaintableLine extends PaintableObject {
     	set(color, x, y);
     }
     
+    /**
+     * Set this objects parameters. This should be used instead of creating new objects.
+     * @param color Color of the line.
+     * @param x X coordinate of the line.
+     * @param y Y coordinate of the line.
+     */
     public void set(int color, float x, float y) {
         this.color = color;
         this.x = x;
         this.y = y;
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void paint(Canvas canvas) {
-    	if (canvas==null) return;
+    	if (canvas==null) throw new NullPointerException();
     	
         setFill(false);
         setColor(color); 
         paintLine(canvas, 0, 0, x, y);
     }
-    
-    @Override
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getWidth() {
         return x;
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getHeight() {
         return y;
     }

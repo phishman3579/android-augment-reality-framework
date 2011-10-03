@@ -33,8 +33,10 @@ public class AugmentedReality extends SensorsActivity {
     private static FrameLayout frameLayout = null;
     private static AugmentedView augmentedView = null;
 
-    /** Called when the activity is first created. */
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         logger.info("onCreate()");
@@ -66,25 +68,37 @@ public class AugmentedReality extends SensorsActivity {
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
     }
-    
-    @Override
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onDestroy() {
     	super.onDestroy();
     	logger.info("onDestroy()");
     }
-    
-    @Override
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onStart() {
     	super.onStart();
     	logger.info("onStart()");
     }
-    
-    @Override
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onStop() {
     	super.onStop();
     	logger.info("onStop()");
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -92,14 +106,20 @@ public class AugmentedReality extends SensorsActivity {
 		wakeLock.acquire();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onPause() {
 		super.onPause();
 
 		wakeLock.release();
 	}
-	
-    @Override
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void onSensorChanged(SensorEvent evt) {
         super.onSensorChanged(evt);
 
@@ -147,7 +167,7 @@ public class AugmentedReality extends SensorsActivity {
         return myout;
     }
 
-    protected void updateDataOnZoom() {
+    private static void updateDataOnZoom() {
         float zoomLevel = calcZoomLevel();
         ARData.setRadius(zoomLevel);
         ARData.setZoomLevel(FORMAT.format(zoomLevel));

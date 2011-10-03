@@ -16,7 +16,18 @@ public class PaintablePosition extends PaintableObject {
     	set(drawObj, x, y, rotation, scale);
     }
 
+    /**
+     * Set this objects parameters. This should be used instead of creating new objects.
+     * @param drawObj Object to set for this Position. 
+     * @param x X coordinate of the Position.
+     * @param y Y coordinate of the Position.
+     * @param rotation Rotation of the Position.
+     * @param scale Scale of the Position.
+     * @throws NullPointerException if PaintableObject is NULL.
+     */
     public void set(PaintableObject drawObj, float x, float y, float rotation, float scale) {
+    	if (drawObj==null) throw new NullPointerException();
+    	
         obj = drawObj;
         objX = x;
         objY = y;
@@ -32,31 +43,54 @@ public class PaintablePosition extends PaintableObject {
         height = h * 2;
     }
     
+    /**
+     * Move the object.
+     * @param x New X coordinate of the Position.
+     * @param y New Y coordinate of the Position.
+     */
     public void move(float x, float y) {
         objX = x;
         objY = y;
     }
-
-    public void paint(Canvas canvas) {
-    	if (canvas==null || obj==null) return;
-    	
-        paintObj(canvas, obj, objX, objY, objRotation, objScale);
-    }
     
+    /**
+     * X coordinate of the Position.
+     * @return float X coordinate.
+     */
     public float getX() {
         return myX;
     }
     
+    /**
+     * Y coordinate of the Position.
+     * @return float Y coordinate.
+     */
     public float getY() {
         return myY;
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+    public void paint(Canvas canvas) {
+    	if (canvas==null || obj==null) throw new NullPointerException();
+    	
+        paintObj(canvas, obj, objX, objY, objRotation, objScale);
+    }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getWidth() {
         return width;
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getHeight() {
         return height;
     }

@@ -18,26 +18,40 @@ public class PaintablePoint extends PaintableObject {
     	set(color, fill);
     }
     
+    /**
+     * Set this objects parameters. This should be used instead of creating new objects.
+     * @param color Color to set the rectangle representing this Point.
+     * @param fill Fill color to set the rectangle representing this Point.
+     */
     public void set(int color, boolean fill) {
         this.color = color;
         this.fill = fill;
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public void paint(Canvas canvas) {
-    	if (canvas==null) return;
+    	if (canvas==null) throw new NullPointerException();
     	
         setFill(fill);
         setColor(color);
         paintRect(canvas, -1, -1, width, height);
     }
-    
-    @Override
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getWidth() {
         return width;
     }
 
-    @Override
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
     public float getHeight() {
         return height;
     }

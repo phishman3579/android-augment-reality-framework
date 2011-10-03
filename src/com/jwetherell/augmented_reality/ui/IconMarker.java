@@ -20,10 +20,13 @@ public class IconMarker extends Marker {
         this.bitmap = bitmap;
         icon = new PaintableIcon(bitmap);
     }
-    
+
+	/**
+	 * {@inheritDoc}
+	 */
     @Override
     public void drawIcon(Canvas canvas) {
-    	if (canvas==null || bitmap==null) return;
+    	if (canvas==null || bitmap==null) throw new NullPointerException();
     	
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
         
