@@ -2,7 +2,6 @@ package com.jwetherell.augmented_reality.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,13 +15,13 @@ import com.jwetherell.augmented_reality.R;
 import com.jwetherell.augmented_reality.ui.IconMarker;
 import com.jwetherell.augmented_reality.ui.Marker;
 
+
 /**
  * This class extends DataSource to fetch data from Google Buzz.
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class BuzzDataSource extends DataSource {
-	private static final Logger logger = Logger.getLogger(BuzzDataSource.class.getSimpleName());
 	private static final String BASE_URL = "https://www.googleapis.com/buzz/v1/activities/search?alt=json&max-results=40";
 
 	private static Bitmap icon = null;
@@ -53,10 +52,11 @@ public class BuzzDataSource extends DataSource {
 		
 		JSONObject jo = null;
 		JSONArray dataArray = null;
-    	List<Marker> markers=new ArrayList<Marker>();
+    	List<Marker> markers = new ArrayList<Marker>();
 
 		try {
-			if(root.has("data") && root.getJSONObject("data").has("items")) dataArray = root.getJSONObject("data").getJSONArray("items");
+			if(	root.has("data") && root.getJSONObject("data").has("items")) 
+				dataArray = root.getJSONObject("data").getJSONArray("items");
 			if (dataArray == null) return markers;
 				int top = Math.min(MAX, dataArray.length());
 				for (int i = 0; i < top; i++) {					
@@ -65,7 +65,7 @@ public class BuzzDataSource extends DataSource {
 					if(ma!=null) markers.add(ma);
 				}
 		} catch (JSONException e) {
-			logger.info("Exception: "+e.getMessage());
+			e.printStackTrace();
 		}
 		return markers;
 	}
@@ -80,10 +80,7 @@ public class BuzzDataSource extends DataSource {
 		if (jo==null) throw new NullPointerException();
 		
         Marker ma = null;
-        if (	jo.has("title") && 
-        		jo.has("geocode") && 
-        		jo.has("links")
-        ) {
+        if (jo.has("title") && jo.has("geocode")) {
         	try {
         		ma = new IconMarker(
         				jo.getString("title"),
@@ -93,7 +90,7 @@ public class BuzzDataSource extends DataSource {
         				Color.GREEN,
         				icon);
         	} catch (Exception e) {
-        		logger.info("Exception: "+e.getMessage());
+        		e.printStackTrace();
         	}
         }
         return ma;
