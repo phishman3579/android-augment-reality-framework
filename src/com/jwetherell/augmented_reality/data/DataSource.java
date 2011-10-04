@@ -24,6 +24,8 @@ import com.jwetherell.augmented_reality.ui.Marker;
  */
 public abstract class DataSource {
 	protected static final int MAX = 5;
+	protected static final int READ_TIMEOUT = 10000;
+	protected static final int CONNECT_TIMEOUT = 10000;
 	
 	public abstract String createRequestURL(	double lat, 
 												double lon, 
@@ -44,8 +46,8 @@ public abstract class DataSource {
 
     		URL url = new URL(urlStr);
     		conn =  url.openConnection();
-    		conn.setReadTimeout(2000);
-    		conn.setConnectTimeout(2000);
+    		conn.setReadTimeout(READ_TIMEOUT);
+    		conn.setConnectTimeout(CONNECT_TIMEOUT);
 
     		is = conn.getInputStream();
 

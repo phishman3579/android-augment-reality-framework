@@ -7,6 +7,7 @@ import com.jwetherell.augmented_reality.camera.CameraModel;
 import com.jwetherell.augmented_reality.common.MixState;
 import com.jwetherell.augmented_reality.common.MixUtils;
 import com.jwetherell.augmented_reality.data.ARData;
+import com.jwetherell.augmented_reality.data.ScreenLine;
 import com.jwetherell.augmented_reality.ui.objects.PaintableCircle;
 import com.jwetherell.augmented_reality.ui.objects.PaintableLine;
 import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
@@ -106,8 +107,8 @@ public class Radar {
             leftRadarLine.rotate(-CameraModel.DEFAULT_VIEW_ANGLE / 2);
             leftRadarLine.add(PAD_X+RADIUS, PAD_Y+RADIUS);
 
-            float leftX = leftRadarLine.x-(PAD_X+RADIUS);
-            float leftY = leftRadarLine.y-(PAD_Y+RADIUS);
+            float leftX = leftRadarLine.getX()-(PAD_X+RADIUS);
+            float leftY = leftRadarLine.getY()-(PAD_Y+RADIUS);
             PaintableLine leftLine = new PaintableLine(LINE_COLOR, leftX, leftY);
             leftLineContainer = new PaintablePosition(  leftLine, 
                                                         PAD_X+RADIUS, 
@@ -123,8 +124,8 @@ public class Radar {
             rightRadarLine.rotate(CameraModel.DEFAULT_VIEW_ANGLE / 2);
             rightRadarLine.add(PAD_X+RADIUS, PAD_Y+RADIUS);
             
-            float rightX = rightRadarLine.x-(PAD_X+RADIUS);
-            float rightY = rightRadarLine.y-(PAD_Y+RADIUS);
+            float rightX = rightRadarLine.getX()-(PAD_X+RADIUS);
+            float rightY = rightRadarLine.getY()-(PAD_Y+RADIUS);
             PaintableLine rightLine = new PaintableLine(LINE_COLOR, rightX, rightY);
             rightLineContainer = new PaintablePosition( rightLine, 
                                                         PAD_X+RADIUS, 
@@ -176,31 +177,5 @@ public class Radar {
         else paintedContainer.set(paintableText,x,y,0,1);
         
         paintedContainer.paint(canvas);
-    }
-
-    private class ScreenLine {
-        public float x, y;
-
-        public ScreenLine() {
-            set(0, 0);
-        }
-
-        public void set(float x, float y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public void rotate(double t) {
-            float xp = (float) Math.cos(t) * x - (float) Math.sin(t) * y;
-            float yp = (float) Math.sin(t) * x + (float) Math.cos(t) * y;
-
-            x = xp;
-            y = yp;
-        }
-
-        public void add(float x, float y) {
-            this.x += x;
-            this.y += y;
-        }
     }
 }

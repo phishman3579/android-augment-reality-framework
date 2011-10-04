@@ -7,6 +7,7 @@ import com.jwetherell.augmented_reality.common.MixUtils;
 import com.jwetherell.augmented_reality.common.MixVector;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.PhysicalLocation;
+import com.jwetherell.augmented_reality.data.ScreenLine;
 import com.jwetherell.augmented_reality.ui.objects.PaintableBoxedText;
 import com.jwetherell.augmented_reality.ui.objects.PaintableGps;
 import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
@@ -39,6 +40,10 @@ public class Marker implements Comparable<Marker> {
     
     private PaintableGps gps = null;
     private PaintablePosition gpsContainter = null;
+    
+    private ScreenLine temp = new ScreenLine();
+    
+    private float[] dist = new float[1];
     
     //Unique identifier of Marker
     protected String name = null;
@@ -129,7 +134,7 @@ public class Marker implements Comparable<Marker> {
 	 * {@inheritDoc}
 	 */
 	@Override
-    public boolean equals (Object marker) {
+    public boolean equals(Object marker) {
     	if(marker==null || name==null) throw new NullPointerException();
     	
         return name.equals(((Marker)marker).getName());
@@ -179,8 +184,7 @@ public class Marker implements Comparable<Marker> {
 
     private void updateDistance(Location location) {
     	if (location==null) throw new NullPointerException();
-    	
-        float[] dist=new float[1];
+
         Location.distanceBetween(getLatitude(), getLongitude(), location.getLatitude(), location.getLongitude(), dist);
         distance = dist[0];
     }
@@ -221,6 +225,35 @@ public class Marker implements Comparable<Marker> {
 	    drawText(canvas);
 	}
 
+    public boolean handleClick(float x, float y) {
+    	if (!isVisible) return false;
+    	return isClickValid(x,y);
+    }
+	
+	private boolean isClickValid(float x, float y) {
+		float currentAngle = MixUtils.getAngle(circleVector.x, circleVector.y, signVector.x, signVector.y);
+		
+		temp.setX(x - signVector.x);
+		temp.setY(y - signVector.y);
+		temp.rotate(Math.toRadians(-(currentAngle + 90)));
+		temp.setX(temp.getX() + txtContainter.getX());
+		temp.setY(temp.getY() + txtContainter.getY());
+
+		float objX = txtContainter.getX() - txtContainter.getWidth() / 2;
+		float objY = txtContainter.getY() - txtContainter.getHeight() / 2;
+		float objW = txtContainter.getWidth();
+		float objH = txtContainter.getHeight();
+
+		if (temp.getX() > objX && 
+			temp.getX() < objX + objW && 
+			temp.getY() > objY && 
+			temp.getY() < objY + objH) 
+		{
+			return true;
+		}
+		return false;
+	}
+    
     protected void drawIcon(Canvas canvas) {
     	if (canvas==null) throw new NullPointerException();
     	

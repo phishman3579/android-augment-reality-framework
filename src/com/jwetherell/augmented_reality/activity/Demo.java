@@ -13,6 +13,8 @@ import com.jwetherell.augmented_reality.data.WikipediaDataSource;
 import com.jwetherell.augmented_reality.ui.Marker;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.widget.Toast;
 
 /**
  * This class extends the AugmentedReality and is designed to be an example on how to extends the AugmentedReality
@@ -66,6 +68,16 @@ public class Demo extends AugmentedReality {
         
         updateData(location.getLatitude(),location.getLongitude(),location.getAltitude());
     }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void markerTouched(Marker marker) {
+        Toast t = Toast.makeText(getApplicationContext(), marker.getName(), Toast.LENGTH_SHORT);
+        t.setGravity(Gravity.CENTER, 0, 0);
+        t.show();
+	}
 
     private void updateData(final double lat, final double lon, final double alt) {
     	if (thread!=null && thread.isAlive()) {

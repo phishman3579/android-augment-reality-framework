@@ -10,12 +10,16 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import com.jwetherell.augmented_reality.camera.CameraSurface;
 import com.jwetherell.augmented_reality.data.ARData;
+import com.jwetherell.augmented_reality.ui.Marker;
 
 
 /**
@@ -23,7 +27,7 @@ import com.jwetherell.augmented_reality.data.ARData;
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class AugmentedReality extends SensorsActivity {
+public class AugmentedReality extends SensorsActivity implements OnTouchListener {
     private static final Logger logger = Logger.getLogger(AugmentedReality.class.getSimpleName());
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
     
@@ -59,6 +63,7 @@ public class AugmentedReality extends SensorsActivity {
         addContentView(frameLayout,frameLayoutParams);
 
         augmentedView = new AugmentedView(this);
+        augmentedView.setOnTouchListener(this);
         LayoutParams augLayout = new LayoutParams(  LayoutParams.WRAP_CONTENT, 
                                                     LayoutParams.WRAP_CONTENT);
         addContentView(augmentedView,augLayout);
@@ -172,5 +177,26 @@ public class AugmentedReality extends SensorsActivity {
         ARData.setRadius(zoomLevel);
         ARData.setZoomLevel(FORMAT.format(zoomLevel));
         ARData.setZoomProgress(myZoomBar.getProgress());
-    };
+    }
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean onTouch(View view, MotionEvent me) {
+		//See if the motion event is on a Marker
+		for (Marker marker : ARData.getMarkers()) {
+			if (marker.handleClick(me.getX(), me.getY())) {
+				if (me.getAction() == MotionEvent.ACTION_UP) markerTouched(marker);
+				return true;
+			}
+		}
+		
+		return false;
+	};
+	
+	protected void markerTouched(Marker marker) {
+		logger.warning("markerTouched() not implemented.");
+		//Do nothing for now, let the App handle if they'd like to
+	}
 }
