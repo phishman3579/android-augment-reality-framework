@@ -21,7 +21,7 @@ import com.jwetherell.augmented_reality.ui.Marker;
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class BuzzDataSource extends DataSource {
+public class BuzzDataSource extends NetworkDataSource {
 	private static final String BASE_URL = "https://www.googleapis.com/buzz/v1/activities/search?alt=json&max-results=40";
 
 	private static Bitmap icon = null;

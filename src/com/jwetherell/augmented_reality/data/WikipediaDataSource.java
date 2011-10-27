@@ -16,7 +16,7 @@ import com.jwetherell.augmented_reality.ui.Marker;
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class WikipediaDataSource extends DataSource {
+public class WikipediaDataSource extends NetworkDataSource {
 	private static final String BASE_URL = "http://ws.geonames.org/findNearbyWikipediaJSON";
 
 	public WikipediaDataSource() {}

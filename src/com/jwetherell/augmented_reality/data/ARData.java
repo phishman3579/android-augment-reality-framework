@@ -19,12 +19,21 @@ import android.location.Location;
 public abstract class ARData {
 	private static final Logger logger = Logger.getLogger(ARData.class.getSimpleName());
     private static final Map<String,Marker> markerList = new ConcurrentHashMap<String,Marker>();
-	
+
+    /*defaulting to our place*/
+    public static Location hardFix = new Location("ATL");
+    static {
+        hardFix.setLatitude(39.931261);
+        hardFix.setLongitude(-75.051267);
+        hardFix.setAltitude(1);
+    }
+    
     private static String zoomLevel = null;
     private static int zoomProgress = 0;
     private static float radius = 20;
-    private static Location currentLocation = null;
+    private static Location currentLocation = hardFix;
     private static Matrix rotationMatrix = null;
+    
 
     /**
      * Set the zoom level.

@@ -7,7 +7,8 @@ import java.util.Locale;
 import java.util.logging.Logger;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.BuzzDataSource;
-import com.jwetherell.augmented_reality.data.DataSource;
+import com.jwetherell.augmented_reality.data.LocalDataSource;
+import com.jwetherell.augmented_reality.data.NetworkDataSource;
 import com.jwetherell.augmented_reality.data.TwitterDataSource;
 import com.jwetherell.augmented_reality.data.WikipediaDataSource;
 import com.jwetherell.augmented_reality.ui.Marker;
@@ -26,7 +27,7 @@ public class Demo extends AugmentedReality {
 	private static final Logger logger = Logger.getLogger(Demo.class.getSimpleName());
 	private static final String locale = Locale.getDefault().getLanguage();
 	
-	private static Collection<DataSource> sources = null;    
+	private static Collection<NetworkDataSource> sources = null;    
     private static Thread thread = null;
 
 	/**
@@ -37,13 +38,16 @@ public class Demo extends AugmentedReality {
         super.onCreate(savedInstanceState);
         
         if (sources==null) {
-        	sources = new ArrayList<DataSource>();
+        	sources = new ArrayList<NetworkDataSource>();
             
-            DataSource twitter = new TwitterDataSource(this.getResources());
+        	LocalDataSource localData = new LocalDataSource();
+        	ARData.addMarkers(localData.getMarkers());
+        	
+            NetworkDataSource twitter = new TwitterDataSource(this.getResources());
             sources.add(twitter);
-            DataSource wikipedia = new WikipediaDataSource();
+            NetworkDataSource wikipedia = new WikipediaDataSource();
             sources.add(wikipedia);
-            DataSource buzz = new BuzzDataSource(this.getResources());
+            NetworkDataSource buzz = new BuzzDataSource(this.getResources());
             sources.add(buzz);
         }
     }
@@ -90,7 +94,7 @@ public class Demo extends AugmentedReality {
 				@Override
 				public void run() {
 					logger.info("Start");
-					for (DataSource source : sources) {
+					for (NetworkDataSource source : sources) {
 						download(source, lat, lon, alt);
 					}
 					logger.info("Stop");
@@ -100,7 +104,7 @@ public class Demo extends AugmentedReality {
     	thread.start();
     }
     
-    private static boolean download(DataSource source, double lat, double lon, double alt) {
+    private static boolean download(NetworkDataSource source, double lat, double lon, double alt) {
 		if (source==null) return false;
 		
 		String url = null;

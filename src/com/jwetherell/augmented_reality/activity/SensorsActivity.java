@@ -139,11 +139,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
             locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
 
             try {
-                /*defaulting to our place*/
-                Location hardFix = new Location("ATL");
-                hardFix.setLatitude(39.931261);
-                hardFix.setLongitude(-75.051267);
-                hardFix.setAltitude(1);
+
 
                 try {
                     Location gps=locationMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -153,9 +149,9 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                     else if (network!=null)
                         onLocationChanged(network);
                     else
-                        onLocationChanged(hardFix);
+                        onLocationChanged(ARData.hardFix);
                 } catch (Exception ex2) {
-                    onLocationChanged(hardFix);
+                    onLocationChanged(ARData.hardFix);
                 }
 
                 GeomagneticField gmf = new GeomagneticField((float) ARData.getCurrentLocation().getLatitude(), 
