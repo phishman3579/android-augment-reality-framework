@@ -7,7 +7,7 @@ import com.jwetherell.augmented_reality.common.MixUtils;
 import com.jwetherell.augmented_reality.common.MixVector;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.PhysicalLocation;
-import com.jwetherell.augmented_reality.data.ScreenLine;
+import com.jwetherell.augmented_reality.data.ScreenPosition;
 import com.jwetherell.augmented_reality.ui.objects.PaintableBoxedText;
 import com.jwetherell.augmented_reality.ui.objects.PaintableGps;
 import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
@@ -41,7 +41,7 @@ public class Marker implements Comparable<Marker> {
     private PaintableGps gps = null;
     private PaintablePosition gpsContainter = null;
     
-    private ScreenLine temp = new ScreenLine();
+    private ScreenPosition screenPosition = new ScreenPosition();
     
     private float[] dist = new float[1];
     
@@ -108,6 +108,22 @@ public class Marker implements Comparable<Marker> {
     	return color;
     }
 
+    /**
+     * Get the visibility of the Marker
+     * @return True if Marker is visible.
+     */
+    public boolean isVisible() {
+        return isVisible;
+    }
+    
+    /**
+     * Get the position of the Marker.
+     * @return MixVector representing the prosition of the Marker.
+     */
+    public MixVector getPosition() {
+        return circleVector;
+    }
+    
 	private double getLatitude() {
 		return physicalLocation.getLatitude();
 	}
@@ -140,10 +156,18 @@ public class Marker implements Comparable<Marker> {
         return name.equals(((Marker)marker).getName());
     }
 
-    private void update(Canvas canvas, float addX, float addY) {
+	/**
+	 * Update the matrices and visibility of the Marker.
+	 * 
+	 * @param canvas Canvas to use in the CameraModel.
+	 * @param addX Adder to the X position.
+	 * @param addY Adder to the Y position.
+	 */
+    public void update(Canvas canvas, float addX, float addY) {
     	if (canvas==null) throw new NullPointerException();
     	
     	if (cam==null) cam = new CameraModel(canvas.getWidth(), canvas.getHeight(), true);
+    	cam.set(canvas.getWidth(), canvas.getHeight(), false);
         cam.setViewAngle(CameraModel.DEFAULT_VIEW_ANGLE);
         cam.setTransform(ARData.getRotationMatrix());
         populateMatrices(originVector, cam, addX, addY);
@@ -227,27 +251,35 @@ public class Marker implements Comparable<Marker> {
 
     public boolean handleClick(float x, float y) {
     	if (!isVisible) return false;
-    	return isClickValid(x,y);
+    	return isPointOnMarker(x,y);
     }
 	
-	private boolean isClickValid(float x, float y) {
+    /**
+     * Determines if the point is on this Marker.
+     * @param x X point.
+     * @param y Y point.
+     * @return True if the point is on this Marker.
+     */
+	public boolean isPointOnMarker(float x, float y) {
+	    if (txtContainter==null) return false;
+	    
 		float currentAngle = MixUtils.getAngle(circleVector.x, circleVector.y, signVector.x, signVector.y);
 		
-		temp.setX(x - signVector.x);
-		temp.setY(y - signVector.y);
-		temp.rotate(Math.toRadians(-(currentAngle + 90)));
-		temp.setX(temp.getX() + txtContainter.getX());
-		temp.setY(temp.getY() + txtContainter.getY());
+		screenPosition.setX(x - signVector.x);
+		screenPosition.setY(y - signVector.y);
+		screenPosition.rotate(Math.toRadians(-(currentAngle + 90)));
+		screenPosition.setX(screenPosition.getX() + txtContainter.getX());
+		screenPosition.setY(screenPosition.getY() + txtContainter.getY());
 
 		float objX = txtContainter.getX() - txtContainter.getWidth() / 2;
 		float objY = txtContainter.getY() - txtContainter.getHeight() / 2;
 		float objW = txtContainter.getWidth();
 		float objH = txtContainter.getHeight();
 
-		if (temp.getX() > objX && 
-			temp.getX() < objX + objW && 
-			temp.getY() > objY && 
-			temp.getY() < objY + objH) 
+		if (screenPosition.getX() > objX && 
+			screenPosition.getX() < objX + objW && 
+			screenPosition.getY() > objY && 
+			screenPosition.getY() < objY + objH) 
 		{
 			return true;
 		}

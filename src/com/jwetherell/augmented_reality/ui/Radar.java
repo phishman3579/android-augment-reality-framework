@@ -7,7 +7,7 @@ import com.jwetherell.augmented_reality.camera.CameraModel;
 import com.jwetherell.augmented_reality.common.MixState;
 import com.jwetherell.augmented_reality.common.MixUtils;
 import com.jwetherell.augmented_reality.data.ARData;
-import com.jwetherell.augmented_reality.data.ScreenLine;
+import com.jwetherell.augmented_reality.data.ScreenPosition;
 import com.jwetherell.augmented_reality.ui.objects.PaintableCircle;
 import com.jwetherell.augmented_reality.ui.objects.PaintableLine;
 import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
@@ -32,8 +32,8 @@ public class Radar {
     private static final int TEXT_SIZE = 12;
     private static final MixState state = new MixState();
     
-    private static ScreenLine leftRadarLine = null;
-    private static ScreenLine rightRadarLine = null;
+    private static ScreenPosition leftRadarLine = null;
+    private static ScreenPosition rightRadarLine = null;
     private static PaintablePosition leftLineContainer = null;
     private static PaintablePosition rightLineContainer = null;
     private static PaintablePosition circleContainer = null;
@@ -45,8 +45,8 @@ public class Radar {
     private static PaintablePosition paintedContainer = null;
 
     public Radar() {
-        if (leftRadarLine==null) leftRadarLine = new ScreenLine();
-        if (rightRadarLine==null) rightRadarLine = new ScreenLine();
+        if (leftRadarLine==null) leftRadarLine = new ScreenPosition();
+        if (rightRadarLine==null) rightRadarLine = new ScreenPosition();
     }
 
     /**

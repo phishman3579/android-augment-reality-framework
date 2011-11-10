@@ -1,6 +1,7 @@
 package com.jwetherell.augmented_reality.data;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -149,6 +150,6 @@ public abstract class ARData {
      * @return Collection of Markers.
      */
     public static Collection<Marker> getMarkers() {
-        return markerList.values();
+        return Collections.unmodifiableCollection(markerList.values());
     }
 }

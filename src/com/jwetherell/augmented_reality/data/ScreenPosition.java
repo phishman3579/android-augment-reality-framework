@@ -5,11 +5,11 @@ package com.jwetherell.augmented_reality.data;
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class ScreenLine {
+public class ScreenPosition {
     private float x = 0f;
     private float y = 0f;
 
-	public ScreenLine() {
+	public ScreenPosition() {
         set(0, 0);
     }
 
@@ -73,5 +73,13 @@ public class ScreenLine {
     public void add(float x, float y) {
         this.x += x;
         this.y += y;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "< x="+x+" y="+y+" >";
     }
 }

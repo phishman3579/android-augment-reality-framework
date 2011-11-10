@@ -68,7 +68,23 @@ public class PaintablePosition extends PaintableObject {
     public float getY() {
         return myY;
     }
-
+    
+    /**
+     * X coordinate of the Object.
+     * @return float X coordinate.
+     */
+    public float getObjectsX() {
+        return objX;
+    }
+    
+    /**
+     * Y coordinate of the Object.
+     * @return float Y coordinate.
+     */
+    public float getObjectsY() {
+        return objY;
+    }
+    
 	/**
 	 * {@inheritDoc}
 	 */
@@ -94,4 +110,12 @@ public class PaintablePosition extends PaintableObject {
     public float getHeight() {
         return height;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+	public String toString() {
+	    return "< x="+myX+" y="+myY+" objX="+objX+" objY="+objY+" width="+width+" height="+height+" >";
+	}
 }

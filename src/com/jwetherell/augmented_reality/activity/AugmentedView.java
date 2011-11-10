@@ -1,9 +1,13 @@
 package com.jwetherell.augmented_reality.activity;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.View;
 
 import com.jwetherell.augmented_reality.data.ARData;
@@ -11,6 +15,7 @@ import com.jwetherell.augmented_reality.ui.Marker;
 import com.jwetherell.augmented_reality.ui.Radar;
 import com.jwetherell.augmented_reality.ui.objects.PaintableBoxedText;
 import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
+
 
 /**
  * This class extends the View class and is designed draw the zoom bar, radar circle, and markers on the View.
@@ -87,12 +92,36 @@ public class AugmentedView extends View {
 	        //Re-factor zoom text, if it has changed.
 	        if (lastZoom != ARData.getZoomProgress()) currentTxtContainter = generateCurrentZoom(canvas);
 	        currentTxtContainter.paint(canvas);
-	
-	        //Draw AR markers
-		    for (Marker marker : ARData.getMarkers()) {
-		        marker.draw(canvas);
-		    }
-	        
+
+	        Collection<Marker> collection = new ArrayList<Marker>(ARData.getMarkers());
+	        Collection<Marker> collision = new HashSet<Marker>();
+	        //Update the AR markers for collisions
+	        for (Marker marker1 : collection) {
+	            marker1.update(canvas,0,0);
+	            if (!marker1.isVisible()) continue;
+	            
+	            boolean add=false;
+	            boolean added=false;
+	            for (Marker marker2 : collection) {
+	                if (!marker2.isVisible() || marker1==marker2) continue;
+	                
+	                add=true;
+	                if (marker1.isPointOnMarker(marker2.getPosition().x, marker2.getPosition().y)) {
+	                    collision.add(marker1);
+	                    Log.e("JUSTIN", "position="+marker2.getPosition());
+	                    marker2.getPosition().set(marker2.getPosition().x+50, marker2.getPosition().y+50, marker2.getPosition().z+50);
+	                    Log.e("JUSTIN", "position2="+marker2.getPosition());
+	                    //collision.add(marker2);
+	                    added=true;
+	                }
+	                if (add && !added) collision.add(marker1);  
+	            }
+	        }
+            //Draw AR markers
+	        for (Marker marker : collision) {
+	            marker.draw(canvas);
+	        }
+            
 	        //Radar circle and radar markers
 	        radar.draw(canvas);
 	        drawing.set(false);

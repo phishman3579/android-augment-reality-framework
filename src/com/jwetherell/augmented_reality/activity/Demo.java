@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.Toast;
 
+
 /**
  * This class extends the AugmentedReality and is designed to be an example on how to extends the AugmentedReality
  * class to show multiple data sources.

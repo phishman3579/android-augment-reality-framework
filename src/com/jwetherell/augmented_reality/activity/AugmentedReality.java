@@ -184,10 +184,11 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
 	 */
 	@Override
 	public boolean onTouch(View view, MotionEvent me) {
-		//See if the motion event is on a Marker
+	    logger.warning("x="+me.getX()+" y="+me.getY());
+	    //See if the motion event is on a Marker
 		for (Marker marker : ARData.getMarkers()) {
 			if (marker.handleClick(me.getX(), me.getY())) {
-				if (me.getAction() == MotionEvent.ACTION_UP) markerTouched(marker);
+				markerTouched(marker);
 				return true;
 			}
 		}
@@ -197,6 +198,5 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
 	
 	protected void markerTouched(Marker marker) {
 		logger.warning("markerTouched() not implemented.");
-		//Do nothing for now, let the App handle if they'd like to
 	}
 }

@@ -59,4 +59,8 @@ public class PaintableGps extends PaintableObject {
     public float getHeight() {
         return radius;
     }
+	
+	public String toString() {
+	    return "";
+	}
 }
