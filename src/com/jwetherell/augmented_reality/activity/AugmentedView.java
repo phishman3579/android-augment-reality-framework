@@ -1,13 +1,11 @@
 package com.jwetherell.augmented_reality.activity;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.View;
 
 import com.jwetherell.augmented_reality.data.ARData;
@@ -22,12 +20,12 @@ import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class AugmentedView extends View {    
+public class AugmentedView extends View {
     private static final AtomicBoolean drawing = new AtomicBoolean(false);
     
     private static final int fontSize = 14;
     private static final int startLabelX = 4;
-    private static final int endLabelX = 95;
+    private static final int endLabelX = 92;
     private static final int labelY = 95;
     private static final String startKM = "0km";
     private static final String endKM = "80km";
@@ -40,9 +38,11 @@ public class AugmentedView extends View {
     private static PaintablePosition endTxtContainter = null;
     private static PaintablePosition currentTxtContainter = null;
     private static int lastZoom = 0;
+    private static boolean useCollisionDetection = false;
 
-    public AugmentedView(Context context) {
+    public AugmentedView(Context context, boolean useCollisionDetection) {
         super(context);
+        AugmentedView.useCollisionDetection=useCollisionDetection;
     }
 
     private static PaintablePosition generateCurrentZoom(Canvas canvas) {
@@ -93,32 +93,10 @@ public class AugmentedView extends View {
 	        if (lastZoom != ARData.getZoomProgress()) currentTxtContainter = generateCurrentZoom(canvas);
 	        currentTxtContainter.paint(canvas);
 
-	        Collection<Marker> collection = new ArrayList<Marker>(ARData.getMarkers());
-	        Collection<Marker> collision = new HashSet<Marker>();
-	        //Update the AR markers for collisions
-	        for (Marker marker1 : collection) {
-	            marker1.update(canvas,0,0);
-	            if (!marker1.isVisible()) continue;
-	            
-	            boolean add=false;
-	            boolean added=false;
-	            for (Marker marker2 : collection) {
-	                if (!marker2.isVisible() || marker1==marker2) continue;
-	                
-	                add=true;
-	                if (marker1.isPointOnMarker(marker2.getPosition().x, marker2.getPosition().y)) {
-	                    collision.add(marker1);
-	                    Log.e("JUSTIN", "position="+marker2.getPosition());
-	                    marker2.getPosition().set(marker2.getPosition().x+50, marker2.getPosition().y+50, marker2.getPosition().z+50);
-	                    Log.e("JUSTIN", "position2="+marker2.getPosition());
-	                    //collision.add(marker2);
-	                    added=true;
-	                }
-	                if (add && !added) collision.add(marker1);  
-	            }
-	        }
-            //Draw AR markers
-	        for (Marker marker : collision) {
+	        Collection<Marker> collection = new TreeSet<Marker>(ARData.getMarkers());
+	        if (useCollisionDetection) collection = adjustForCollisions(canvas,collection);
+	        //Draw AR markers
+	        for (Marker marker : collection) {
 	            marker.draw(canvas);
 	        }
             
@@ -127,4 +105,38 @@ public class AugmentedView extends View {
 	        drawing.set(false);
         }
     }
+	
+	private static Collection<Marker> adjustForCollisions(Canvas canvas, Collection<Marker> collection) {
+        Collection<Marker> collision = new TreeSet<Marker>();
+        synchronized (ARData.getMarkers()) {
+            //Update the Markers visibility
+            for (Marker marker1 : collection) {
+                marker1.update(canvas,0,0);
+            }
+        }
+        //Update the AR markers for collisions
+        for (Marker marker1 : collection) {
+            if (!marker1.isVisible() || collision.contains(marker1)) continue;
+            
+            boolean add = false;
+            boolean added = false;
+            for (Marker marker2 : collection) {
+                if (!marker2.isVisible() || marker1.equals(marker2)) continue;
+
+                add=true;
+                if (marker1.isPointOnMarker(marker2.getPositionVector().x, marker2.getPositionVector().y)) {
+                    float y = marker2.getLocationVector().y;
+                    float h = marker1.getHeight();
+                    synchronized (ARData.getMarkers()) {
+                        marker2.getLocationVector().y = (y+h);
+                    }
+                    collision.add(marker2);
+                    collision.add(marker1);
+                    added=true;
+                }
+                if (add && !added) collision.add(marker1);  
+            }
+        }
+        return collision;
+	}
 }

@@ -3,7 +3,6 @@ package com.jwetherell.augmented_reality.data;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.json.JSONArray;
@@ -17,13 +16,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
+
 /**
  * This class extends DataSource to fetch data from Twitter.
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class TwitterDataSource extends NetworkDataSource {
-	private static final Logger logger = Logger.getLogger(TwitterDataSource.class.getSimpleName());
 	private static final String URL = "http://search.twitter.com/search.json";
 
 	private static Bitmap icon = null;
@@ -67,7 +66,7 @@ public class TwitterDataSource extends NetworkDataSource {
     	try {
     		json = new JSONObject(string);
     	} catch (JSONException e) {
-    		logger.info("Exception: "+e.getMessage());
+    	    e.printStackTrace();
     	}
     	if (json==null) throw new NullPointerException();
     	
@@ -88,14 +87,14 @@ public class TwitterDataSource extends NetworkDataSource {
 		try {
 			if(root.has("results")) dataArray = root.getJSONArray("results");
 			if (dataArray == null) return markers;
-				int top = Math.min(MAX, dataArray.length());
-				for (int i = 0; i < top; i++) {					
-					jo = dataArray.getJSONObject(i);
-					Marker ma = processJSONObject(jo);
-					if(ma!=null) markers.add(ma);
-				}
+			int top = Math.min(MAX, dataArray.length());
+			for (int i = 0; i < top; i++) {					
+				jo = dataArray.getJSONObject(i);
+				Marker ma = processJSONObject(jo);
+				if(ma!=null) markers.add(ma);
+			}
 		} catch (JSONException e) {
-			logger.info("Exception: "+e.getMessage());
+		    e.printStackTrace();
 		}
 		return markers;
 	}

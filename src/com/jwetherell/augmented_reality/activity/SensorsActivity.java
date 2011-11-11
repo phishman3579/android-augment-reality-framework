@@ -339,7 +339,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
 		if (sensor==null) throw new NullPointerException();
 		
         if(sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD && accuracy==SensorManager.SENSOR_STATUS_UNRELIABLE) {
-            logger.info("Compass data unreliable");
+            logger.warning("Compass data unreliable");
         }
     }
 }

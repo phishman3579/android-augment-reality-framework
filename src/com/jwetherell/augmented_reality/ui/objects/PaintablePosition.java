@@ -39,7 +39,7 @@ public class PaintablePosition extends PaintableObject {
         myX = w / 2;
         myY = 0;
 
-        width = w * 2;
+        width = w;
         height = h * 2;
     }
     

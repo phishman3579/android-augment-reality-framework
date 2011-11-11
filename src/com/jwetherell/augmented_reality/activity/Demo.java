@@ -43,7 +43,7 @@ public class Demo extends AugmentedReality {
             
         	LocalDataSource localData = new LocalDataSource();
         	ARData.addMarkers(localData.getMarkers());
-        	
+
             NetworkDataSource twitter = new TwitterDataSource(this.getResources());
             sources.add(twitter);
             NetworkDataSource wikipedia = new WikipediaDataSource();

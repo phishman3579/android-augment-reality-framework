@@ -36,14 +36,13 @@ public class Marker implements Comparable<Marker> {
     private final MixVector tmpc = new MixVector();
 
     private PaintableBoxedText textBlock = null;
-    private PaintablePosition txtContainter = null;
-    
+    private PaintablePosition textContainer = null;    
     private PaintableGps gps = null;
-    private PaintablePosition gpsContainter = null;
-    
     private ScreenPosition screenPosition = new ScreenPosition();
     
     private float[] dist = new float[1];
+    
+    protected PaintablePosition symbolContainer = null;
     
     //Unique identifier of Marker
     protected String name = null;
@@ -59,7 +58,7 @@ public class Marker implements Comparable<Marker> {
     protected MixVector locationVector = new MixVector();
     
     protected int color = Color.WHITE;
-	
+
 	public Marker(String name, double latitude, double longitude, double altitude, int color) {
 		set(name, latitude, longitude, altitude, color);
 	}
@@ -120,42 +119,27 @@ public class Marker implements Comparable<Marker> {
      * Get the position of the Marker.
      * @return MixVector representing the prosition of the Marker.
      */
-    public MixVector getPosition() {
+    public MixVector getPositionVector() {
         return circleVector;
     }
     
-	private double getLatitude() {
-		return physicalLocation.getLatitude();
-	}
-
-	private double getLongitude() {
-		return physicalLocation.getLongitude();
-	}
-
-	private double getDistance() {
-        return distance;
+    /**
+     * Get the physical location of the Marker.
+     * @return PhysicalLocation meaning lat/lon/alt of the Marker.
+     */
+    public PhysicalLocation getPhysicalLocation() {
+        return physicalLocation;
     }
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-    public int compareTo(Marker another) {
-    	if (another==null) throw new NullPointerException();
-    	
-        return Double.compare(this.getDistance(), another.getDistance());
+    
+    public float getHeight() {
+        return symbolContainer.getHeight()+textContainer.getHeight();
     }
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-    public boolean equals(Object marker) {
-    	if(marker==null || name==null) throw new NullPointerException();
-    	
-        return name.equals(((Marker)marker).getName());
+    
+    public float getWidth() {
+        //Assume text is the widest element
+        return textContainer.getHeight();
     }
-
+    
 	/**
 	 * Update the matrices and visibility of the Marker.
 	 * 
@@ -209,7 +193,7 @@ public class Marker implements Comparable<Marker> {
     private void updateDistance(Location location) {
     	if (location==null) throw new NullPointerException();
 
-        Location.distanceBetween(getLatitude(), getLongitude(), location.getLatitude(), location.getLongitude(), dist);
+        Location.distanceBetween(physicalLocation.getLatitude(), physicalLocation.getLongitude(), location.getLatitude(), location.getLongitude(), dist);
         distance = dist[0];
     }
 
@@ -261,25 +245,25 @@ public class Marker implements Comparable<Marker> {
      * @return True if the point is on this Marker.
      */
 	public boolean isPointOnMarker(float x, float y) {
-	    if (txtContainter==null) return false;
+	    if (textContainer==null) return false;
 	    
 		float currentAngle = MixUtils.getAngle(circleVector.x, circleVector.y, signVector.x, signVector.y);
 		
 		screenPosition.setX(x - signVector.x);
 		screenPosition.setY(y - signVector.y);
 		screenPosition.rotate(Math.toRadians(-(currentAngle + 90)));
-		screenPosition.setX(screenPosition.getX() + txtContainter.getX());
-		screenPosition.setY(screenPosition.getY() + txtContainter.getY());
+		screenPosition.setX(screenPosition.getX() + textContainer.getX());
+		screenPosition.setY(screenPosition.getY() + textContainer.getY());
 
-		float objX = txtContainter.getX() - txtContainter.getWidth() / 2;
-		float objY = txtContainter.getY() - txtContainter.getHeight() / 2;
-		float objW = txtContainter.getWidth();
-		float objH = txtContainter.getHeight();
+		float objX = textContainer.getX() - (textContainer.getWidth() / 2);
+		float objY = textContainer.getY() - (textContainer.getHeight() / 2);
+		float objW = textContainer.getWidth();
+		float objH = textContainer.getHeight();
 
 		if (screenPosition.getX() > objX && 
-			screenPosition.getX() < objX + objW && 
+			screenPosition.getX() < (objX + objW) && 
 			screenPosition.getY() > objY && 
-			screenPosition.getY() < objY + objH) 
+			screenPosition.getY() < (objY + objH)) 
 		{
 			return true;
 		}
@@ -292,9 +276,9 @@ public class Marker implements Comparable<Marker> {
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
         if (gps==null) gps = new PaintableGps((maxHeight / 1.5f), (maxHeight / 10f), true, getColor());
         
-        if (gpsContainter==null) gpsContainter = new PaintablePosition(gps, circleVector.x, circleVector.y, 0, 1);
-        else gpsContainter.set(gps, circleVector.x, circleVector.y, 0, 1);
-        gpsContainter.paint(canvas);
+        if (symbolContainer==null) symbolContainer = new PaintablePosition(gps, circleVector.x, circleVector.y, 0, 1);
+        else symbolContainer.set(gps, circleVector.x, circleVector.y, 0, 1);
+        symbolContainer.paint(canvas);
     }
 
     private void drawText(Canvas canvas) {
@@ -315,8 +299,28 @@ public class Marker implements Comparable<Marker> {
 	    float y = signVector.y + maxHeight;
 	    float currentAngle = MixUtils.getAngle(circleVector.x, circleVector.y, signVector.x, signVector.y);
 	    float angle = currentAngle + 90;
-	    if (txtContainter==null) txtContainter = new PaintablePosition(textBlock, x, y, angle, 1);
-	    else txtContainter.set(textBlock, x, y, angle, 1);
-	    txtContainter.paint(canvas);
+	    if (textContainer==null) textContainer = new PaintablePosition(textBlock, x, y, angle, 1);
+	    else textContainer.set(textBlock, x, y, angle, 1);
+	    textContainer.paint(canvas);
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(Marker another) {
+        if (another==null) throw new NullPointerException();
+        
+        return name.compareTo(another.getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object marker) {
+        if(marker==null || name==null) throw new NullPointerException();
+        
+        return name.equals(((Marker)marker).getName());
+    }
 }

@@ -1,11 +1,11 @@
 package com.jwetherell.augmented_reality.ui.objects;
 
-import java.util.logging.Logger;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+
 
 /**
  * This abstract class provides many methods paint objects on a given Canvas.
@@ -13,9 +13,6 @@ import android.graphics.Path;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public abstract class PaintableObject {
-    private static final Logger logger = Logger.getLogger(PaintableObject.class.getSimpleName());
-    private static final boolean DEBUG = false;
-    
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public PaintableObject() {
@@ -116,7 +113,6 @@ public abstract class PaintableObject {
     public void paintLine(Canvas canvas, float x1, float y1, float x2, float y2) {
     	if (canvas==null) throw new NullPointerException();
     	
-        if (DEBUG) logger.severe("paintLine: x1="+x1+" y1="+y1+" x2="+x2+" y2="+y2+" paint="+paint.toString());
         canvas.drawLine(x1, y1, x2, y2, paint);
     }
 
@@ -132,7 +128,6 @@ public abstract class PaintableObject {
     public void paintRect(Canvas canvas, float x, float y, float width, float height) {
     	if (canvas==null) throw new NullPointerException();
     	
-        if (DEBUG) logger.severe("paintRect: x="+x+" y="+y+" width="+(x + width)+" height="+(y + height)+" paint="+paint.toString());
         canvas.drawRect(x, y, x + width, y + height, paint);
     }
 
@@ -147,7 +142,6 @@ public abstract class PaintableObject {
     public void paintBitmap(Canvas canvas, Bitmap bitmap, float left, float top) {
     	if (canvas==null || bitmap==null) throw new NullPointerException();
     	
-        if (DEBUG) logger.severe("paintBitmap: left="+left+" top="+top+" bitmap="+bitmap.toString());
         canvas.drawBitmap(bitmap, left, top, paint);
     }
 
@@ -162,7 +156,6 @@ public abstract class PaintableObject {
     public void paintCircle(Canvas canvas, float x, float y, float radius) {
     	if (canvas==null) throw new NullPointerException();
     	
-        if (DEBUG) logger.severe("paintCircle: x="+x+" y="+y+" radius="+radius);
         canvas.drawCircle(x, y, radius, paint);
     }
 
@@ -177,7 +170,6 @@ public abstract class PaintableObject {
     public void paintText(Canvas canvas, float x, float y, String text) {
     	if (canvas==null || text==null) throw new NullPointerException();
     	
-        if (DEBUG) logger.severe("paintText: x="+x+" y="+y+" text="+text);
         canvas.drawText(text, x, y, paint);
     }
 
@@ -197,7 +189,6 @@ public abstract class PaintableObject {
     {
     	if (canvas==null || obj==null) throw new NullPointerException();
     	
-        if (DEBUG) logger.severe("paintObj: x="+x+" y="+y+" rotation="+rotation+" scale="+scale);
         canvas.save();
         canvas.translate(x + obj.getWidth() / 2, y + obj.getHeight() / 2);
         canvas.rotate(rotation);
@@ -225,8 +216,7 @@ public abstract class PaintableObject {
     {
     	if (canvas==null || path==null) throw new NullPointerException();
     	
-    	if (DEBUG) logger.severe("paintPath: x="+x+" y="+y+" rotation="+rotation+" scale="+scale);
-        canvas.save();
+    	canvas.save();
         canvas.translate(x + width / 2, y + height / 2);
         canvas.rotate(rotation);
         canvas.scale(scale, scale);

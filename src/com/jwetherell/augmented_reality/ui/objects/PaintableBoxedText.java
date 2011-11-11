@@ -81,7 +81,7 @@ public class PaintableBoxedText extends PaintableObject {
 
 		txt = txtInit;
 		fontSize = fontSizeInit;
-		areaWidth = maxWidth - pad * 2;
+		areaWidth = maxWidth - pad;
 		lineHeight = getTextAsc() + getTextDesc();
 
 		if (lineList==null) lineList = new ArrayList<String>();

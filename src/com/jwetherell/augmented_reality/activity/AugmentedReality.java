@@ -1,7 +1,6 @@
 package com.jwetherell.augmented_reality.activity;
 
 import java.text.DecimalFormat;
-import java.util.logging.Logger;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -9,6 +8,7 @@ import android.hardware.SensorEvent;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,7 +28,6 @@ import com.jwetherell.augmented_reality.ui.Marker;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class AugmentedReality extends SensorsActivity implements OnTouchListener {
-    private static final Logger logger = Logger.getLogger(AugmentedReality.class.getSimpleName());
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
     
     private static WakeLock wakeLock = null;
@@ -36,14 +35,14 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
     private static SeekBar myZoomBar = null;
     private static FrameLayout frameLayout = null;
     private static AugmentedView augmentedView = null;
-
+    private static boolean useCollisionDetection = true;
+    
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        logger.info("onCreate()");
 
         camScreen = new CameraSurface(this);
         setContentView(camScreen);
@@ -62,7 +61,7 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
                                                                                     Gravity.BOTTOM);
         addContentView(frameLayout,frameLayoutParams);
 
-        augmentedView = new AugmentedView(this);
+        augmentedView = new AugmentedView(this,useCollisionDetection);
         augmentedView.setOnTouchListener(this);
         LayoutParams augLayout = new LayoutParams(  LayoutParams.WRAP_CONTENT, 
                                                     LayoutParams.WRAP_CONTENT);
@@ -72,33 +71,6 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
-    }
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-    public void onDestroy() {
-    	super.onDestroy();
-    	logger.info("onDestroy()");
-    }
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-    public void onStart() {
-    	super.onStart();
-    	logger.info("onStart()");
-    }
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-    public void onStop() {
-    	super.onStop();
-    	logger.info("onStop()");
     }
 
 	/**
@@ -184,19 +156,18 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
 	 */
 	@Override
 	public boolean onTouch(View view, MotionEvent me) {
-	    logger.warning("x="+me.getX()+" y="+me.getY());
 	    //See if the motion event is on a Marker
 		for (Marker marker : ARData.getMarkers()) {
 			if (marker.handleClick(me.getX(), me.getY())) {
-				markerTouched(marker);
+			    if (me.getAction() == MotionEvent.ACTION_UP) markerTouched(marker);
 				return true;
 			}
 		}
 		
-		return false;
+		return super.onTouchEvent(me);
 	};
 	
 	protected void markerTouched(Marker marker) {
-		logger.warning("markerTouched() not implemented.");
+		Log.w("AugmentedReality","markerTouched() not implemented.");
 	}
 }

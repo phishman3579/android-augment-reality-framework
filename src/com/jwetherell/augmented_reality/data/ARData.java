@@ -12,6 +12,7 @@ import com.jwetherell.augmented_reality.ui.Marker;
 
 import android.location.Location;
 
+
 /**
  * Abstract class which should be used to set global data.
  * 
@@ -99,8 +100,10 @@ public abstract class ARData {
     }
     
     private static void onLocationChanged(Location location) {
-    	for(Marker ma: markerList.values()) {
-            ma.calcRelativePosition(location);
+        synchronized (markerList) {
+        	for(Marker ma: markerList.values()) {
+                ma.calcRelativePosition(location);
+            }
         }
     }
     
@@ -136,13 +139,15 @@ public abstract class ARData {
     	if (markers==null) throw new NullPointerException();
     	
     	logger.info("Marker before: "+markerList.size());
-        for(Marker ma : markers) {
-            if (!markerList.containsKey(ma)) {
-            	ma.calcRelativePosition(ARData.getCurrentLocation());
-            	markerList.put(ma.getName(),ma);
+    	synchronized (markerList) {
+        	for(Marker ma : markers) {
+                if (!markerList.containsKey(ma.getName())) {
+                	ma.calcRelativePosition(ARData.getCurrentLocation());
+                	markerList.put(ma.getName(),ma);
+                }
             }
         }
-        logger.info("Marker count: "+markerList.size());
+    	logger.info("Marker count: "+markerList.size());
     }
 
     /**
