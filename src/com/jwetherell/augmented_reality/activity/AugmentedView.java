@@ -110,9 +110,6 @@ public class AugmentedView extends View {
 	private static Collection<Marker> adjustForCollisions(Canvas canvas, Collection<Marker> collection) {
 	    collection = new TreeSet<Marker>(ARData.getMarkers());
         Collection<Marker> collision = new TreeSet<Marker>();
-        
-        Log.i("Collisions", "Collision detection");
-        
         //Update the AR markers for collisions
         for (Marker marker1 : collection) {
             if (collision.contains(marker1)) continue;
