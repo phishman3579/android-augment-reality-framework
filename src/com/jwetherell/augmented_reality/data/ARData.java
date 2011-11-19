@@ -100,10 +100,8 @@ public abstract class ARData {
     }
     
     private static void onLocationChanged(Location location) {
-        synchronized (markerList) {
-        	for(Marker ma: markerList.values()) {
-                ma.calcRelativePosition(location);
-            }
+        for(Marker ma: markerList.values()) {
+            ma.calcRelativePosition(location);
         }
     }
     
@@ -139,12 +137,10 @@ public abstract class ARData {
     	if (markers==null) throw new NullPointerException();
     	
     	logger.info("Marker before: "+markerList.size());
-    	synchronized (markerList) {
-        	for(Marker ma : markers) {
-                if (!markerList.containsKey(ma.getName())) {
-                	ma.calcRelativePosition(ARData.getCurrentLocation());
-                	markerList.put(ma.getName(),ma);
-                }
+        for(Marker ma : markers) {
+            if (!markerList.containsKey(ma.getName())) {
+               	ma.calcRelativePosition(ARData.getCurrentLocation());
+               	markerList.put(ma.getName(),ma);
             }
         }
     	logger.info("Marker count: "+markerList.size());

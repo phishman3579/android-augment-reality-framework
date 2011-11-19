@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.View;
 
 import com.jwetherell.augmented_reality.data.ARData;
@@ -93,7 +94,7 @@ public class AugmentedView extends View {
 	        if (lastZoom != ARData.getZoomProgress()) currentTxtContainter = generateCurrentZoom(canvas);
 	        currentTxtContainter.paint(canvas);
 
-	        Collection<Marker> collection = new TreeSet<Marker>(ARData.getMarkers());
+	        Collection<Marker> collection = ARData.getMarkers();
 	        if (useCollisionDetection) collection = adjustForCollisions(canvas,collection);
 	        //Draw AR markers
 	        for (Marker marker : collection) {
@@ -107,32 +108,30 @@ public class AugmentedView extends View {
     }
 	
 	private static Collection<Marker> adjustForCollisions(Canvas canvas, Collection<Marker> collection) {
+	    collection = new TreeSet<Marker>(ARData.getMarkers());
         Collection<Marker> collision = new TreeSet<Marker>();
-        synchronized (ARData.getMarkers()) {
-            //Update the Markers visibility
-            for (Marker marker1 : collection) {
-                marker1.update(canvas,0,0);
-            }
-        }
+        
+        Log.i("Collisions", "Collision detection");
+        
         //Update the AR markers for collisions
         for (Marker marker1 : collection) {
-            if (!marker1.isVisible() || collision.contains(marker1)) continue;
-            
+            if (collision.contains(marker1)) continue;
+
+            int collisions = 1;
             boolean add = false;
             boolean added = false;
             for (Marker marker2 : collection) {
-                if (!marker2.isVisible() || marker1.equals(marker2)) continue;
-
+                if (marker1.equals(marker2)) continue;
+         
                 add=true;
                 if (marker1.isPointOnMarker(marker2.getPositionVector().x, marker2.getPositionVector().y)) {
                     float y = marker2.getLocationVector().y;
-                    float h = marker1.getHeight();
-                    synchronized (ARData.getMarkers()) {
-                        marker2.getLocationVector().y = (y+h);
-                    }
+                    float h = collisions*marker1.getHeight();
+                    marker2.getLocationVector().y = (y+h);
                     collision.add(marker2);
                     collision.add(marker1);
                     added=true;
+                    collisions++;
                 }
                 if (add && !added) collision.add(marker1);  
             }
