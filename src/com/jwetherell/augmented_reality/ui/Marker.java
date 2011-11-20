@@ -31,6 +31,7 @@ public class Marker implements Comparable<Marker> {
 
     private static CameraModel cam = null;
     
+    private final MixVector tmp = new MixVector();
     private final MixVector tmpa = new MixVector();
     private final MixVector tmpb = new MixVector();
     private final MixVector tmpc = new MixVector();
@@ -127,7 +128,11 @@ public class Marker implements Comparable<Marker> {
      * @return MixVector representing the prosition of the Marker.
      */
     public MixVector getScreenPosition() {
-        return symbolXyzRelativeToCameraView;
+        float x = (symbolXyzRelativeToCameraView.x + textXyzRelativeToCameraView.x)/2;
+        float y = (symbolXyzRelativeToCameraView.y + textXyzRelativeToCameraView.y)/2;
+        float z = (symbolXyzRelativeToCameraView.z + textXyzRelativeToCameraView.z)/2;
+        tmp.set(x, y, z);
+        return tmp;
     }
 
     /**
@@ -216,13 +221,6 @@ public class Marker implements Comparable<Marker> {
             isInView = true;
         }
     }
-    
-    private void updateDistance(Location location) {
-    	if (location==null) throw new NullPointerException();
-
-        Location.distanceBetween(physicalLocation.getLatitude(), physicalLocation.getLongitude(), location.getLatitude(), location.getLongitude(), dist);
-        distance = dist[0];
-    }
 
     /**
      * Calculate the relative position of this Marker from the given Location.
@@ -241,6 +239,13 @@ public class Marker implements Comparable<Marker> {
 		PhysicalLocation.convLocationToMixVector(location, physicalLocation, locationXyzRelativeToPhysicalLocation);
 		//Log.i("Location", "locationRelativeToPhysicalLocation="+locationRelativeToPhysicalLocation.toString());
 		updateRadar();
+    }
+    
+    private void updateDistance(Location location) {
+        if (location==null) throw new NullPointerException();
+
+        Location.distanceBetween(physicalLocation.getLatitude(), physicalLocation.getLongitude(), location.getLatitude(), location.getLongitude(), dist);
+        distance = dist[0];
     }
 
     /**

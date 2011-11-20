@@ -22,32 +22,32 @@ public class PaintableRadarPoints extends PaintableObject {
     public void paint(Canvas canvas) {
 		if (canvas==null) throw new NullPointerException();
 		
-        /** Radius is in KM. */
-        float range = ARData.getRadius() * 1000;
-
-        //Draw the markers in the circle
-        float scale = range / Radar.RADIUS;
-        for (Marker pm : ARData.getMarkers()) {
-            float x = pm.getLocation().x / scale;
-            float y = pm.getLocation().z / scale;
-            if ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS)) {
-                if (paintablePoint==null) paintablePoint = new PaintablePoint(pm.getColor(),true);
-                else paintablePoint.set(pm.getColor(),true);
-                
-                if (pointContainer==null) pointContainer = new PaintablePosition( 	paintablePoint, 
-                                                                          			(x+Radar.RADIUS-1), 
-                                                                          			(y+Radar.RADIUS-1), 
-                                                                          			0, 
-                                                                          			1);
-                else pointContainer.set(paintablePoint, 
-              							(x+Radar.RADIUS-1), 
-              							(y+Radar.RADIUS-1), 
-              							0, 
-              							1);
-                
-                pointContainer.paint(canvas);
+		synchronized (ARData.getMarkerslock()) {
+            //Draw the markers in the circle
+		    float range = ARData.getRadius() * 1000;
+		    float scale = range / Radar.RADIUS;
+            for (Marker pm : ARData.getMarkers()) {
+                float x = pm.getLocation().x / scale;
+                float y = pm.getLocation().z / scale;
+                if ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS)) {
+                    if (paintablePoint==null) paintablePoint = new PaintablePoint(pm.getColor(),true);
+                    else paintablePoint.set(pm.getColor(),true);
+                    
+                    if (pointContainer==null) pointContainer = new PaintablePosition( 	paintablePoint, 
+                                                                              			(x+Radar.RADIUS-1), 
+                                                                              			(y+Radar.RADIUS-1), 
+                                                                              			0, 
+                                                                              			1);
+                    else pointContainer.set(paintablePoint, 
+                  							(x+Radar.RADIUS-1), 
+                  							(y+Radar.RADIUS-1), 
+                  							0, 
+                  							1);
+                    
+                    pointContainer.paint(canvas);
+                }
             }
-        }
+		}
     }
 
 	/**

@@ -2,7 +2,6 @@ package com.jwetherell.augmented_reality.data;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -21,6 +20,7 @@ import android.location.Location;
 public abstract class ARData {
 	private static final Logger logger = Logger.getLogger(ARData.class.getSimpleName());
     private static final Map<String,Marker> markerList = new ConcurrentHashMap<String,Marker>();
+    private static final Object markersLock = new Object();
 
     /*defaulting to our place*/
     public static Location hardFix = new Location("ATL");
@@ -80,7 +80,7 @@ public abstract class ARData {
     }
     
     /**
-     * Get the radius of the radar screen.
+     * Get the radius (in KM) of the radar screen.
      * @return float representing the radar screen.
      */
     public static float getRadius() {
@@ -100,8 +100,10 @@ public abstract class ARData {
     }
     
     private static void onLocationChanged(Location location) {
-        for(Marker ma: markerList.values()) {
-            ma.calcRelativePosition(location);
+        synchronized (markersLock) {
+            for(Marker ma: markerList.values()) {
+                ma.calcRelativePosition(location);
+            }
         }
     }
     
@@ -133,17 +135,19 @@ public abstract class ARData {
      * Add a List of Markers to our Collection.
      * @param markers List of Markers to add.
      */
-    public static void addMarkers(List<Marker> markers) {
+    public static void addMarkers(Collection<Marker> markers) {
     	if (markers==null) throw new NullPointerException();
     	
-    	logger.info("Marker before: "+markerList.size());
-        for(Marker ma : markers) {
-            if (!markerList.containsKey(ma.getName())) {
-               	ma.calcRelativePosition(ARData.getCurrentLocation());
-               	markerList.put(ma.getName(),ma);
+    	synchronized (markersLock) {
+        	logger.info("Marker before: "+markerList.size());
+            for(Marker ma : markers) {
+                if (!markerList.containsKey(ma.getName())) {
+                   	ma.calcRelativePosition(ARData.getCurrentLocation());
+                   	markerList.put(ma.getName(),ma);
+                }
             }
-        }
-    	logger.info("Marker count: "+markerList.size());
+        	logger.info("Marker count: "+markerList.size());
+    	}
     }
 
     /**
@@ -151,6 +155,16 @@ public abstract class ARData {
      * @return Collection of Markers.
      */
     public static Collection<Marker> getMarkers() {
-        return Collections.unmodifiableCollection(markerList.values());
+        synchronized (markersLock) {
+            return Collections.unmodifiableCollection(markerList.values());
+        }
+    }
+
+    /**
+     * The lock for the Markers collections
+     * @return Lock for the markers collections
+     */
+    public static Object getMarkerslock() {
+        return markersLock;
     }
 }

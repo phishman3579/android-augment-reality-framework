@@ -37,10 +37,14 @@ public class LocalDataSource extends DataSource{
     }
     
     public List<Marker> getMarkers() {
-        for (int i=0; i<2; i++) {
-            Marker marker = null;
-            if (i%2==0) marker = new IconMarker("ATL-"+i, 39.931269, -75.051261, 0, Color.YELLOW, icon);
-            else  marker = new Marker("ATL-"+i, 39.931269, -75.051261, 0, Color.YELLOW);
+        Marker atl = new IconMarker("ATL", 39.931269, -75.051261, 0, Color.DKGRAY, icon);
+        cachedMarkers.add(atl);
+        Marker home = new Marker("HOME", 39.95, -74.9, 0, Color.YELLOW);
+        cachedMarkers.add(home);
+        
+        for (int i=0; i<10; i++) {
+            Marker marker = new Marker("Test-"+i, 39.99, -75.33, 0, Color.LTGRAY);
+            //Marker marker = new IconMarker("Test-"+i, 39.99, -75.33, 0, Color.LTGRAY, icon);
             cachedMarkers.add(marker);
         }
         return cachedMarkers;

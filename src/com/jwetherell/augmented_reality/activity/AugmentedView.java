@@ -94,11 +94,13 @@ public class AugmentedView extends View {
 	        if (lastZoom != ARData.getZoomProgress()) currentTxtContainter = generateCurrentZoom(canvas);
 	        currentTxtContainter.paint(canvas);
 
-	        Collection<Marker> collection = ARData.getMarkers();
-	        if (useCollisionDetection) collection = adjustForCollisions(canvas,collection);
-	        //Draw AR markers
-	        for (Marker marker : collection) {
-	            marker.draw(canvas);
+	        synchronized (ARData.getMarkerslock()) {
+    	        Collection<Marker> collection = ARData.getMarkers();
+    	        if (useCollisionDetection) collection = adjustForCollisions(canvas,collection);
+    	        //Draw AR markers
+    	        for (Marker marker : collection) {
+    	            marker.draw(canvas);
+    	        }
 	        }
             
 	        //Radar circle and radar markers
@@ -108,14 +110,14 @@ public class AugmentedView extends View {
     }
 	
 	private static Collection<Marker> adjustForCollisions(Canvas canvas, Collection<Marker> collection) {
-	    TreeSet<Marker> updated = new TreeSet<Marker>();
+        TreeSet<Marker> updated = new TreeSet<Marker>();
         //Update the AR markers for collisions
         for (Marker marker1 : collection) {
             if (updated.contains(marker1)) continue;
 
             int collisions = 1;
             for (Marker marker2 : collection) {
-                if (marker1.equals(marker2)) continue;
+                if (marker1.equals(marker2) || updated.contains(marker2)) continue;
 
                 if (marker1.isPointOnMarker(marker2.getScreenPosition().x, marker2.getScreenPosition().y)) {
                     float y = marker2.getLocation().y;
