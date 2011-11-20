@@ -51,9 +51,9 @@ public class Marker implements Comparable<Marker> {
 	//Distance from camera to PhysicalLocation in meters
     protected double distance = 0.0;
 	//Is within the radar
-    protected boolean onRadar = false;
+    protected boolean isOnRadar = false;
     //Is in the camera's view
-    protected boolean inView = false;
+    protected boolean isInView = false;
     //Symbol's (circle in this case) X, Y, Z position relative to the camera's view
     //X is left/right, Y is up/down, Z is In/Out (unused)
     protected MixVector symbolXyzRelativeToCameraView = new MixVector();
@@ -83,8 +83,8 @@ public class Marker implements Comparable<Marker> {
 		this.name = name;
 		this.physicalLocation.set(latitude,longitude,altitude);
 		this.color = color;
-		onRadar = false;
-		inView = false;
+		isOnRadar = false;
+		isInView = false;
 		symbolXyzRelativeToCameraView.set(0, 0, 0);
 		textXyzRelativeToCameraView.set(0, 0, 0);
 		locationXyzRelativeToPhysicalLocation.set(0, 0, 0);
@@ -110,16 +110,16 @@ public class Marker implements Comparable<Marker> {
      * Get the whether the Marker is inside the range (relative to slider on view)
      * @return True if Marker is inside the range.
      */
-    public boolean onRadar() {
-        return onRadar;
+    public boolean isOnRadar() {
+        return isOnRadar;
     }
 
     /**
      * Get the whether the Marker is inside the camera's view
      * @return True if Marker is inside the camera's view.
      */
-    public boolean inView() {
-        return inView;
+    public boolean isInView() {
+        return isInView;
     }
     
     /**
@@ -190,19 +190,19 @@ public class Marker implements Comparable<Marker> {
 	}
 
 	private void updateRadar() {
-		onRadar = false;
+		isOnRadar = false;
 
 		float range = ARData.getRadius() * 1000;
 		float scale = range / Radar.RADIUS;
         float x = locationXyzRelativeToPhysicalLocation.x / scale;
         float y = locationXyzRelativeToPhysicalLocation.z / scale;
 		if ( (symbolXyzRelativeToCameraView.z < -1f) && ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS)) ) {
-			onRadar = true;
+			isOnRadar = true;
 		}
 	}
 
     private void updateView() {
-        inView = false;
+        isInView = false;
 
         float x1 = symbolXyzRelativeToCameraView.x + (getWidth()/2);
         float y1 = symbolXyzRelativeToCameraView.y + (getHeight()/2);
@@ -213,7 +213,7 @@ public class Marker implements Comparable<Marker> {
             y1>=0 &&
             y2<=cam.getHeight()
         ) {
-            inView = true;
+            isInView = true;
         }
     }
     
@@ -255,7 +255,7 @@ public class Marker implements Comparable<Marker> {
 	    update(canvas,0,0);
 	    
 	    //If not visible then do nothing
-	    if (!onRadar || !inView) return;
+	    if (!isOnRadar || !isInView) return;
 	    
 	    //Draw the Icon and Text
 	    drawIcon(canvas);
@@ -263,11 +263,17 @@ public class Marker implements Comparable<Marker> {
 	}
 
     public boolean handleClick(float x, float y) {
-    	if (!onRadar || !inView) return false;
-    	return isClickOnMarker(x,y);
+    	if (!isOnRadar || !isInView) return false;
+    	return isPointOnMarker(x,y);
     }
-
-    private boolean isClickOnMarker(float x, float y) {
+    
+    /**
+     * Determines if the point is on this Marker.
+     * @param x X point.
+     * @param y Y point.
+     * @return True if the point is on Marker.
+     */
+	public boolean isPointOnMarker(float x, float y) {
         if (symbolContainer==null || textContainer==null) return false;
         
         float currentAngle = MixUtils.getAngle(symbolXyzRelativeToCameraView.x, symbolXyzRelativeToCameraView.y, textXyzRelativeToCameraView.x, textXyzRelativeToCameraView.y);
@@ -297,38 +303,6 @@ public class Marker implements Comparable<Marker> {
             return true;
         }
         return false;
-    }
-    
-    /**
-     * Determines if the point is in collision with this Marker.
-     * @param x X point.
-     * @param y Y point.
-     * @return True if the point is in collision this Marker.
-     */
-	public boolean isInCollision(float x, float y) {
-	    if (textContainer==null) return false;
-	    
-		float currentAngle = MixUtils.getAngle(symbolXyzRelativeToCameraView.x, symbolXyzRelativeToCameraView.y, textXyzRelativeToCameraView.x, textXyzRelativeToCameraView.y);
-		
-		screenPosition.setX(x - symbolXyzRelativeToCameraView.x);
-		screenPosition.setY(y - symbolXyzRelativeToCameraView.y);
-		screenPosition.rotate(Math.toRadians(-(currentAngle + 90)));
-		screenPosition.setX(screenPosition.getX() + textContainer.getX());
-		screenPosition.setY(screenPosition.getY() + textContainer.getY());
-
-		float objX = textContainer.getX() - (textContainer.getWidth() / 2);
-		float objY = textContainer.getY() - (textContainer.getHeight() / 2);
-		float objW = textContainer.getWidth();
-		float objH = textContainer.getHeight();
-
-		if (screenPosition.getX() > objX && 
-			screenPosition.getX() < (objX + objW) && 
-			screenPosition.getY() > objY && 
-			screenPosition.getY() < (objY + objH)) 
-		{
-			return true;
-		}
-		return false;
 	}
     
     protected void drawIcon(Canvas canvas) {

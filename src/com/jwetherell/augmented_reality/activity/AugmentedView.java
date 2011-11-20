@@ -39,6 +39,7 @@ public class AugmentedView extends View {
     private static PaintablePosition currentTxtContainter = null;
     private static int lastZoom = 0;
     private static boolean useCollisionDetection = false;
+    private static final int COLLISION_ADJUSTMENT = 4000;
 
     public AugmentedView(Context context, boolean useCollisionDetection) {
         super(context);
@@ -116,9 +117,9 @@ public class AugmentedView extends View {
             for (Marker marker2 : collection) {
                 if (marker1.equals(marker2)) continue;
 
-                if (marker1.isInCollision(marker2.getScreenPosition().x, marker2.getScreenPosition().y)) {
+                if (marker1.isPointOnMarker(marker2.getScreenPosition().x, marker2.getScreenPosition().y)) {
                     float y = marker2.getLocation().y;
-                    float h = collisions*((marker1.getHeight()+marker2.getHeight())*2);
+                    float h = collisions*COLLISION_ADJUSTMENT;
                     marker2.getLocation().y = (y+h);
                     collisions++;
                     updated.add(marker2);
