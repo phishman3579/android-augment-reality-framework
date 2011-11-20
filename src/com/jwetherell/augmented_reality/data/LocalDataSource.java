@@ -19,10 +19,10 @@ public class LocalDataSource extends DataSource{
     private List<Marker> cachedMarkers = new ArrayList<Marker>();
     
     public List<Marker> getMarkers() {
-        Marker marker1 = new Marker("ATL-1", 39.931269, -75.051261, 0, Color.YELLOW);
-        cachedMarkers.add(marker1);
-        Marker marker2 = new Marker("ATL-2", 39.931269, -75.051261, 0, Color.MAGENTA);
-        cachedMarkers.add(marker2);
+        for (int i=0; i<1; i++) {
+            Marker marker = new Marker("ATL-"+i, 39.931269, -75.051261, 0, Color.YELLOW);
+            cachedMarkers.add(marker);
+        }
         return cachedMarkers;
     }
 }

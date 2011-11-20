@@ -46,16 +46,22 @@ public class Marker implements Comparable<Marker> {
     
     //Unique identifier of Marker
     protected String name = null;
-	//Marker's physical location
+	//Marker's physical location (Lat, Lon, Alt)
     protected PhysicalLocation physicalLocation = new PhysicalLocation();
-	// distance from user to PhysicalLocation in meters
+	//Distance from camera to PhysicalLocation in meters
     protected double distance = 0.0;
-
-	// Draw properties
-    protected boolean isVisible = false;
-    protected MixVector circleVector = new MixVector();
-    protected MixVector signVector = new MixVector();
-    protected MixVector locationVector = new MixVector();
+	//Is within the radar
+    protected boolean onRadar = false;
+    //Is in the camera's view
+    protected boolean inView = false;
+    //Symbol's (circle in this case) X, Y, Z position relative to the camera's view
+    //X is left/right, Y is up/down, Z is In/Out (unused)
+    protected MixVector symbolXyzRelativeToCameraView = new MixVector();
+    //Text box's X, Y, Z position relative to the camera's view
+    //X is left/right, Y is up/down, Z is In/Out (unused)
+    protected MixVector textXyzRelativeToCameraView = new MixVector();
+    //Physical location's X, Y, Z relative to the camera's location
+    protected MixVector locationXyzRelativeToPhysicalLocation = new MixVector();
     
     protected int color = Color.WHITE;
 
@@ -77,10 +83,11 @@ public class Marker implements Comparable<Marker> {
 		this.name = name;
 		this.physicalLocation.set(latitude,longitude,altitude);
 		this.color = color;
-		isVisible = false;
-		circleVector.set(0, 0, 0);
-		signVector.set(0, 0, 0);
-		locationVector.set(0, 0, 0);
+		onRadar = false;
+		inView = false;
+		symbolXyzRelativeToCameraView.set(0, 0, 0);
+		textXyzRelativeToCameraView.set(0, 0, 0);
+		locationXyzRelativeToPhysicalLocation.set(0, 0, 0);
 	}
 	
 	/**
@@ -89,14 +96,6 @@ public class Marker implements Comparable<Marker> {
 	 */
 	public String getName(){
 		return name;
-	}
-
-	/**
-	 * Get the the location of the Marker.
-	 * @return MixVector representing the location of the Marker.
-	 */
-	public MixVector getLocationVector() {
-		return locationVector;
 	}
 
     /**
@@ -108,29 +107,37 @@ public class Marker implements Comparable<Marker> {
     }
 
     /**
-     * Get the visibility of the Marker
-     * @return True if Marker is visible.
+     * Get the whether the Marker is inside the range (relative to slider on view)
+     * @return True if Marker is inside the range.
      */
-    public boolean isVisible() {
-        return isVisible;
+    public boolean onRadar() {
+        return onRadar;
+    }
+
+    /**
+     * Get the whether the Marker is inside the camera's view
+     * @return True if Marker is inside the camera's view.
+     */
+    public boolean inView() {
+        return inView;
     }
     
     /**
-     * Get the position of the Marker.
+     * Get the position of the Marker in XYZ.
      * @return MixVector representing the prosition of the Marker.
      */
-    public MixVector getPositionVector() {
-        return circleVector;
+    public MixVector getScreenPosition() {
+        return symbolXyzRelativeToCameraView;
     }
-    
+
     /**
-     * Get the physical location of the Marker.
-     * @return PhysicalLocation meaning lat/lon/alt of the Marker.
+     * Get the the location of the Marker in XYZ.
+     * @return MixVector representing the location of the Marker.
      */
-    public PhysicalLocation getPhysicalLocation() {
-        return physicalLocation;
+    public MixVector getLocation() {
+        return locationXyzRelativeToPhysicalLocation;
     }
-    
+
     public float getHeight() {
         if (symbolContainer==null || textContainer==null) return 0f;
         return symbolContainer.getHeight()+textContainer.getHeight();
@@ -158,7 +165,8 @@ public class Marker implements Comparable<Marker> {
         cam.setViewAngle(CameraModel.DEFAULT_VIEW_ANGLE);
         cam.setTransform(ARData.getRotationMatrix());
         populateMatrices(originVector, cam, addX, addY);
-        calcVisibility();
+        updateRadar();
+        updateView();
     }
 
 	private void populateMatrices(MixVector originalPoint, CameraModel cam, float addX, float addY) {
@@ -167,8 +175,8 @@ public class Marker implements Comparable<Marker> {
 		// Temp properties
 		tmpa.set(originalPoint.x, originalPoint.y, originalPoint.z);
 		tmpc.set(upVector.x, upVector.y, upVector.z);
-		tmpa.add(locationVector); //3 
-		tmpc.add(locationVector); //3
+		tmpa.add(locationXyzRelativeToPhysicalLocation); //3 
+		tmpc.add(locationXyzRelativeToPhysicalLocation); //3
 		tmpa.sub(cam.getLco()); //4
 		tmpc.sub(cam.getLco()); //4
 		tmpa.prod(cam.getTransform()); //5
@@ -176,23 +184,39 @@ public class Marker implements Comparable<Marker> {
 
 		tmpb.set(0, 0, 0);
 		cam.projectPoint(tmpa, tmpb, addX, addY); //6
-		circleVector.set(tmpb.x, tmpb.y, tmpb.z); //7
+		symbolXyzRelativeToCameraView.set(tmpb.x, tmpb.y, tmpb.z); //7
 		cam.projectPoint(tmpc, tmpb, addX, addY); //6
-		signVector.set(tmpb.x, tmpb.y, tmpb.z); //7
+		textXyzRelativeToCameraView.set(tmpb.x, tmpb.y, tmpb.z); //7
 	}
 
-	private void calcVisibility() {
-		isVisible = false;
-		
+	private void updateRadar() {
+		onRadar = false;
+
 		float range = ARData.getRadius() * 1000;
 		float scale = range / Radar.RADIUS;
-        float x = getLocationVector().x / scale;
-        float y = getLocationVector().z / scale;
-		if ( (circleVector.z < -1f) && ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS)) ) {
-			isVisible = true;
+        float x = locationXyzRelativeToPhysicalLocation.x / scale;
+        float y = locationXyzRelativeToPhysicalLocation.z / scale;
+		if ( (symbolXyzRelativeToCameraView.z < -1f) && ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS)) ) {
+			onRadar = true;
 		}
 	}
 
+    private void updateView() {
+        inView = false;
+
+        float x1 = symbolXyzRelativeToCameraView.x + (getWidth()/2);
+        float y1 = symbolXyzRelativeToCameraView.y + (getHeight()/2);
+        float x2 = symbolXyzRelativeToCameraView.x - (getWidth()/2);
+        float y2 = symbolXyzRelativeToCameraView.y - (getHeight()/2);
+        if (x1>=0 && 
+            x2<=cam.getWidth() &&
+            y1>=0 &&
+            y2<=cam.getHeight()
+        ) {
+            inView = true;
+        }
+    }
+    
     private void updateDistance(Location location) {
     	if (location==null) throw new NullPointerException();
 
@@ -214,8 +238,10 @@ public class Marker implements Comparable<Marker> {
 		if (physicalLocation.getAltitude()==0.0) physicalLocation.setAltitude(location.getAltitude());
 		 
 		// compute the relative position vector from user position to POI location
-		PhysicalLocation.convLocationToMixVector(location, physicalLocation, locationVector);
-	}
+		PhysicalLocation.convLocationToMixVector(location, physicalLocation, locationXyzRelativeToPhysicalLocation);
+		//Log.i("Location", "locationRelativeToPhysicalLocation="+locationRelativeToPhysicalLocation.toString());
+		updateRadar();
+    }
 
     /**
      * Draw this Marker on the Canvas
@@ -229,7 +255,7 @@ public class Marker implements Comparable<Marker> {
 	    update(canvas,0,0);
 	    
 	    //If not visible then do nothing
-	    if (!isVisible) return;
+	    if (!onRadar || !inView) return;
 	    
 	    //Draw the Icon and Text
 	    drawIcon(canvas);
@@ -237,7 +263,7 @@ public class Marker implements Comparable<Marker> {
 	}
 
     public boolean handleClick(float x, float y) {
-    	if (!isVisible) return false;
+    	if (!onRadar || !inView) return false;
     	return isPointOnMarker(x,y);
     }
 	
@@ -250,18 +276,18 @@ public class Marker implements Comparable<Marker> {
 	public boolean isPointOnMarker(float x, float y) {
 	    if (textContainer==null) return false;
 	    
-		float currentAngle = MixUtils.getAngle(circleVector.x, circleVector.y, signVector.x, signVector.y);
+		float currentAngle = MixUtils.getAngle(symbolXyzRelativeToCameraView.x, symbolXyzRelativeToCameraView.y, textXyzRelativeToCameraView.x, textXyzRelativeToCameraView.y);
 		
-		screenPosition.setX(x - signVector.x);
-		screenPosition.setY(y - signVector.y);
+		screenPosition.setX(x - symbolXyzRelativeToCameraView.x);
+		screenPosition.setY(y - symbolXyzRelativeToCameraView.y);
 		screenPosition.rotate(Math.toRadians(-(currentAngle + 90)));
-		screenPosition.setX(screenPosition.getX() + textContainer.getX());
-		screenPosition.setY(screenPosition.getY() + textContainer.getY());
+		screenPosition.setX(screenPosition.getX() + symbolContainer.getX());
+		screenPosition.setY(screenPosition.getY() + symbolContainer.getY());
 
-		float objX = textContainer.getX() - (textContainer.getWidth() / 2);
-		float objY = textContainer.getY() - (textContainer.getHeight() / 2);
-		float objW = textContainer.getWidth();
-		float objH = textContainer.getHeight();
+		float objX = symbolContainer.getX() - (symbolContainer.getWidth() / 2);
+		float objY = symbolContainer.getY() - (symbolContainer.getHeight() / 2);
+		float objW = symbolContainer.getWidth();
+		float objH = symbolContainer.getHeight();
 
 		if (screenPosition.getX() > objX && 
 			screenPosition.getX() < (objX + objW) && 
@@ -279,8 +305,8 @@ public class Marker implements Comparable<Marker> {
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
         if (gps==null) gps = new PaintableGps((maxHeight / 1.5f), (maxHeight / 10f), true, getColor());
         
-        if (symbolContainer==null) symbolContainer = new PaintablePosition(gps, circleVector.x, circleVector.y, 0, 1);
-        else symbolContainer.set(gps, circleVector.x, circleVector.y, 0, 1);
+        if (symbolContainer==null) symbolContainer = new PaintablePosition(gps, symbolXyzRelativeToCameraView.x, symbolXyzRelativeToCameraView.y, 0, 1);
+        else symbolContainer.set(gps, symbolXyzRelativeToCameraView.x, symbolXyzRelativeToCameraView.y, 0, 1);
         symbolContainer.paint(canvas);
     }
 
@@ -298,9 +324,9 @@ public class Marker implements Comparable<Marker> {
 	    float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
 	    if (textBlock==null) textBlock = new PaintableBoxedText(textStr, Math.round(maxHeight / 2f) + 1, 300);
 	    else textBlock.set(textStr, Math.round(maxHeight / 2f) + 1, 300);
-	    float x = signVector.x - textBlock.getWidth() / 2;
-	    float y = signVector.y + maxHeight;
-	    float currentAngle = MixUtils.getAngle(circleVector.x, circleVector.y, signVector.x, signVector.y);
+	    float x = textXyzRelativeToCameraView.x - textBlock.getWidth() / 2;
+	    float y = textXyzRelativeToCameraView.y + maxHeight;
+	    float currentAngle = MixUtils.getAngle(symbolXyzRelativeToCameraView.x, symbolXyzRelativeToCameraView.y, textXyzRelativeToCameraView.x, textXyzRelativeToCameraView.y);
 	    float angle = currentAngle + 90;
 	    if (textContainer==null) textContainer = new PaintablePosition(textBlock, x, y, angle, 1);
 	    else textContainer.set(textBlock, x, y, angle, 1);

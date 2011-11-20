@@ -114,7 +114,7 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
         }
 
         public void onStartTrackingTouch(SeekBar seekBar) {
-            
+            //Ignore
         }
 
         public void onStopTrackingTouch(SeekBar seekBar) {

@@ -4,6 +4,7 @@ import com.jwetherell.augmented_reality.common.MixVector;
 
 import android.location.Location;
 
+
 /**
  * This class is used to represent a physical locations which have a latitude, longitude, and alitude.
  * 
@@ -106,7 +107,6 @@ public class PhysicalLocation {
 			z[0] *= -1;
 		if (org.getLongitude() > gp.getLongitude())
 			x[0] *= -1;
-
 		v.set(x[0], (float) y, z[0]);
 	}
 

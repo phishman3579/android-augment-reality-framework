@@ -48,6 +48,22 @@ public class CameraModel {
 	}
 	
 	/**
+	 * Width of the camera view.
+	 * @return int representing the width of camera view.
+	 */
+	public int getWidth() {
+	    return width;
+	}
+    
+    /**
+     * Height of the camera view.
+     * @return int representing height of the camera view.
+     */
+    public int getHeight() {
+        return height;
+    }
+    
+	/**
 	 * Get transformation matrix.
 	 * @return Matrix representation of the transformation.
 	 */

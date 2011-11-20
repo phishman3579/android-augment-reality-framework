@@ -107,31 +107,25 @@ public class AugmentedView extends View {
     }
 	
 	private static Collection<Marker> adjustForCollisions(Canvas canvas, Collection<Marker> collection) {
-	    collection = new TreeSet<Marker>(ARData.getMarkers());
-        Collection<Marker> collision = new TreeSet<Marker>();
+	    TreeSet<Marker> updated = new TreeSet<Marker>();
         //Update the AR markers for collisions
         for (Marker marker1 : collection) {
-            if (collision.contains(marker1)) continue;
+            if (updated.contains(marker1)) continue;
 
             int collisions = 1;
-            boolean add = false;
-            boolean added = false;
             for (Marker marker2 : collection) {
                 if (marker1.equals(marker2)) continue;
-         
-                add=true;
-                if (marker1.isPointOnMarker(marker2.getPositionVector().x, marker2.getPositionVector().y)) {
-                    float y = marker2.getLocationVector().y;
-                    float h = collisions*marker1.getHeight();
-                    marker2.getLocationVector().y = (y+h);
-                    collision.add(marker2);
-                    collision.add(marker1);
-                    added=true;
+
+                if (marker1.isPointOnMarker(marker2.getScreenPosition().x, marker2.getScreenPosition().y)) {
+                    float y = marker2.getLocation().y;
+                    float h = collisions*(marker1.getHeight()+marker2.getHeight());
+                    marker2.getLocation().y = (y+h);
                     collisions++;
+                    updated.add(marker2);
                 }
-                if (add && !added) collision.add(marker1);  
             }
+            updated.add(marker1);
         }
-        return collision;
+        return collection;
 	}
 }

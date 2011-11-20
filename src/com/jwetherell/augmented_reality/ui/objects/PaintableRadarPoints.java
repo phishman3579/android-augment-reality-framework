@@ -28,8 +28,8 @@ public class PaintableRadarPoints extends PaintableObject {
         //Draw the markers in the circle
         float scale = range / Radar.RADIUS;
         for (Marker pm : ARData.getMarkers()) {
-            float x = pm.getLocationVector().x / scale;
-            float y = pm.getLocationVector().z / scale;
+            float x = pm.getLocation().x / scale;
+            float y = pm.getLocation().z / scale;
             if ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS)) {
                 if (paintablePoint==null) paintablePoint = new PaintablePoint(pm.getColor(),true);
                 else paintablePoint.set(pm.getColor(),true);
