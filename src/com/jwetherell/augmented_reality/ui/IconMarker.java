@@ -33,7 +33,6 @@ public class IconMarker extends Marker {
             symbolContainer = new PaintablePosition(icon, (circleVector.x - maxHeight/1.5f), (circleVector.y - maxHeight/1.5f), 0, 2);
         else 
             symbolContainer.set(icon, (circleVector.x - maxHeight/1.5f), (circleVector.y - maxHeight/1.5f), 0, 2);
-        
         symbolContainer.paint(canvas);
     }
 }

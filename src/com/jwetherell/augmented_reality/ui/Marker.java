@@ -132,12 +132,15 @@ public class Marker implements Comparable<Marker> {
     }
     
     public float getHeight() {
+        if (symbolContainer==null || textContainer==null) return 0f;
         return symbolContainer.getHeight()+textContainer.getHeight();
     }
     
     public float getWidth() {
-        //Assume text is the widest element
-        return textContainer.getHeight();
+        if (symbolContainer==null || textContainer==null) return 0f;
+        float symbol = symbolContainer.getWidth();
+        float text = textContainer.getWidth();
+        return (symbol>text)?symbol:text;
     }
     
 	/**
