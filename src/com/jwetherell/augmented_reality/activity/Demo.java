@@ -41,12 +41,12 @@ public class Demo extends AugmentedReality {
         if (sources==null) {
         	sources = new ArrayList<NetworkDataSource>();
             
-        	LocalDataSource localData = new LocalDataSource();
+        	LocalDataSource localData = new LocalDataSource(this.getResources());
         	ARData.addMarkers(localData.getMarkers());
 
             NetworkDataSource twitter = new TwitterDataSource(this.getResources());
             sources.add(twitter);
-            NetworkDataSource wikipedia = new WikipediaDataSource();
+            NetworkDataSource wikipedia = new WikipediaDataSource(this.getResources());
             sources.add(wikipedia);
             NetworkDataSource buzz = new BuzzDataSource(this.getResources());
             sources.add(buzz);

@@ -264,16 +264,48 @@ public class Marker implements Comparable<Marker> {
 
     public boolean handleClick(float x, float y) {
     	if (!onRadar || !inView) return false;
-    	return isPointOnMarker(x,y);
+    	return isClickOnMarker(x,y);
     }
-	
+
+    private boolean isClickOnMarker(float x, float y) {
+        if (symbolContainer==null || textContainer==null) return false;
+        
+        float currentAngle = MixUtils.getAngle(symbolXyzRelativeToCameraView.x, symbolXyzRelativeToCameraView.y, textXyzRelativeToCameraView.x, textXyzRelativeToCameraView.y);
+        
+        float x1 = (symbolXyzRelativeToCameraView.x + textXyzRelativeToCameraView.x)/2;
+        float y1 = (symbolXyzRelativeToCameraView.y + textXyzRelativeToCameraView.y)/2;
+        
+        float x2 = (symbolContainer.getX() + textContainer.getX())/2;
+        float y2 = (symbolContainer.getY() + textContainer.getY())/2;
+        
+        screenPosition.setX(x - x1);
+        screenPosition.setY(y - y1);
+        screenPosition.rotate(Math.toRadians(-(currentAngle + 90)));
+        screenPosition.setX(screenPosition.getX() + x2);
+        screenPosition.setY(screenPosition.getY() + y2);
+
+        float objX = x2 - (getWidth() / 2);
+        float objY = y2 - (getHeight() / 2);
+        float objW = getWidth();
+        float objH = getHeight();
+
+        if (screenPosition.getX() > objX && 
+            screenPosition.getX() < (objX + objW) && 
+            screenPosition.getY() > objY && 
+            screenPosition.getY() < (objY + objH)) 
+        {
+            return true;
+        }
+        return false;
+    }
+    
     /**
-     * Determines if the point is on this Marker.
+     * Determines if the point is in collision with this Marker.
      * @param x X point.
      * @param y Y point.
-     * @return True if the point is on this Marker.
+     * @return True if the point is in collision this Marker.
      */
-	public boolean isPointOnMarker(float x, float y) {
+	public boolean isInCollision(float x, float y) {
 	    if (textContainer==null) return false;
 	    
 		float currentAngle = MixUtils.getAngle(symbolXyzRelativeToCameraView.x, symbolXyzRelativeToCameraView.y, textXyzRelativeToCameraView.x, textXyzRelativeToCameraView.y);
@@ -281,13 +313,13 @@ public class Marker implements Comparable<Marker> {
 		screenPosition.setX(x - symbolXyzRelativeToCameraView.x);
 		screenPosition.setY(y - symbolXyzRelativeToCameraView.y);
 		screenPosition.rotate(Math.toRadians(-(currentAngle + 90)));
-		screenPosition.setX(screenPosition.getX() + symbolContainer.getX());
-		screenPosition.setY(screenPosition.getY() + symbolContainer.getY());
+		screenPosition.setX(screenPosition.getX() + textContainer.getX());
+		screenPosition.setY(screenPosition.getY() + textContainer.getY());
 
-		float objX = symbolContainer.getX() - (symbolContainer.getWidth() / 2);
-		float objY = symbolContainer.getY() - (symbolContainer.getHeight() / 2);
-		float objW = symbolContainer.getWidth();
-		float objH = symbolContainer.getHeight();
+		float objX = textContainer.getX() - (textContainer.getWidth() / 2);
+		float objY = textContainer.getY() - (textContainer.getHeight() / 2);
+		float objW = textContainer.getWidth();
+		float objH = textContainer.getHeight();
 
 		if (screenPosition.getX() > objX && 
 			screenPosition.getX() < (objX + objW) && 

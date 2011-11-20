@@ -6,8 +6,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
+import com.jwetherell.augmented_reality.R;
+import com.jwetherell.augmented_reality.ui.IconMarker;
 import com.jwetherell.augmented_reality.ui.Marker;
 
 
@@ -19,8 +24,20 @@ import com.jwetherell.augmented_reality.ui.Marker;
 public class WikipediaDataSource extends NetworkDataSource {
 	private static final String BASE_URL = "http://ws.geonames.org/findNearbyWikipediaJSON";
 
-	public WikipediaDataSource() {}
+	private static Bitmap icon = null;
+	
+	public WikipediaDataSource(Resources res) {        
+	    if (res==null) throw new NullPointerException();
+        
+        createIcon(res);
+    }
 
+    protected void createIcon(Resources res) {
+        if (res==null) throw new NullPointerException();
+        
+        icon=BitmapFactory.decodeResource(res, R.drawable.wikipedia);
+    }
+    
 	/**
 	 * {@inheritDoc}
 	 */
@@ -71,12 +88,13 @@ public class WikipediaDataSource extends NetworkDataSource {
         		jo.has("elevation")
         ) {
         	try {
-        		ma = new Marker(
+        		ma = new IconMarker(
         				jo.getString("title"),
         				jo.getDouble("lat"),
         				jo.getDouble("lng"),
         				jo.getDouble("elevation"),
-        				Color.WHITE);
+        				Color.WHITE,
+        				icon);
         	} catch (JSONException e) {
         		e.printStackTrace();
         	}

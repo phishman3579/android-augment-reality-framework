@@ -21,7 +21,7 @@ import com.jwetherell.augmented_reality.ui.Marker;
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public abstract class NetworkDataSource extends DataSource{
+public abstract class NetworkDataSource extends DataSource {
     protected static final int MAX = 5;
     protected static final int READ_TIMEOUT = 10000;
     protected static final int CONNECT_TIMEOUT = 10000;
