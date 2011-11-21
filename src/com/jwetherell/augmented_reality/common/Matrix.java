@@ -34,9 +34,9 @@ public class Matrix {
     private static final Vector up = new Vector();
     private static final Matrix tmp = new Matrix();
 
-    private static final float[] tmp1 = new float[3];
-    private static final float[] tmp2 = new float[3];
-    private static final float[] tmp3 = new float[3];
+    private static final float[] dirArray = new float[3];
+    private static final float[] rightArray = new float[3];
+    private static final float[] upArray = new float[3];
     
     private volatile float a1=0f, a2=0f, a3=0f;
     private volatile float b1=0f, b2=0f, b3=0f;
@@ -165,19 +165,19 @@ public class Matrix {
         dir.sub(cam);
         dir.mult(-1f);
         dir.norm();
-        dir.get(tmp1);
+        dir.get(dirArray);
 
         right.set(0, 0, 0);
         right.cross(worldUp, dir);
         right.norm();
-        right.get(tmp2);
+        right.get(rightArray);
 
         up.set(0, 0, 0);
         up.cross(dir, right);
         up.norm();
-        up.get(tmp3);
+        up.get(upArray);
 
-        set(tmp2[0], tmp2[1], tmp2[2], tmp3[0], tmp3[1], tmp3[2], tmp1[0], tmp1[1], tmp1[2]);
+        set(rightArray[0], rightArray[1], rightArray[2], upArray[0], upArray[1], upArray[2], dirArray[0], dirArray[1], dirArray[2]);
     }
 
     public synchronized void adj() {

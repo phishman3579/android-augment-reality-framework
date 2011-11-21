@@ -28,7 +28,7 @@ package com.jwetherell.augmented_reality.common;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Vector {
-    private final float[] tmp = new float[9];
+    private final float[] matrixArray = new float[9];
     
 	private volatile float x = 0f;
     private volatile float y = 0f;
@@ -193,10 +193,10 @@ public class Vector {
 	public synchronized void prod(Matrix m) {
 		if (m==null) return;
 
-		m.get(tmp);
-        float xTemp = tmp[0] * this.x + tmp[1] * this.y + tmp[2] * this.z;
-        float yTemp = tmp[3] * this.x + tmp[4] * this.y + tmp[5] * this.z;
-        float zTemp = tmp[6] * this.x + tmp[7] * this.y + tmp[8] * this.z;
+		m.get(matrixArray);
+        float xTemp = matrixArray[0] * this.x + matrixArray[1] * this.y + matrixArray[2] * this.z;
+        float yTemp = matrixArray[3] * this.x + matrixArray[4] * this.y + matrixArray[5] * this.z;
+        float zTemp = matrixArray[6] * this.x + matrixArray[7] * this.y + matrixArray[8] * this.z;
 
 		this.x = xTemp;
 		this.y = yTemp;

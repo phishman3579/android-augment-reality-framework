@@ -33,7 +33,7 @@ import java.util.List;
 public class PitchBearingCalculator {
 	private static final Vector looking = new Vector();
 	
-	private static final float[] tmp = new float[3];
+	private static final float[] lookingArray = new float[3];
 	
 	private static final int bearingListSize = 5;
 	private static List<Float> bearingList = new ArrayList<Float>();
@@ -59,8 +59,8 @@ public class PitchBearingCalculator {
 	    rotationM.transpose();
 		looking.set(1, 0, 0);
 		looking.prod(rotationM);
-		looking.get(tmp);
-		float bearing = ((Utilities.getAngle(0, 0, tmp[0], tmp[2])  + 360 ) % 360);
+		looking.get(lookingArray);
+		float bearing = ((Utilities.getAngle(0, 0, lookingArray[0], lookingArray[2])  + 360 ) % 360);
 		bearingList.add(bearing);
 		if (bearingList.size()>bearingListSize) bearingList.remove(0);
 		float adjBearing = 0;
@@ -72,8 +72,8 @@ public class PitchBearingCalculator {
 		rotationM.transpose();
 		looking.set(0, 1, 0);
 		looking.prod(rotationM);
-		looking.get(tmp);
-		float pitch = -Utilities.getAngle(0, 0, tmp[1], tmp[2]);
+		looking.get(lookingArray);
+		float pitch = -Utilities.getAngle(0, 0, lookingArray[1], lookingArray[2]);
 		pitchList.add(pitch);
 	    if (pitchList.size()>pitchListSize) pitchList.remove(0);
 	    float adjPitch = 0;
