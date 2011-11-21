@@ -15,7 +15,6 @@ import com.jwetherell.augmented_reality.ui.Marker;
 
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -27,8 +26,7 @@ import android.widget.Toast;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Demo extends AugmentedReality {
-    private static final String TAG = "Demo";
-	private static final String locale = Locale.getDefault().getLanguage();
+    private static final String locale = Locale.getDefault().getLanguage();
 	
 	private static Collection<NetworkDataSource> sources = null;    
     private static Thread thread = null;
@@ -87,20 +85,15 @@ public class Demo extends AugmentedReality {
 	}
 
     private void updateData(final double lat, final double lon, final double alt) {
-    	if (thread!=null && thread.isAlive()) {
-    		Log.i(TAG,"Not updating since in the process");
-    		return;
-    	}
+    	if (thread!=null && thread.isAlive()) return;
     	
     	thread = new Thread(
     		new Runnable(){
 				@Override
 				public void run() {
-					Log.i(TAG,"Start");
 					for (NetworkDataSource source : sources) {
 						download(source, lat, lon, alt);
 					}
-					Log.i(TAG,"Stop");
 				}
 			}
     	);
@@ -113,7 +106,6 @@ public class Demo extends AugmentedReality {
 		String url = null;
 		try {
 			url = source.createRequestURL(lat, lon, alt, ARData.getRadius(), locale);    	
-			Log.i(TAG,url);
 		} catch (NullPointerException e) {
 			return false;
 		}
@@ -124,9 +116,7 @@ public class Demo extends AugmentedReality {
 		} catch (NullPointerException e) {
 			return false;
 		}
-    	
-    	Log.i(TAG,source.getClass().getSimpleName()+" size="+markers.size());
-    	
+
     	ARData.addMarkers(markers);
     	return true;
     }

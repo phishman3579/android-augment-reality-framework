@@ -10,6 +10,7 @@ import com.jwetherell.augmented_reality.common.Matrix;
 import com.jwetherell.augmented_reality.ui.Marker;
 
 import android.location.Location;
+import android.util.Log;
 
 
 /**
@@ -18,6 +19,7 @@ import android.location.Location;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public abstract class ARData {
+    private static final String TAG = "ARData";
 	private static final Map<String,Marker> markerList = new ConcurrentHashMap<String,Marker>();
     private static final AtomicBoolean dirty = new AtomicBoolean(false);
     private static final float[] tmp = new float[3];
@@ -100,9 +102,13 @@ public abstract class ARData {
     }
     
     private static void onLocationChanged(Location location) {
+        Log.d(TAG, "New location, updating markers. location="+location.toString());
         for(Marker ma: markerList.values()) {
             ma.calcRelativePosition(location);
         }
+
+        Log.v(TAG, "Setting DIRTY flag!");
+        dirty.set(true);
     }
     
     /**
@@ -136,6 +142,7 @@ public abstract class ARData {
     public static void addMarkers(Collection<Marker> markers) {
     	if (markers==null) throw new NullPointerException();
 
+    	Log.d(TAG, "New markers, updating markers. new markers="+markers.toString());
     	for(Marker marker : markers) {
     	    if (!markerList.containsKey(marker.getName())) {
     	        marker.calcRelativePosition(ARData.getCurrentLocation());
@@ -143,6 +150,7 @@ public abstract class ARData {
     	    }
     	}
 
+    	Log.v(TAG, "Setting DIRTY flag!");
     	dirty.set(true);
     }
 
@@ -153,6 +161,7 @@ public abstract class ARData {
     public static Collection<Marker> getMarkers() {
         //If markers we added, zero out the altitude to recompute the collision detection
         if (dirty.get()) {
+            Log.v(TAG, "DIRTY flag found, resetting all marker heights to zero.");
             for(Marker ma : markerList.values()) {
                 ma.getLocation().get(tmp);
                 tmp[1]=0;

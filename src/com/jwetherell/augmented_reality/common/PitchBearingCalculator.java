@@ -34,11 +34,11 @@ public class PitchBearingCalculator {
 	private static final Vector looking = new Vector();
 	private static final float[] lookingArray = new float[3];
 	
-	private static final int bearingListSize = 10;
+	private static final int bearingListSize = 3;
 	private static List<Float> bearingList = new ArrayList<Float>();
 	private static volatile float bearing = 0;
 	
-	private static final int pitchListSize = 10;
+	private static final int pitchListSize = 3;
 	private static List<Float> pitchList = new ArrayList<Float>();
 	private static volatile float pitch = 0;
 

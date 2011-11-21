@@ -11,6 +11,7 @@ import android.graphics.Canvas;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class IconMarker extends Marker {
+    private static final float[] symbolArray = new float[3];
     private Bitmap bitmap = null;
     private PaintableIcon icon = null;
 
@@ -29,10 +30,11 @@ public class IconMarker extends Marker {
     	
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
         
+        symbolXyzRelativeToCameraView.get(symbolArray);
         if (symbolContainer==null) 
-            symbolContainer = new PaintablePosition(icon, (symbolXyzRelativeToCameraView.getX() - maxHeight/1.5f), (symbolXyzRelativeToCameraView.getY() - maxHeight/1.5f), 0, 2);
+            symbolContainer = new PaintablePosition(icon, (symbolArray[0] - maxHeight/1.5f), (symbolArray[1] - maxHeight/1.5f), 0, 2);
         else 
-            symbolContainer.set(icon, (symbolXyzRelativeToCameraView.getX() - maxHeight/1.5f), (symbolXyzRelativeToCameraView.getY() - maxHeight/1.5f), 0, 2);
+            symbolContainer.set(icon, (symbolArray[0] - maxHeight/1.5f), (symbolArray[1] - maxHeight/1.5f), 0, 2);
         symbolContainer.paint(canvas);
     }
 }

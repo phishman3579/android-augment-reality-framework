@@ -34,26 +34,6 @@ public class Vector {
     private volatile float y = 0f;
 	private volatile float z = 0f;
 
-    public synchronized float getX() {
-        return this.x;
-    }
-    public synchronized void setX(float x) {
-        this.x = x;
-    }
-
-    public synchronized float getY() {
-        return this.y;
-    }
-    public synchronized void setY(float y) {
-        this.y = y;
-    }
-    public synchronized float getZ() {
-        return this.z;
-    }
-    public synchronized void setZ(float z) {
-        this.z = z;
-    }
-    
 	public Vector() {
 		this(0, 0, 0);
 	}

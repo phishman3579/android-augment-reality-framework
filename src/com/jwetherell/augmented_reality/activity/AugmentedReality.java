@@ -28,6 +28,7 @@ import com.jwetherell.augmented_reality.ui.Marker;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class AugmentedReality extends SensorsActivity implements OnTouchListener {
+    private static final String TAG = "AugmentedReality";
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
     
     private static WakeLock wakeLock = null;
@@ -168,6 +169,6 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
 	};
 	
 	protected void markerTouched(Marker marker) {
-		Log.w("AugmentedReality","markerTouched() not implemented.");
+		Log.w(TAG,"markerTouched() not implemented.");
 	}
 }
