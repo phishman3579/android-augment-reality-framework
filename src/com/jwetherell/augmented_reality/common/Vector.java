@@ -99,7 +99,22 @@ public class Vector {
         
         set(v.x, v.y, v.z);
     }
-    
+
+    /**
+     * Set the vector's values.
+     * 
+     *  array[0] = x;
+     *  array[1] = y;
+     *  array[2] = z;
+     * 
+     * @param array float array representing this vector.
+     */
+    public void set(float[] array) {
+        if (array==null || array.length!=3) 
+            throw new IllegalArgumentException("get() array must be non-NULL and size of 3");
+        
+        set(array[0], array[1], array[2]);
+    }
     /**
      * Set the Vector to the given values.
      * @param x float x value.

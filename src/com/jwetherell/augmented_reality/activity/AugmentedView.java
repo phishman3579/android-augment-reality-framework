@@ -127,7 +127,7 @@ public class AugmentedView extends View {
                     float y = locationArray[1];
                     float h = collisions*COLLISION_ADJUSTMENT;
                     locationArray[1] = y+h;
-                    marker2.getLocation().set(locationArray[0],locationArray[1],locationArray[2]);
+                    marker2.getLocation().set(locationArray);
                     collisions++;
                     updated.add(marker2);
                 }

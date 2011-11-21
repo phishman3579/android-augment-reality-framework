@@ -125,7 +125,7 @@ public class Marker implements Comparable<Marker> {
     
     /**
      * Get the position of the Marker in XYZ.
-     * @return Vector representing the prosition of the Marker.
+     * @return Vector representing the position of the Marker.
      */
     public Vector getScreenPosition() {
         float x = (symbolXyzRelativeToCameraView.getX() + textXyzRelativeToCameraView.getX())/2;

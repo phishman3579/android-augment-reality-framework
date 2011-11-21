@@ -86,6 +86,30 @@ public class Matrix {
 
     /**
      * Set the Matrix values.
+     * 
+     *  array[0] = a1
+     *  array[1] = a2
+     *  array[2] = a3
+     *  array[3] = b1
+     *  array[4] = b2
+     *  array[5] = b3
+     *  array[6] = c1
+     *  array[7] = c2
+     *  array[8] = c3
+     * 
+     * @param array float[] array of size containing the matrix data.
+     */
+    public void set(float[] array) {
+        if (array==null || array.length!=9) 
+            throw new IllegalArgumentException("get() array must be non-NULL and size of 9");
+        
+        set(array[0], array[1], array[2],
+            array[3], array[4], array[5],
+            array[6], array[7], array[8]);
+    }
+    
+    /**
+     * Set the Matrix values.
      * @param a1 float representing the top row left value.
      * @param a2 float representing the top row middle value.
      * @param a3 float representing the top row right value.

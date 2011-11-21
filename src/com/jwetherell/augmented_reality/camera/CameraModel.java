@@ -132,7 +132,7 @@ public class CameraModel {
 	    tmp2[2]=(tmp1[2]);
 	    tmp2[0]=(tmp2[0] + addX + width / 2);
 	    tmp2[1]=(-tmp2[1] + addY + height / 2);
-	    prjPoint.set(tmp2[0],tmp2[1],tmp2[2]);
+	    prjPoint.set(tmp2);
 	}
 
 	/**
