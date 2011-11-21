@@ -12,6 +12,9 @@ import com.jwetherell.augmented_reality.common.Vector;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class CameraModel {
+    private static final float[] tmp1 = new float[3];
+    private static final float[] tmp2 = new float[3];
+    
 	private static Matrix transform = new Matrix();
 	private static Vector lco = new Vector();
 
@@ -123,11 +126,13 @@ public class CameraModel {
 	 * @param addY Add Y to the projected point.
 	 */
 	public void projectPoint(Vector orgPoint, Vector prjPoint, float addX, float addY) {
-		prjPoint.setX(distance * orgPoint.getX() / -orgPoint.getZ());
-		prjPoint.setY(distance * orgPoint.getY() / -orgPoint.getZ());
-		prjPoint.setZ(orgPoint.getZ());
-		prjPoint.setX(prjPoint.getX() + addX + width / 2);
-		prjPoint.setY(-prjPoint.getY() + addY + height / 2);
+	    orgPoint.get(tmp1);
+	    tmp2[0]=(distance * tmp1[0] / -tmp1[2]);
+	    tmp2[1]=(distance * tmp1[1] / -tmp1[2]);
+	    tmp2[2]=(tmp1[2]);
+	    tmp2[0]=(tmp2[0] + addX + width / 2);
+	    tmp2[1]=(-tmp2[1] + addY + height / 2);
+	    prjPoint.set(tmp2[0],tmp2[1],tmp2[2]);
 	}
 
 	/**

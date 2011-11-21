@@ -33,13 +33,15 @@ public class AugmentedView extends View {
     private static final int rightBound = 87;
     private static final int conflictHeight = 82;
     private static final Radar radar = new Radar();
+    private static final float[] screenPositionArray = new float[3];
+    private static final float[] locationArray = new float[3];
     
     private static PaintablePosition startTxtContainter = null;
     private static PaintablePosition endTxtContainter = null;
     private static PaintablePosition currentTxtContainter = null;
     private static int lastZoom = 0;
     private static boolean useCollisionDetection = false;
-    private static final int COLLISION_ADJUSTMENT = 4000;
+    private static final int COLLISION_ADJUSTMENT = 2000;
 
     public AugmentedView(Context context, boolean useCollisionDetection) {
         super(context);
@@ -119,10 +121,13 @@ public class AugmentedView extends View {
             for (Marker marker2 : collection) {
                 if (marker1.equals(marker2) || updated.contains(marker2)) continue;
 
-                if (marker1.isPointOnMarker(marker2.getScreenPosition().getX(), marker2.getScreenPosition().getY())) {
-                    float y = marker2.getLocation().getY();
+                marker2.getScreenPosition().get(screenPositionArray);
+                if (marker1.isPointOnMarker(screenPositionArray[0],screenPositionArray[1])) {
+                    marker2.getLocation().get(locationArray);
+                    float y = locationArray[1];
                     float h = collisions*COLLISION_ADJUSTMENT;
-                    marker2.getLocation().setY(y+h);
+                    locationArray[1] = y+h;
+                    marker2.getLocation().set(locationArray[0],locationArray[1],locationArray[2]);
                     collisions++;
                     updated.add(marker2);
                 }

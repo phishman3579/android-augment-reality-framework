@@ -12,6 +12,7 @@ import android.graphics.Canvas;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class PaintableRadarPoints extends PaintableObject {
+    private final float[] locationArray = new float[3];
 	private PaintablePoint paintablePoint = null;
 	private PaintablePosition pointContainer = null;
 
@@ -27,8 +28,9 @@ public class PaintableRadarPoints extends PaintableObject {
 		    float range = ARData.getRadius() * 1000;
 		    float scale = range / Radar.RADIUS;
             for (Marker pm : ARData.getMarkers()) {
-                float x = pm.getLocation().getX() / scale;
-                float y = pm.getLocation().getZ() / scale;
+                pm.getLocation().get(locationArray);
+                float x = locationArray[0] / scale;
+                float y = locationArray[2] / scale;
                 if ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS)) {
                     if (paintablePoint==null) paintablePoint = new PaintablePoint(pm.getColor(),true);
                     else paintablePoint.set(pm.getColor(),true);

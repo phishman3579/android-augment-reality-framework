@@ -32,7 +32,6 @@ import java.util.List;
  */
 public class PitchBearingCalculator {
 	private static final Vector looking = new Vector();
-	
 	private static final float[] lookingArray = new float[3];
 	
 	private static final int bearingListSize = 5;
