@@ -3,8 +3,8 @@ package com.jwetherell.augmented_reality.ui;
 import java.text.DecimalFormat;
 
 import com.jwetherell.augmented_reality.camera.CameraModel;
-import com.jwetherell.augmented_reality.common.MixUtils;
-import com.jwetherell.augmented_reality.common.MixVector;
+import com.jwetherell.augmented_reality.common.Utilities;
+import com.jwetherell.augmented_reality.common.Vector;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.PhysicalLocation;
 import com.jwetherell.augmented_reality.data.ScreenPosition;
@@ -26,15 +26,15 @@ import android.location.Location;
 public class Marker implements Comparable<Marker> {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("@#");
         
-    private static final MixVector originVector = new MixVector(0, 0, 0);
-    private static final MixVector upVector = new MixVector(0, 1, 0);
+    private static final Vector originVector = new Vector(0, 0, 0);
+    private static final Vector upVector = new Vector(0, 1, 0);
 
     private static CameraModel cam = null;
     
-    private final MixVector tmp = new MixVector();
-    private final MixVector tmpa = new MixVector();
-    private final MixVector tmpb = new MixVector();
-    private final MixVector tmpc = new MixVector();
+    private final Vector tmp = new Vector();
+    private final Vector tmpa = new Vector();
+    private final Vector tmpb = new Vector();
+    private final Vector tmpc = new Vector();
 
     private PaintableBoxedText textBlock = null;
     private PaintablePosition textContainer = null;    
@@ -57,12 +57,12 @@ public class Marker implements Comparable<Marker> {
     protected boolean isInView = false;
     //Symbol's (circle in this case) X, Y, Z position relative to the camera's view
     //X is left/right, Y is up/down, Z is In/Out (unused)
-    protected MixVector symbolXyzRelativeToCameraView = new MixVector();
+    protected Vector symbolXyzRelativeToCameraView = new Vector();
     //Text box's X, Y, Z position relative to the camera's view
     //X is left/right, Y is up/down, Z is In/Out (unused)
-    protected MixVector textXyzRelativeToCameraView = new MixVector();
+    protected Vector textXyzRelativeToCameraView = new Vector();
     //Physical location's X, Y, Z relative to the camera's location
-    protected MixVector locationXyzRelativeToPhysicalLocation = new MixVector();
+    protected Vector locationXyzRelativeToPhysicalLocation = new Vector();
     
     protected int color = Color.WHITE;
 
@@ -125,21 +125,21 @@ public class Marker implements Comparable<Marker> {
     
     /**
      * Get the position of the Marker in XYZ.
-     * @return MixVector representing the prosition of the Marker.
+     * @return Vector representing the prosition of the Marker.
      */
-    public MixVector getScreenPosition() {
-        float x = (symbolXyzRelativeToCameraView.x + textXyzRelativeToCameraView.x)/2;
-        float y = (symbolXyzRelativeToCameraView.y + textXyzRelativeToCameraView.y)/2;
-        float z = (symbolXyzRelativeToCameraView.z + textXyzRelativeToCameraView.z)/2;
+    public Vector getScreenPosition() {
+        float x = (symbolXyzRelativeToCameraView.getX() + textXyzRelativeToCameraView.getX())/2;
+        float y = (symbolXyzRelativeToCameraView.getY() + textXyzRelativeToCameraView.getY())/2;
+        float z = (symbolXyzRelativeToCameraView.getZ() + textXyzRelativeToCameraView.getZ())/2;
         tmp.set(x, y, z);
         return tmp;
     }
 
     /**
      * Get the the location of the Marker in XYZ.
-     * @return MixVector representing the location of the Marker.
+     * @return Vector representing the location of the Marker.
      */
-    public MixVector getLocation() {
+    public Vector getLocation() {
         return locationXyzRelativeToPhysicalLocation;
     }
 
@@ -174,12 +174,12 @@ public class Marker implements Comparable<Marker> {
         updateView();
     }
 
-	private void populateMatrices(MixVector originalPoint, CameraModel cam, float addX, float addY) {
+	private void populateMatrices(Vector originalPoint, CameraModel cam, float addX, float addY) {
 		if (originalPoint==null || cam==null) throw new NullPointerException();
 		
 		// Temp properties
-		tmpa.set(originalPoint.x, originalPoint.y, originalPoint.z);
-		tmpc.set(upVector.x, upVector.y, upVector.z);
+		tmpa.set(originalPoint.getX(), originalPoint.getY(), originalPoint.getZ());
+		tmpc.set(upVector.getX(), upVector.getY(), upVector.getZ());
 		tmpa.add(locationXyzRelativeToPhysicalLocation); //3 
 		tmpc.add(locationXyzRelativeToPhysicalLocation); //3
 		tmpa.sub(cam.getLco()); //4
@@ -189,9 +189,9 @@ public class Marker implements Comparable<Marker> {
 
 		tmpb.set(0, 0, 0);
 		cam.projectPoint(tmpa, tmpb, addX, addY); //6
-		symbolXyzRelativeToCameraView.set(tmpb.x, tmpb.y, tmpb.z); //7
+		symbolXyzRelativeToCameraView.set(tmpb.getX(), tmpb.getY(), tmpb.getZ()); //7
 		cam.projectPoint(tmpc, tmpb, addX, addY); //6
-		textXyzRelativeToCameraView.set(tmpb.x, tmpb.y, tmpb.z); //7
+		textXyzRelativeToCameraView.set(tmpb.getX(), tmpb.getY(), tmpb.getZ()); //7
 	}
 
 	private void updateRadar() {
@@ -199,9 +199,9 @@ public class Marker implements Comparable<Marker> {
 
 		float range = ARData.getRadius() * 1000;
 		float scale = range / Radar.RADIUS;
-        float x = locationXyzRelativeToPhysicalLocation.x / scale;
-        float y = locationXyzRelativeToPhysicalLocation.z / scale;
-		if ( (symbolXyzRelativeToCameraView.z < -1f) && ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS)) ) {
+        float x = locationXyzRelativeToPhysicalLocation.getX() / scale;
+        float y = locationXyzRelativeToPhysicalLocation.getZ() / scale;
+		if ( (symbolXyzRelativeToCameraView.getZ() < -1f) && ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS)) ) {
 			isOnRadar = true;
 		}
 	}
@@ -209,10 +209,10 @@ public class Marker implements Comparable<Marker> {
     private void updateView() {
         isInView = false;
 
-        float x1 = symbolXyzRelativeToCameraView.x + (getWidth()/2);
-        float y1 = symbolXyzRelativeToCameraView.y + (getHeight()/2);
-        float x2 = symbolXyzRelativeToCameraView.x - (getWidth()/2);
-        float y2 = symbolXyzRelativeToCameraView.y - (getHeight()/2);
+        float x1 = symbolXyzRelativeToCameraView.getX() + (getWidth()/2);
+        float y1 = symbolXyzRelativeToCameraView.getY() + (getHeight()/2);
+        float x2 = symbolXyzRelativeToCameraView.getX() - (getWidth()/2);
+        float y2 = symbolXyzRelativeToCameraView.getY() - (getHeight()/2);
         if (x1>=0 && 
             x2<=cam.getWidth() &&
             y1>=0 &&
@@ -236,7 +236,7 @@ public class Marker implements Comparable<Marker> {
 		if (physicalLocation.getAltitude()==0.0) physicalLocation.setAltitude(location.getAltitude());
 		 
 		// compute the relative position vector from user position to POI location
-		PhysicalLocation.convLocationToMixVector(location, physicalLocation, locationXyzRelativeToPhysicalLocation);
+		PhysicalLocation.convLocationToVector(location, physicalLocation, locationXyzRelativeToPhysicalLocation);
 		//Log.i("Location", "locationRelativeToPhysicalLocation="+locationRelativeToPhysicalLocation.toString());
 		updateRadar();
     }
@@ -281,10 +281,10 @@ public class Marker implements Comparable<Marker> {
 	public boolean isPointOnMarker(float x, float y) {
         if (symbolContainer==null || textContainer==null) return false;
         
-        float currentAngle = MixUtils.getAngle(symbolXyzRelativeToCameraView.x, symbolXyzRelativeToCameraView.y, textXyzRelativeToCameraView.x, textXyzRelativeToCameraView.y);
+        float currentAngle = Utilities.getAngle(symbolXyzRelativeToCameraView.getX(), symbolXyzRelativeToCameraView.getY(), textXyzRelativeToCameraView.getX(), textXyzRelativeToCameraView.getY());
         
-        float x1 = (symbolXyzRelativeToCameraView.x + textXyzRelativeToCameraView.x)/2;
-        float y1 = (symbolXyzRelativeToCameraView.y + textXyzRelativeToCameraView.y)/2;
+        float x1 = (symbolXyzRelativeToCameraView.getX() + textXyzRelativeToCameraView.getX())/2;
+        float y1 = (symbolXyzRelativeToCameraView.getY() + textXyzRelativeToCameraView.getY())/2;
         
         float x2 = (symbolContainer.getX() + textContainer.getX())/2;
         float y2 = (symbolContainer.getY() + textContainer.getY())/2;
@@ -316,8 +316,8 @@ public class Marker implements Comparable<Marker> {
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
         if (gps==null) gps = new PaintableGps((maxHeight / 1.5f), (maxHeight / 10f), true, getColor());
         
-        if (symbolContainer==null) symbolContainer = new PaintablePosition(gps, symbolXyzRelativeToCameraView.x, symbolXyzRelativeToCameraView.y, 0, 1);
-        else symbolContainer.set(gps, symbolXyzRelativeToCameraView.x, symbolXyzRelativeToCameraView.y, 0, 1);
+        if (symbolContainer==null) symbolContainer = new PaintablePosition(gps, symbolXyzRelativeToCameraView.getX(), symbolXyzRelativeToCameraView.getY(), 0, 1);
+        else symbolContainer.set(gps, symbolXyzRelativeToCameraView.getX(), symbolXyzRelativeToCameraView.getY(), 0, 1);
         symbolContainer.paint(canvas);
     }
 
@@ -335,9 +335,9 @@ public class Marker implements Comparable<Marker> {
 	    float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
 	    if (textBlock==null) textBlock = new PaintableBoxedText(textStr, Math.round(maxHeight / 2f) + 1, 300);
 	    else textBlock.set(textStr, Math.round(maxHeight / 2f) + 1, 300);
-	    float x = textXyzRelativeToCameraView.x - textBlock.getWidth() / 2;
-	    float y = textXyzRelativeToCameraView.y + maxHeight;
-	    float currentAngle = MixUtils.getAngle(symbolXyzRelativeToCameraView.x, symbolXyzRelativeToCameraView.y, textXyzRelativeToCameraView.x, textXyzRelativeToCameraView.y);
+	    float x = textXyzRelativeToCameraView.getX() - textBlock.getWidth() / 2;
+	    float y = textXyzRelativeToCameraView.getY() + maxHeight;
+	    float currentAngle = Utilities.getAngle(symbolXyzRelativeToCameraView.getX(), symbolXyzRelativeToCameraView.getY(), textXyzRelativeToCameraView.getX(), textXyzRelativeToCameraView.getY());
 	    float angle = currentAngle + 90;
 	    if (textContainer==null) textContainer = new PaintablePosition(textBlock, x, y, angle, 1);
 	    else textContainer.set(textBlock, x, y, angle, 1);

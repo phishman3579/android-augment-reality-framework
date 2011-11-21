@@ -119,10 +119,10 @@ public class AugmentedView extends View {
             for (Marker marker2 : collection) {
                 if (marker1.equals(marker2) || updated.contains(marker2)) continue;
 
-                if (marker1.isPointOnMarker(marker2.getScreenPosition().x, marker2.getScreenPosition().y)) {
-                    float y = marker2.getLocation().y;
+                if (marker1.isPointOnMarker(marker2.getScreenPosition().getX(), marker2.getScreenPosition().getY())) {
+                    float y = marker2.getLocation().getY();
                     float h = collisions*COLLISION_ADJUSTMENT;
-                    marker2.getLocation().y = (y+h);
+                    marker2.getLocation().setY(y+h);
                     collisions++;
                     updated.add(marker2);
                 }

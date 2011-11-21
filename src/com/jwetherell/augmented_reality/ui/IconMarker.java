@@ -30,9 +30,9 @@ public class IconMarker extends Marker {
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
         
         if (symbolContainer==null) 
-            symbolContainer = new PaintablePosition(icon, (symbolXyzRelativeToCameraView.x - maxHeight/1.5f), (symbolXyzRelativeToCameraView.y - maxHeight/1.5f), 0, 2);
+            symbolContainer = new PaintablePosition(icon, (symbolXyzRelativeToCameraView.getX() - maxHeight/1.5f), (symbolXyzRelativeToCameraView.getY() - maxHeight/1.5f), 0, 2);
         else 
-            symbolContainer.set(icon, (symbolXyzRelativeToCameraView.x - maxHeight/1.5f), (symbolXyzRelativeToCameraView.y - maxHeight/1.5f), 0, 2);
+            symbolContainer.set(icon, (symbolXyzRelativeToCameraView.getX() - maxHeight/1.5f), (symbolXyzRelativeToCameraView.getY() - maxHeight/1.5f), 0, 2);
         symbolContainer.paint(canvas);
     }
 }

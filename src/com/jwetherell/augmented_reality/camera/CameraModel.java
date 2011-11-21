@@ -1,7 +1,7 @@
 package com.jwetherell.augmented_reality.camera;
 
 import com.jwetherell.augmented_reality.common.Matrix;
-import com.jwetherell.augmented_reality.common.MixVector;
+import com.jwetherell.augmented_reality.common.Vector;
 
 /**
  * Represents the camera and it's view. It also allows a user to project a point given this camera's view.
@@ -13,7 +13,7 @@ import com.jwetherell.augmented_reality.common.MixVector;
  */
 public class CameraModel {
 	private static Matrix transform = new Matrix();
-	private static MixVector lco = new MixVector();
+	private static Vector lco = new Vector();
 
 	private int width = 0; 
 	private int height = 0;
@@ -80,18 +80,18 @@ public class CameraModel {
 	}
 
 	/**
-	 * Get the MixVector LCO.
-	 * @return MixVector representing the LCO.
+	 * Get the Vector LCO.
+	 * @return Vector representing the LCO.
 	 */
-	public MixVector getLco() {
+	public Vector getLco() {
 		return lco;
 	}
 	
 	/**
-	 * Set the MixVector LCO.
-	 * @param lco MixVector representing the LCO.
+	 * Set the Vector LCO.
+	 * @param lco Vector representing the LCO.
 	 */
-	public void setLco(MixVector lco) {
+	public void setLco(Vector lco) {
 		CameraModel.lco = lco;
 	}
 	
@@ -116,18 +116,18 @@ public class CameraModel {
 	}
 
 	/**
-	 * Project point from the origin MixVector to the projected MixVector.
-	 * @param orgPoint MixVector representing the origin.
-	 * @param prjPoint MixVector representing the projected point.
+	 * Project point from the origin Vector to the projected Vector.
+	 * @param orgPoint Vector representing the origin.
+	 * @param prjPoint Vector representing the projected point.
 	 * @param addX Add X to the projected point.
 	 * @param addY Add Y to the projected point.
 	 */
-	public void projectPoint(MixVector orgPoint, MixVector prjPoint, float addX, float addY) {
-		prjPoint.x = distance * orgPoint.x / -orgPoint.z;
-		prjPoint.y = distance * orgPoint.y / -orgPoint.z;
-		prjPoint.z = orgPoint.z;
-		prjPoint.x = prjPoint.x + addX + width / 2;
-		prjPoint.y = -prjPoint.y + addY + height / 2;
+	public void projectPoint(Vector orgPoint, Vector prjPoint, float addX, float addY) {
+		prjPoint.setX(distance * orgPoint.getX() / -orgPoint.getZ());
+		prjPoint.setY(distance * orgPoint.getY() / -orgPoint.getZ());
+		prjPoint.setZ(orgPoint.getZ());
+		prjPoint.setX(prjPoint.getX() + addX + width / 2);
+		prjPoint.setY(-prjPoint.getY() + addY + height / 2);
 	}
 
 	/**

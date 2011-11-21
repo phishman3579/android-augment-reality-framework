@@ -1,6 +1,6 @@
 package com.jwetherell.augmented_reality.data;
 
-import com.jwetherell.augmented_reality.common.MixVector;
+import com.jwetherell.augmented_reality.common.Vector;
 
 import android.location.Location;
 
@@ -84,13 +84,13 @@ public class PhysicalLocation {
 	}
 
 	/**
-	 * Converts a Location to a MixVector given a PhysicalLocation.
+	 * Converts a Location to a Vector given a PhysicalLocation.
 	 * @param org Origin Location.
 	 * @param gp Current PhysicalLocation.
-	 * @param v MixVector to populate.
-	 * @throws NullPointerException if Location, PhysicalLocation, or MixVector is NULL.
+	 * @param v Vector to populate.
+	 * @throws NullPointerException if Location, PhysicalLocation, or Vector is NULL.
 	 */
-	public static void convLocationToMixVector(Location org, PhysicalLocation gp, MixVector v) {
+	public static void convLocationToVector(Location org, PhysicalLocation gp, Vector v) {
 		if (org==null || gp==null || v==null) return;
 		
 		float[] z = new float[1];

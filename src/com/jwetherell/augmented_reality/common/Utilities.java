@@ -19,38 +19,14 @@
 package com.jwetherell.augmented_reality.common;
 
 /**
- * Some static functions useful in Matrices/Vectors.
+ * Some static utility functions.
  * 
  * This file was adapted from Mixare <http://www.mixare.org/>
  * 
  * @author Daniele Gobbetti <info@mixare.org>
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class MixUtils {
-
-	public static String formatDist(float meters) {
-		if (meters < 1000) {
-			return ((int) meters) + "m";
-		} else if (meters < 10000) {
-			return formatDec(meters / 1000f, 1) + "km";
-		} else {
-			return ((int) (meters / 1000f)) + "km";
-		}
-	}
-
-	private static String formatDec(float val, int dec) {
-		int factor = (int) Math.pow(10, dec);
-
-		int front = (int) (val );
-		int back = (int) Math.abs(val * (factor) ) % factor;
-
-		return front + "." + back;
-	}
-
-	public static boolean pointInside(	float P_x, float P_y, float r_x,
-										float r_y, float r_w, float r_h) {
-		return (P_x > r_x && P_x < r_x + r_w && P_y > r_y && P_y < r_y + r_h);
-	}
+public class Utilities {
 
 	public static float getAngle(float center_x, float center_y, float post_x, float post_y) {
 		float tmpv_x = post_x - center_x;
