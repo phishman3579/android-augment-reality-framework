@@ -62,7 +62,7 @@ public class PitchBearingCalculator {
 		looking.get(tmp);
 		float bearing = ((Utilities.getAngle(0, 0, tmp[0], tmp[2])  + 360 ) % 360);
 		bearingList.add(bearing);
-		if (bearingList.size()>=bearingListSize) bearingList.remove(0);
+		if (bearingList.size()>bearingListSize) bearingList.remove(0);
 		float adjBearing = 0;
 		for (float tempBearing : bearingList) {
 		    adjBearing += tempBearing;
@@ -75,7 +75,7 @@ public class PitchBearingCalculator {
 		looking.get(tmp);
 		float pitch = -Utilities.getAngle(0, 0, tmp[1], tmp[2]);
 		pitchList.add(pitch);
-	    if (pitchList.size()>=pitchListSize) pitchList.remove(0);
+	    if (pitchList.size()>pitchListSize) pitchList.remove(0);
 	    float adjPitch = 0;
 	    for (float tempPitch : pitchList) {
 	        adjPitch += tempPitch;
