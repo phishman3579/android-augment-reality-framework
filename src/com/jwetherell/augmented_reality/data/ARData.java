@@ -22,7 +22,7 @@ public abstract class ARData {
     private static final String TAG = "ARData";
 	private static final Map<String,Marker> markerList = new ConcurrentHashMap<String,Marker>();
     private static final AtomicBoolean dirty = new AtomicBoolean(false);
-    private static final float[] tmp = new float[3];
+    private static final float[] locationArray = new float[3];
     
     /*defaulting to our place*/
     public static final Location hardFix = new Location("ATL");
@@ -62,7 +62,10 @@ public abstract class ARData {
      * @param zoomProgress int representing the zoom progress.
      */
     public static void setZoomProgress(int zoomProgress) {
-        ARData.zoomProgress = zoomProgress;
+        if (ARData.zoomProgress != zoomProgress) {
+            ARData.zoomProgress = zoomProgress;
+            dirty.set(true);
+        }
     }
     
     /**
@@ -160,14 +163,13 @@ public abstract class ARData {
      */
     public static Collection<Marker> getMarkers() {
         //If markers we added, zero out the altitude to recompute the collision detection
-        if (dirty.get()) {
+        if (dirty.compareAndSet(true, false)) {
             Log.v(TAG, "DIRTY flag found, resetting all marker heights to zero.");
             for(Marker ma : markerList.values()) {
-                ma.getLocation().get(tmp);
-                tmp[1]=0;
-                ma.getLocation().set(tmp);
+                ma.getLocation().get(locationArray);
+                locationArray[1]=0;
+                ma.getLocation().set(locationArray);
             }
-            dirty.set(false);
         }
         return Collections.unmodifiableCollection(markerList.values());
     }
