@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
+
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.BuzzDataSource;
 import com.jwetherell.augmented_reality.data.LocalDataSource;
@@ -12,8 +12,10 @@ import com.jwetherell.augmented_reality.data.NetworkDataSource;
 import com.jwetherell.augmented_reality.data.TwitterDataSource;
 import com.jwetherell.augmented_reality.data.WikipediaDataSource;
 import com.jwetherell.augmented_reality.ui.Marker;
+
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -25,7 +27,7 @@ import android.widget.Toast;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Demo extends AugmentedReality {
-	private static final Logger logger = Logger.getLogger(Demo.class.getSimpleName());
+    private static final String TAG = "Demo";
 	private static final String locale = Locale.getDefault().getLanguage();
 	
 	private static Collection<NetworkDataSource> sources = null;    
@@ -86,7 +88,7 @@ public class Demo extends AugmentedReality {
 
     private void updateData(final double lat, final double lon, final double alt) {
     	if (thread!=null && thread.isAlive()) {
-    		logger.info("Not updating since in the process");
+    		Log.i(TAG,"Not updating since in the process");
     		return;
     	}
     	
@@ -94,11 +96,11 @@ public class Demo extends AugmentedReality {
     		new Runnable(){
 				@Override
 				public void run() {
-					logger.info("Start");
+					Log.i(TAG,"Start");
 					for (NetworkDataSource source : sources) {
 						download(source, lat, lon, alt);
 					}
-					logger.info("Stop");
+					Log.i(TAG,"Stop");
 				}
 			}
     	);
@@ -111,7 +113,7 @@ public class Demo extends AugmentedReality {
 		String url = null;
 		try {
 			url = source.createRequestURL(lat, lon, alt, ARData.getRadius(), locale);    	
-			logger.info(url);
+			Log.i(TAG,url);
 		} catch (NullPointerException e) {
 			return false;
 		}
@@ -123,7 +125,7 @@ public class Demo extends AugmentedReality {
 			return false;
 		}
     	
-    	logger.info(source.getClass().getSimpleName()+" size="+markers.size());
+    	Log.i(TAG,source.getClass().getSimpleName()+" size="+markers.size());
     	
     	ARData.addMarkers(markers);
     	return true;

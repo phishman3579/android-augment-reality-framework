@@ -2,7 +2,6 @@ package com.jwetherell.augmented_reality.activity;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Logger;
 
 import com.jwetherell.augmented_reality.common.Matrix;
 import com.jwetherell.augmented_reality.data.ARData;
@@ -18,6 +17,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 
 
 /**
@@ -26,7 +26,7 @@ import android.os.Bundle;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class SensorsActivity extends Activity implements SensorEventListener, LocationListener {
-    private static final Logger logger = Logger.getLogger(SensorsActivity.class.getSimpleName());    
+    private static final String TAG = "SensorsActivity";
     private static final AtomicBoolean computing = new AtomicBoolean(false); 
 
     private static final int MIN_TIME = 30*1000;
@@ -339,7 +339,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
 		if (sensor==null) throw new NullPointerException();
 		
         if(sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD && accuracy==SensorManager.SENSOR_STATUS_UNRELIABLE) {
-            logger.warning("Compass data unreliable");
+            Log.e(TAG, "Compass data unreliable");
         }
     }
 }

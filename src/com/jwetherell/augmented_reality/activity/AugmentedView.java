@@ -96,15 +96,13 @@ public class AugmentedView extends View {
 	        if (lastZoom != ARData.getZoomProgress()) currentTxtContainter = generateCurrentZoom(canvas);
 	        currentTxtContainter.paint(canvas);
 
-	        synchronized (ARData.getMarkerslock()) {
-    	        Collection<Marker> collection = ARData.getMarkers();
-    	        if (useCollisionDetection) collection = adjustForCollisions(canvas,collection);
-    	        //Draw AR markers
-    	        for (Marker marker : collection) {
-    	            marker.draw(canvas);
-    	        }
+	        Collection<Marker> collection = ARData.getMarkers();
+	        if (useCollisionDetection) collection = adjustForCollisions(canvas,collection);
+	        //Draw AR markers
+	        for (Marker marker : collection) {
+	            marker.draw(canvas);
 	        }
-            
+
 	        //Radar circle and radar markers
 	        radar.draw(canvas);
 	        drawing.set(false);

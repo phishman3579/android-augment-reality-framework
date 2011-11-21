@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.jwetherell.augmented_reality.common.Matrix;
 import com.jwetherell.augmented_reality.ui.Marker;
@@ -18,24 +18,24 @@ import android.location.Location;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public abstract class ARData {
-	private static final Logger logger = Logger.getLogger(ARData.class.getSimpleName());
-    private static final Map<String,Marker> markerList = new ConcurrentHashMap<String,Marker>();
-    private static final Object markersLock = new Object();
-
+	private static final Map<String,Marker> markerList = new ConcurrentHashMap<String,Marker>();
+    private static final AtomicBoolean dirty = new AtomicBoolean(false);
+    private static final float[] tmp = new float[3];
+    
     /*defaulting to our place*/
-    public static Location hardFix = new Location("ATL");
+    public static final Location hardFix = new Location("ATL");
     static {
         hardFix.setLatitude(39.931261);
         hardFix.setLongitude(-75.051267);
         hardFix.setAltitude(1);
     }
     
+    private static float radius = 20;
     private static String zoomLevel = null;
     private static int zoomProgress = 0;
-    private static float radius = 20;
     private static Location currentLocation = hardFix;
     private static Matrix rotationMatrix = null;
-    
+
 
     /**
      * Set the zoom level.
@@ -100,10 +100,8 @@ public abstract class ARData {
     }
     
     private static void onLocationChanged(Location location) {
-        synchronized (markersLock) {
-            for(Marker ma: markerList.values()) {
-                ma.calcRelativePosition(location);
-            }
+        for(Marker ma: markerList.values()) {
+            ma.calcRelativePosition(location);
         }
     }
     
@@ -137,17 +135,15 @@ public abstract class ARData {
      */
     public static void addMarkers(Collection<Marker> markers) {
     	if (markers==null) throw new NullPointerException();
-    	
-    	synchronized (markersLock) {
-        	logger.info("Marker before: "+markerList.size());
-            for(Marker ma : markers) {
-                if (!markerList.containsKey(ma.getName())) {
-                   	ma.calcRelativePosition(ARData.getCurrentLocation());
-                   	markerList.put(ma.getName(),ma);
-                }
-            }
-        	logger.info("Marker count: "+markerList.size());
+
+    	for(Marker marker : markers) {
+    	    if (!markerList.containsKey(marker.getName())) {
+    	        marker.calcRelativePosition(ARData.getCurrentLocation());
+    	        markerList.put(marker.getName(),marker);
+    	    }
     	}
+
+    	dirty.set(true);
     }
 
     /**
@@ -155,16 +151,15 @@ public abstract class ARData {
      * @return Collection of Markers.
      */
     public static Collection<Marker> getMarkers() {
-        synchronized (markersLock) {
-            return Collections.unmodifiableCollection(markerList.values());
+        //If markers we added, zero out the altitude to recompute the collision detection
+        if (dirty.get()) {
+            for(Marker ma : markerList.values()) {
+                ma.getLocation().get(tmp);
+                tmp[1]=0;
+                ma.getLocation().set(tmp);
+            }
+            dirty.set(false);
         }
-    }
-
-    /**
-     * The lock for the Markers collections
-     * @return Lock for the markers collections
-     */
-    public static Object getMarkerslock() {
-        return markersLock;
+        return Collections.unmodifiableCollection(markerList.values());
     }
 }

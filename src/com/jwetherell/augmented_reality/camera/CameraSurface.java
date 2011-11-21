@@ -2,11 +2,12 @@ package com.jwetherell.augmented_reality.camera;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
+
 import android.content.Context;
 import android.hardware.Camera;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
 
 /**
  * Represents the camera's surface and all the initialization involved with it.
@@ -17,8 +18,6 @@ import android.view.SurfaceView;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class CameraSurface extends SurfaceView implements SurfaceHolder.Callback {
-    private static final Logger logger = Logger.getLogger(CameraSurface.class.getSimpleName());
-
     private static SurfaceHolder holder = null;
     private static Camera camera = null;
 
@@ -116,7 +115,6 @@ public class CameraSurface extends SurfaceView implements SurfaceHolder.Callback
 
                 //preview form factor
                 float ff = (float)w/h;
-                logger.info("Screen res: w:"+ w + " h:" + h + " aspect ratio:" + ff);
 
                 //holder for the best form factor and size
                 float bff = 0;
@@ -139,18 +137,15 @@ public class CameraSurface extends SurfaceView implements SurfaceHolder.Callback
                     //preview width should be less than screen width
                     //preview width should be more than current bestw
                     //this combination will ensure that the highest resolution will win
-                    logger.info("Candidate camera element: w:"+ element.width + " h:" + element.height + " aspect ratio:" + cff);
                     if ((ff-cff <= ff-bff) && (element.width <= w) && (element.width >= bestw)) {
                         bff=cff;
                         bestw = element.width;
                         besth = element.height;
                     }
                 } 
-                logger.info("Chosen camera element: w:"+ bestw + " h:" + besth + " aspect ratio:" + bff);
                 //Some Samsung phones will end up with bestw and besth = 0 because their minimum preview size is bigger then the screen size.
                 //In this case, we use the default values: 480x320
                 if ((bestw == 0) || (besth == 0)){
-                    logger.info("Using default camera parameters!");
                     bestw = 480;
                     besth = 320;
                 }
