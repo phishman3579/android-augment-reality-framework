@@ -41,6 +41,77 @@ public class Matrix {
     private volatile float a1=0f, a2=0f, a3=0f;
     private volatile float b1=0f, b2=0f, b3=0f;
     private volatile float c1=0f, c2=0f, c3=0f;
+    
+    public Matrix() { }
+    
+    public Matrix(Matrix m) {
+        if (m==null) throw new NullPointerException();
+
+        set(m.a1,m. a2, m.a3, m.b1, m.b2, m.b3, m.c1, m.c2, m.c3);
+    }
+    
+    public synchronized float getA1() {
+        return a1;
+    }
+    public synchronized void setA1(float a1) {
+        this.a1 = a1;
+    }
+
+    public synchronized float getA2() {
+        return a2;
+    }
+    public synchronized void setA2(float a2) {
+        this.a2 = a2;
+    }
+
+    public synchronized float getA3() {
+        return a3;
+    }
+    public synchronized void setA3(float a3) {
+        this.a3 = a3;
+    }
+
+    public synchronized float getB1() {
+        return b1;
+    }
+    public synchronized void setB1(float b1) {
+        this.b1 = b1;
+    }
+
+    public synchronized float getB2() {
+        return b2;
+    }
+    public synchronized void setB2(float b2) {
+        this.b2 = b2;
+    }
+
+    public synchronized float getB3() {
+        return b3;
+    }
+    public synchronized void setB3(float b3) {
+        this.b3 = b3;
+    }
+
+    public synchronized float getC1() {
+        return c1;
+    }
+    public synchronized void setC1(float c1) {
+        this.c1 = c1;
+    }
+
+    public synchronized float getC2() {
+        return c2;
+    }
+    public synchronized void setC2(float c2) {
+        this.c2 = c2;
+    }
+
+    public synchronized float getC3() {
+        return c3;
+    }
+    public synchronized void setC3(float c3) {
+        this.c3 = c3;
+    }
 
     /**
      * Get the Matrix values.

@@ -42,7 +42,28 @@ public class Vector {
 		this(v.x, v.y, v.z);
 	}
 
-	/**
+	public synchronized float getX() {
+        return x;
+    }
+    public synchronized void setX(float x) {
+        this.x = x;
+    }
+
+    public synchronized float getY() {
+        return y;
+    }
+    public synchronized void setY(float y) {
+        this.y = y;
+    }
+
+    public synchronized float getZ() {
+        return z;
+    }
+    public synchronized void setZ(float z) {
+        this.z = z;
+    }
+
+    /**
 	 * Set the vector's values.
 	 * @param x float x value.
 	 * @param y float y value.
