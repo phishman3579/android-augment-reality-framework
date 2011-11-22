@@ -15,8 +15,8 @@ public class PaintableText extends PaintableObject {
     private String text = null;
     private int color = 0;
     private int size = 0;
-    private float w = 0;
-    private float h = 0;
+    private float width = 0;
+    private float height = 0;
     private boolean bg = false;
     
     public PaintableText(String text, int color, int size, boolean paintBackground) {
@@ -38,8 +38,8 @@ public class PaintableText extends PaintableObject {
         this.bg = paintBackground;
         this.color = color;
         this.size = size;
-        w = getTextWidth(text) + WIDTH_PAD * 2;
-        h = getTextAsc() + getTextDesc() + HEIGHT_PAD * 2;
+        this.width = getTextWidth(text) + WIDTH_PAD * 2;
+        this.height = getTextAsc() + getTextDesc() + HEIGHT_PAD * 2;
     }
 
 	/**
@@ -54,12 +54,12 @@ public class PaintableText extends PaintableObject {
         if (bg) {
             setColor(Color.rgb(0, 0, 0));
             setFill(true);
-            paintRect(canvas, -(w/2), -(h/2), w, h);
+            paintRect(canvas, -(width/2), -(height/2), width, height);
             setColor(Color.rgb(255, 255, 255));
             setFill(false);
-            paintRect(canvas, -(w/2), -(h/2), w, h);
+            paintRect(canvas, -(width/2), -(height/2), width, height);
         }
-        paintText(canvas, (WIDTH_PAD - w/2), (HEIGHT_PAD + getTextAsc() - h/2), text);
+        paintText(canvas, (WIDTH_PAD - width/2), (HEIGHT_PAD + getTextAsc() - height/2), text);
     }
 
 	/**
@@ -67,7 +67,7 @@ public class PaintableText extends PaintableObject {
 	 */
 	@Override
     public float getWidth() {
-        return w;
+        return width;
     }
 
 	/**
@@ -75,6 +75,6 @@ public class PaintableText extends PaintableObject {
 	 */
 	@Override
     public float getHeight() {
-        return h;
+        return height;
     }
 }

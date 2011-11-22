@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 
 
 /**
@@ -135,6 +136,20 @@ public abstract class PaintableObject {
      * Paint a bitmap on the given Canvas.
      * @param canvas Canvas to paint on.
      * @param bitmap Bitmap to paint.
+     * @param src Source rectangle.
+     * @param dst Destination rectangle.
+     * @throws NullPointerException if Canvas or Bitmap is NULL.
+     */
+    public void paintBitmap(Canvas canvas, Bitmap bitmap, Rect src, Rect dst) {
+        if (canvas==null || bitmap==null) throw new NullPointerException();
+        
+        canvas.drawBitmap(bitmap, src, dst, paint);
+    }
+    
+    /**
+     * Paint a bitmap on the given Canvas.
+     * @param canvas Canvas to paint on.
+     * @param bitmap Bitmap to paint.
      * @param left Left location to draw the bitmap.
      * @param top Top location to draw the bitmap.
      * @throws NullPointerException if Canvas or Bitmap is NULL.
@@ -190,10 +205,10 @@ public abstract class PaintableObject {
     	if (canvas==null || obj==null) throw new NullPointerException();
     	
         canvas.save();
-        canvas.translate(x + obj.getWidth() / 2, y + obj.getHeight() / 2);
+        canvas.translate(x+obj.getWidth()/2, y+obj.getHeight()/2);
         canvas.rotate(rotation);
-        canvas.scale(scale, scale);
-        canvas.translate(-(obj.getWidth() / 2), -(obj.getHeight() / 2));
+        canvas.scale(scale,scale);
+        canvas.translate(-(obj.getWidth()/2), -(obj.getHeight()/2));
         obj.paint(canvas);
         canvas.restore();
     }

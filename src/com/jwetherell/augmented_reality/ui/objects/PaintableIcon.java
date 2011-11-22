@@ -2,6 +2,7 @@ package com.jwetherell.augmented_reality.ui.objects;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 
 /**
  * This class extends PaintableObject to draw an icon.
@@ -10,9 +11,13 @@ import android.graphics.Canvas;
  */
 public class PaintableIcon extends PaintableObject {
     private Bitmap bitmap=null;
-
-    public PaintableIcon(Bitmap bitmap) {
-    	set(bitmap);
+    private int width = 0;
+    private int height = 0;
+    private Rect srcRect = new Rect();
+    private Rect dstRect = new Rect();
+    
+    public PaintableIcon(Bitmap bitmap, int width, int height) {
+    	set(bitmap,width,height);
     }
 
     /**
@@ -20,10 +25,14 @@ public class PaintableIcon extends PaintableObject {
      * @param bitmap Bitmap that should be rendered.
      * @throws NullPointerException if Bitmap is NULL.
      */
-    public void set(Bitmap bitmap) {
+    public void set(Bitmap bitmap, int width, int height) {
     	if (bitmap==null) throw new NullPointerException();
     	
         this.bitmap = bitmap;
+        this.width = width;
+        this.height = height;
+        srcRect.set(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        dstRect.set(0, 0, this.width, this.height);
     }
 
 	/**
@@ -32,8 +41,8 @@ public class PaintableIcon extends PaintableObject {
 	@Override
     public void paint(Canvas canvas) {
     	if (canvas==null || bitmap==null) throw new NullPointerException();
-    	
-        paintBitmap(canvas, bitmap, 0, 0);
+
+        paintBitmap(canvas, bitmap, srcRect, dstRect);
     }
 
 	/**
@@ -41,7 +50,7 @@ public class PaintableIcon extends PaintableObject {
 	 */
 	@Override
     public float getWidth() {
-        return bitmap.getWidth();
+        return width;
     }
 
 	/**
@@ -49,6 +58,6 @@ public class PaintableIcon extends PaintableObject {
 	 */
 	@Override
     public float getHeight() {
-        return bitmap.getHeight();
+        return height;
     }
 }

@@ -18,7 +18,7 @@ public class IconMarker extends Marker {
     public IconMarker(String name, double latitude, double longitude, double altitude, int color, Bitmap bitmap) {
         super(name, latitude, longitude, altitude, color);
         this.bitmap = bitmap;
-        icon = new PaintableIcon(bitmap);
+        icon = new PaintableIcon(bitmap,48,48);
     }
 
 	/**

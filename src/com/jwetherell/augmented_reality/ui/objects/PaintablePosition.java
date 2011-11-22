@@ -8,7 +8,7 @@ import android.graphics.Canvas;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class PaintablePosition extends PaintableObject {
-    private float myX=0, myY=0, width=0, height=0;
+    private float width=0, height=0;
     private float objX=0, objY=0, objRotation=0, objScale=0;
     private PaintableObject obj = null;
     
@@ -28,19 +28,13 @@ public class PaintablePosition extends PaintableObject {
     public void set(PaintableObject drawObj, float x, float y, float rotation, float scale) {
     	if (drawObj==null) throw new NullPointerException();
     	
-        obj = drawObj;
-        objX = x;
-        objY = y;
-        objRotation = rotation;
-        objScale = scale;
-        float w = obj.getWidth();
-        float h = obj.getHeight();
-
-        myX = w / 2;
-        myY = 0;
-
-        width = w;
-        height = h * 2;
+        this.obj = drawObj;
+        this.objX = x;
+        this.objY = y;
+        this.objRotation = rotation;
+        this.objScale = scale;
+        this.width = obj.getWidth();
+        this.height = obj.getWidth();
     }
     
     /**
@@ -52,23 +46,7 @@ public class PaintablePosition extends PaintableObject {
         objX = x;
         objY = y;
     }
-    
-    /**
-     * X coordinate of the Position.
-     * @return float X coordinate.
-     */
-    public float getX() {
-        return myX;
-    }
-    
-    /**
-     * Y coordinate of the Position.
-     * @return float Y coordinate.
-     */
-    public float getY() {
-        return myY;
-    }
-    
+
     /**
      * X coordinate of the Object.
      * @return float X coordinate.
@@ -116,6 +94,6 @@ public class PaintablePosition extends PaintableObject {
      */
     @Override
 	public String toString() {
-	    return "< x="+myX+" y="+myY+" objX="+objX+" objY="+objY+" width="+width+" height="+height+" >";
+	    return "< objX="+objX+" objY="+objY+" width="+width+" height="+height+" >";
 	}
 }

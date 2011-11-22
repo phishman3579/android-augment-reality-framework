@@ -50,7 +50,7 @@ public class PaintableGps extends PaintableObject {
 	 */
 	@Override
     public float getWidth() {
-        return radius;
+        return radius*2;
     }
 
 	/**
@@ -58,6 +58,6 @@ public class PaintableGps extends PaintableObject {
 	 */
 	@Override
     public float getHeight() {
-	    return radius;
+	    return radius*2;
     }
 }

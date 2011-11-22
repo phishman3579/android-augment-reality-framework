@@ -45,7 +45,7 @@ public class PaintableCircle extends PaintableObject {
 	 */
     @Override
     public float getWidth() {
-        return radius;
+        return radius*2;
     }
 
 	/**
@@ -53,6 +53,6 @@ public class PaintableCircle extends PaintableObject {
 	 */
     @Override
     public float getHeight() {
-        return radius;
+        return radius*2;
     }
 }

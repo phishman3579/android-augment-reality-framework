@@ -7,7 +7,7 @@ import com.jwetherell.augmented_reality.common.Utilities;
 import com.jwetherell.augmented_reality.common.Vector;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.PhysicalLocation;
-import com.jwetherell.augmented_reality.data.ScreenPosition;
+import com.jwetherell.augmented_reality.ui.objects.PaintableBox;
 import com.jwetherell.augmented_reality.ui.objects.PaintableBoxedText;
 import com.jwetherell.augmented_reality.ui.objects.PaintableGps;
 import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
@@ -36,14 +36,17 @@ public class Marker implements Comparable<Marker> {
     private final float[] distanceArray = new float[1];
     private final float[] symbolArray = new float[3];
     private final float[] textArray = new float[3];
+    private final float[] locationArray = new float[3];
     
     private volatile static CameraModel cam = null;
     
-    private volatile PaintableBoxedText textBlock = null;
-    private volatile PaintablePosition textContainer = null;    
-    private volatile PaintableGps gps = null;
+    private volatile PaintableBox touchBox = null;
+    private volatile PaintablePosition touchContainer = null;
     
-    private final ScreenPosition screenPosition = new ScreenPosition();
+    private volatile PaintableBoxedText textBlock = null;
+    private volatile PaintablePosition textContainer = null;
+    
+    private volatile PaintableGps gps = null;
 
     //Container for the circle or icon symbol
     protected volatile PaintablePosition symbolContainer = null;
@@ -68,6 +71,8 @@ public class Marker implements Comparable<Marker> {
     //Marker's default color
     protected int color = Color.WHITE;
 
+    private boolean debug = false;
+    
 	public Marker(String name, double latitude, double longitude, double altitude, int color) {
 		set(name, latitude, longitude, altitude, color);
 	}
@@ -198,31 +203,28 @@ public class Marker implements Comparable<Marker> {
 		textXyzRelativeToCameraView.set(tmpVector2);
 	}
 
-    private final float[] locationArray1 = new float[3];
-    private final float[] symbolArray2 = new float[3];
 	private synchronized void updateRadar() {
 		isOnRadar = false;
 
 		float range = ARData.getRadius() * 1000;
 		float scale = range / Radar.RADIUS;
-		locationXyzRelativeToPhysicalLocation.get(locationArray1);
-        float x = locationArray1[0] / scale;
-        float y = locationArray1[2] / scale;
-        symbolXyzRelativeToCameraView.get(symbolArray2);
-		if ((symbolArray2[2] < -1f) && ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS))) {
+		locationXyzRelativeToPhysicalLocation.get(locationArray);
+        float x = locationArray[0] / scale;
+        float y = locationArray[2] / scale;
+        symbolXyzRelativeToCameraView.get(symbolArray);
+		if ((symbolArray[2] < -1f) && ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS))) {
 			isOnRadar = true;
 		}
 	}
 
-	private final float[] symbolArray3 = new float[3];
     private synchronized void updateView() {
         isInView = false;
 
-        symbolXyzRelativeToCameraView.get(symbolArray3);
-        float x1 = symbolArray3[0] + (getWidth()/2);
-        float y1 = symbolArray3[1] + (getHeight()/2);
-        float x2 = symbolArray3[0] - (getWidth()/2);
-        float y2 = symbolArray3[1] - (getHeight()/2);
+        symbolXyzRelativeToCameraView.get(symbolArray);
+        float x1 = symbolArray[0] + (getWidth()/2);
+        float y1 = symbolArray[1] + (getHeight()/2);
+        float x2 = symbolArray[0] - (getWidth()/2);
+        float y2 = symbolArray[1] - (getHeight()/2);
         if (x1>=0 && 
             x2<=cam.getWidth() &&
             y1>=0 &&
@@ -258,25 +260,6 @@ public class Marker implements Comparable<Marker> {
     }
 
     /**
-     * Draw this Marker on the Canvas
-     * @param canvas Canvas to draw on.
-     * @throws NullPointerException if the Canvas is NULL.
-     */
-    public synchronized void draw(Canvas canvas) {
-		if (canvas==null) throw new NullPointerException();
-
-		//Calculate the visibility of this Marker
-	    update(canvas,0,0);
-	    
-	    //If not visible then do nothing
-	    if (!isOnRadar || !isInView) return;
-	    
-	    //Draw the Icon and Text
-	    drawIcon(canvas);
-	    drawText(canvas);
-	}
-
-    /**
      * Tell if the x/y position is on this marker (if the marker is visible)
      * @param x float x value.
      * @param y float y value.
@@ -297,36 +280,62 @@ public class Marker implements Comparable<Marker> {
         if (symbolContainer==null || textContainer==null) return false;
         
         symbolXyzRelativeToCameraView.get(symbolArray);
-        textXyzRelativeToCameraView.get(textArray);
-        float currentAngle = Utilities.getAngle(symbolArray[0], symbolArray[1], textArray[0], textArray[1]);
+        textXyzRelativeToCameraView.get(textArray);        
+        float x1 = symbolArray[0];
+        float y1 = symbolArray[1];
+        float x2 = textArray[0];
+        float y2 = textArray[1];
+        float adjX = (x1 + x2)/2;
+        float adjY = (y1 + y2)/2;
+        float adjW = (getWidth()/2);
+        float adjH = (getHeight()/2);
         
-        float x1 = (symbolArray[0] + textArray[0])/2;
-        float y1 = (symbolArray[1] + textArray[1])/2;
-        
-        float x2 = (symbolContainer.getX() + textContainer.getX())/2;
-        float y2 = (symbolContainer.getY() + textContainer.getY())/2;
-        
-        screenPosition.setX(x - x1);
-        screenPosition.setY(y - y1);
-        screenPosition.rotate(Math.toRadians(-(currentAngle + 90)));
-        screenPosition.setX(screenPosition.getX() + x2);
-        screenPosition.setY(screenPosition.getY() + y2);
-
-        float objX = x2 - (getWidth() / 2);
-        float objY = y2 - (getHeight() / 2);
-        float objW = getWidth();
-        float objH = getHeight();
-
-        if (screenPosition.getX() > objX && 
-            screenPosition.getX() < (objX + objW) && 
-            screenPosition.getY() > objY && 
-            screenPosition.getY() < (objY + objH)) 
-        {
-            return true;
-        }
+        if (x>=(adjX-adjW) && x<=(adjX+adjW) && y>=(adjY-adjH) && y<=(adjY+adjH)) return true;
         return false;
 	}
 
+    /**
+     * Draw this Marker on the Canvas
+     * @param canvas Canvas to draw on.
+     * @throws NullPointerException if the Canvas is NULL.
+     */
+    public synchronized void draw(Canvas canvas) {
+        if (canvas==null) throw new NullPointerException();
+
+        //Calculate the visibility of this Marker
+        update(canvas,0,0);
+        
+        //If not visible then do nothing
+        if (!isOnRadar || !isInView) return;
+        
+        //Draw the Icon and Text
+        if (debug) drawTouch(canvas);
+        drawIcon(canvas);
+        drawText(canvas);
+    }
+
+    protected synchronized void drawTouch(Canvas canvas) {
+        if (canvas==null) throw new NullPointerException();
+
+        symbolXyzRelativeToCameraView.get(symbolArray);
+        textXyzRelativeToCameraView.get(textArray);        
+        float x1 = symbolArray[0];
+        float y1 = symbolArray[1];
+        float x2 = textArray[0];
+        float y2 = textArray[1];
+        float currentAngle = Utilities.getAngle(x1, y1, x2, y2);
+        float adjW = (getWidth()/2);
+        float adjH = (getHeight()/2);
+        float adjX = ((x1 + x2)/2)-adjW;
+        float adjY = ((y1 + y2)/2)-adjH;
+
+        if (touchBox==null) touchBox = new PaintableBox(getWidth(),getHeight());
+        else touchBox.set(getWidth(),getHeight());
+        if (touchContainer==null) touchContainer = new PaintablePosition(touchBox, adjX, adjY, currentAngle, 1);
+        else touchContainer.set(touchBox, adjX, adjY, currentAngle, 1);
+        touchContainer.paint(canvas);
+    }
+    
     protected synchronized void drawIcon(Canvas canvas) {
     	if (canvas==null) throw new NullPointerException();
     	
