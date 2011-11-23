@@ -42,11 +42,26 @@ public class LocalDataSource extends DataSource{
         Marker home = new Marker("HOME", 39.95, -74.9, 0, Color.YELLOW);
         cachedMarkers.add(home);
         
+        Marker lon = new IconMarker("I am a really really long string which should wrap a number of times on the screen.", 
+                                 39.95335, -74.9223445, 
+                                 0, 
+                                 Color.MAGENTA,
+                                 icon);
+        cachedMarkers.add(lon);
+        Marker lon2 = new IconMarker("2: I am a really really long string which should wrap a number of times on the screen.", 
+                39.95334, -74.9223446, 
+                0, 
+                Color.MAGENTA,
+                icon);
+        cachedMarkers.add(lon2);
+
         for (int i=0; i<10; i++) {
-            Marker marker = new Marker("Test-"+i, 39.99, -75.33, 0, Color.LTGRAY);
-            //Marker marker = new IconMarker("Test-"+i, 39.99, -75.33, 0, Color.LTGRAY, icon);
+            Marker marker = null;
+            if (i%2==0) marker = new Marker("Test-"+i, 39.99, -75.33, 0, Color.LTGRAY);
+            marker = new IconMarker("Test-"+i, 39.99, -75.33, 0, Color.LTGRAY, icon);
             cachedMarkers.add(marker);
         }
+
         return cachedMarkers;
     }
 }

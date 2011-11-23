@@ -37,6 +37,7 @@ public class Marker implements Comparable<Marker> {
     private final float[] symbolArray = new float[3];
     private final float[] textArray = new float[3];
     private final float[] locationArray = new float[3];
+    private final float[] screenPositionArray = new float[3];
     
     private volatile static CameraModel cam = null;
 
@@ -265,15 +266,50 @@ public class Marker implements Comparable<Marker> {
     }
 
     /**
+     * Determines if the marker is on this Marker.
+     * @param marker Marker to test for overlap.
+     * @return True if the marker is on Marker.
+     */
+    public synchronized boolean isMarkerOnMarker(Marker marker) {
+        marker.getScreenPosition().get(screenPositionArray);
+        float x = screenPositionArray[0];
+        float y = screenPositionArray[1];
+        boolean middle = isPointOnMarker(x,y);
+        if (middle) return true;
+
+        float x1 = x - (marker.getWidth()/2);
+        float y1 = y;
+        boolean ul = isPointOnMarker(x1,y1);
+        if (ul) return true;
+        
+        float x2 = x + (marker.getWidth()/2);
+        float y2 = y;
+        boolean ur = isPointOnMarker(x2,y2);
+        if (ur) return true;
+        
+        float x3 = x - (marker.getWidth()/2);
+        float y3 = y + (marker.getHeight()/2);
+        boolean ll = isPointOnMarker(x3,y3);
+        if (ll) return true;
+        
+        float x4 = x + (marker.getWidth()/2);
+        float y4 = y + (marker.getHeight()/2);
+        boolean lr = isPointOnMarker(x4,y4);
+        if (lr) return true;
+        
+        return false;
+    }
+
+    /**
      * Determines if the point is on this Marker.
      * @param x X point.
      * @param y Y point.
      * @return True if the point is on Marker.
      */
 	public synchronized boolean isPointOnMarker(float x, float y) {
-        if (symbolContainer==null || textContainer==null) return false;
-        
-        symbolXyzRelativeToCameraView.get(symbolArray);
+	    if (symbolContainer==null) return false;
+	    
+	    symbolXyzRelativeToCameraView.get(symbolArray);
         textXyzRelativeToCameraView.get(textArray);        
         float x1 = symbolArray[0];
         float y1 = symbolArray[1];
@@ -283,6 +319,7 @@ public class Marker implements Comparable<Marker> {
         float adjY = (y1 + y2)/2;
         float adjW = (getWidth()/2);
         float adjH = (getHeight()/2);
+        adjY += adjH;
         
         if (x>=(adjX-adjW) && x<=(adjX+adjW) && y>=(adjY-adjH) && y<=(adjY+adjH)) 
             return true;
