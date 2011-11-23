@@ -34,7 +34,7 @@ public class PaintablePosition extends PaintableObject {
         this.objRotation = rotation;
         this.objScale = scale;
         this.width = obj.getWidth();
-        this.height = obj.getWidth();
+        this.height = obj.getHeight();
     }
     
     /**

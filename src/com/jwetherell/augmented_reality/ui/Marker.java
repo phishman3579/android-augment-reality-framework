@@ -7,9 +7,9 @@ import com.jwetherell.augmented_reality.common.Utilities;
 import com.jwetherell.augmented_reality.common.Vector;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.PhysicalLocation;
-import com.jwetherell.augmented_reality.ui.objects.PaintableBox;
 import com.jwetherell.augmented_reality.ui.objects.PaintableBoxedText;
 import com.jwetherell.augmented_reality.ui.objects.PaintableGps;
+import com.jwetherell.augmented_reality.ui.objects.PaintableObject;
 import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
 
 import android.graphics.Canvas;
@@ -39,16 +39,12 @@ public class Marker implements Comparable<Marker> {
     private final float[] locationArray = new float[3];
     
     private volatile static CameraModel cam = null;
-    
-    private volatile PaintableBox touchBox = null;
-    private volatile PaintablePosition touchContainer = null;
-    
-    private volatile PaintableBoxedText textBlock = null;
+
+    private volatile PaintableBoxedText textBox = null;
     private volatile PaintablePosition textContainer = null;
-    
-    private volatile PaintableGps gps = null;
 
     //Container for the circle or icon symbol
+    protected volatile PaintableObject gpsSymbol = null;
     protected volatile PaintablePosition symbolContainer = null;
     //Unique identifier of Marker
     protected String name = null;
@@ -71,8 +67,6 @@ public class Marker implements Comparable<Marker> {
     //Marker's default color
     protected int color = Color.WHITE;
 
-    private boolean debug = false;
-    
 	public Marker(String name, double latitude, double longitude, double altitude, int color) {
 		set(name, latitude, longitude, altitude, color);
 	}
@@ -153,15 +147,15 @@ public class Marker implements Comparable<Marker> {
     }
 
     public synchronized float getHeight() {
-        if (symbolContainer==null || textContainer==null) return 0f;
+        if (textContainer==null) return 0f;
         return symbolContainer.getHeight()+textContainer.getHeight();
     }
     
     public synchronized float getWidth() {
-        if (symbolContainer==null || textContainer==null) return 0f;
-        float symbol = symbolContainer.getWidth();
-        float text = textContainer.getWidth();
-        return (symbol>text)?symbol:text;
+        if (textContainer==null) return 0f;
+        float w1 = textContainer.getWidth();
+        float w2 = symbolContainer.getWidth();
+        return (w1>w2)?w1:w2;
     }
     
 	/**
@@ -290,7 +284,8 @@ public class Marker implements Comparable<Marker> {
         float adjW = (getWidth()/2);
         float adjH = (getHeight()/2);
         
-        if (x>=(adjX-adjW) && x<=(adjX+adjW) && y>=(adjY-adjH) && y<=(adjY+adjH)) return true;
+        if (x>=(adjX-adjW) && x<=(adjX+adjW) && y>=(adjY-adjH) && y<=(adjY+adjH)) 
+            return true;
         return false;
 	}
 
@@ -309,42 +304,18 @@ public class Marker implements Comparable<Marker> {
         if (!isOnRadar || !isInView) return;
         
         //Draw the Icon and Text
-        if (debug) drawTouch(canvas);
         drawIcon(canvas);
         drawText(canvas);
-    }
-
-    protected synchronized void drawTouch(Canvas canvas) {
-        if (canvas==null) throw new NullPointerException();
-
-        symbolXyzRelativeToCameraView.get(symbolArray);
-        textXyzRelativeToCameraView.get(textArray);        
-        float x1 = symbolArray[0];
-        float y1 = symbolArray[1];
-        float x2 = textArray[0];
-        float y2 = textArray[1];
-        float currentAngle = Utilities.getAngle(x1, y1, x2, y2);
-        float adjW = (getWidth()/2);
-        float adjH = (getHeight()/2);
-        float adjX = ((x1 + x2)/2)-adjW;
-        float adjY = ((y1 + y2)/2)-adjH;
-
-        if (touchBox==null) touchBox = new PaintableBox(getWidth(),getHeight());
-        else touchBox.set(getWidth(),getHeight());
-        if (touchContainer==null) touchContainer = new PaintablePosition(touchBox, adjX, adjY, currentAngle, 1);
-        else touchContainer.set(touchBox, adjX, adjY, currentAngle, 1);
-        touchContainer.paint(canvas);
     }
     
     protected synchronized void drawIcon(Canvas canvas) {
     	if (canvas==null) throw new NullPointerException();
     	
-        float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
-        if (gps==null) gps = new PaintableGps((maxHeight / 1.5f), (maxHeight / 10f), true, getColor());
+        if (gpsSymbol==null) gpsSymbol = new PaintableGps(36, 36, true, getColor());
         
         symbolXyzRelativeToCameraView.get(symbolArray);
-        if (symbolContainer==null) symbolContainer = new PaintablePosition(gps, symbolArray[0], symbolArray[1], 0, 1);
-        else symbolContainer.set(gps, symbolArray[0], symbolArray[1], 0, 1);
+        if (symbolContainer==null) symbolContainer = new PaintablePosition(gpsSymbol, symbolArray[0], symbolArray[1], 0, 1);
+        else symbolContainer.set(gpsSymbol, symbolArray[0], symbolArray[1], 0, 1);
         symbolContainer.paint(canvas);
     }
 
@@ -362,14 +333,14 @@ public class Marker implements Comparable<Marker> {
 	    textXyzRelativeToCameraView.get(textArray);
 	    symbolXyzRelativeToCameraView.get(symbolArray);
 	    float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
-	    if (textBlock==null) textBlock = new PaintableBoxedText(textStr, Math.round(maxHeight / 2f) + 1, 300);
-	    else textBlock.set(textStr, Math.round(maxHeight / 2f) + 1, 300);
-	    float x = textArray[0] - textBlock.getWidth() / 2;
+	    if (textBox==null) textBox = new PaintableBoxedText(textStr, Math.round(maxHeight / 2f) + 1, 300);
+	    else textBox.set(textStr, Math.round(maxHeight / 2f) + 1, 300);
+	    float x = textArray[0] - textBox.getWidth() / 2;
 	    float y = textArray[1] + maxHeight;
 	    float currentAngle = Utilities.getAngle(symbolArray[0], symbolArray[1], textArray[0], textArray[1]);
 	    float angle = currentAngle + 90;
-	    if (textContainer==null) textContainer = new PaintablePosition(textBlock, x, y, angle, 1);
-	    else textContainer.set(textBlock, x, y, angle, 1);
+	    if (textContainer==null) textContainer = new PaintablePosition(textBox, x, y, angle, 1);
+	    else textContainer.set(textBox, x, y, angle, 1);
 	    textContainer.paint(canvas);
 	}
 

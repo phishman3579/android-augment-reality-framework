@@ -21,7 +21,7 @@ import com.jwetherell.augmented_reality.ui.objects.PaintableText;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Radar {
-    public static final float RADIUS = 40;
+    public static final float RADIUS = 48;
     
     private static final int LINE_COLOR = Color.argb(150,0,0,220);
     private static final float PAD_X = 10;
