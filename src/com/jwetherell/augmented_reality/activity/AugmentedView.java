@@ -40,7 +40,7 @@ public class AugmentedView extends View {
     private static PaintablePosition currentTxtContainter = null;
     private static int lastZoom = 0;
     private static boolean useCollisionDetection = false;
-    private static final int COLLISION_ADJUSTMENT = 500;
+    private static final int COLLISION_ADJUSTMENT = 1000;
 
     public AugmentedView(Context context, boolean useCollisionDetection) {
         super(context);
@@ -121,7 +121,7 @@ public class AugmentedView extends View {
                 if (marker1.isMarkerOnMarker(marker2)) {
                     marker2.getLocation().get(locationArray);
                     float y = locationArray[1];
-                    float h = collisions*(marker1.getHeight()+COLLISION_ADJUSTMENT);
+                    float h = collisions*COLLISION_ADJUSTMENT;
                     locationArray[1] = y+h;
                     marker2.getLocation().set(locationArray);
                     collisions++;

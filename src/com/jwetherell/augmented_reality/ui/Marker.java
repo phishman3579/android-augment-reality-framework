@@ -278,12 +278,12 @@ public class Marker implements Comparable<Marker> {
         if (middle) return true;
 
         float x1 = x - (marker.getWidth()/2);
-        float y1 = y;
+        float y1 = y - (marker.getHeight()/2);
         boolean ul = isPointOnMarker(x1,y1);
         if (ul) return true;
         
         float x2 = x + (marker.getWidth()/2);
-        float y2 = y;
+        float y2 = y - (marker.getHeight()/2);
         boolean ur = isPointOnMarker(x2,y2);
         if (ur) return true;
         
