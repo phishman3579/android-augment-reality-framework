@@ -33,35 +33,21 @@ public class LocalDataSource extends DataSource{
     protected void createIcon(Resources res) {
         if (res==null) throw new NullPointerException();
         
-        icon=BitmapFactory.decodeResource(res, R.drawable.icon);
+        icon=BitmapFactory.decodeResource(res, R.drawable.black);
     }
     
     public List<Marker> getMarkers() {
-        Marker atl = new IconMarker("ATL", 39.931269, -75.051261, 0, Color.DKGRAY, icon);
+        Marker atl = new IconMarker("ATL", 41.413287, -75.639206, 100, Color.DKGRAY, icon);
         cachedMarkers.add(atl);
-        Marker home = new Marker("HOME", 39.95, -74.9, 0, Color.YELLOW);
+        Marker home = new Marker("HOME", 41.348838, -75.548773, 1000, Color.YELLOW);
         cachedMarkers.add(home);
         
-        Marker lon = new IconMarker("I am a really really long string which should wrap a number of times on the screen.", 
-                                 39.95335, -74.9223445, 
-                                 0, 
-                                 Color.MAGENTA,
-                                 icon);
-        cachedMarkers.add(lon);
-        Marker lon2 = new IconMarker("2: I am a really really long string which should wrap a number of times on the screen.", 
-                39.95334, -74.9223446, 
-                0, 
-                Color.MAGENTA,
-                icon);
-        cachedMarkers.add(lon2);
-
         for (int i=0; i<10; i++) {
             Marker marker = null;
-            if (i%2==0) marker = new Marker("Test-"+i, 39.99, -75.33, 0, Color.LTGRAY);
-            marker = new IconMarker("Test-"+i, 39.99, -75.33, 0, Color.LTGRAY, icon);
+            if (i%2==0) marker = new Marker("Test-"+i, 41.37093, -75.703801, 754, Color.LTGRAY);
+            else marker = new IconMarker("Test-"+i, 41.37093, -75.703801, 754, Color.LTGRAY, icon);
             cachedMarkers.add(marker);
         }
-
         return cachedMarkers;
     }
 }
