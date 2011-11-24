@@ -173,7 +173,7 @@ public abstract class ARData {
      * Get the Markers collection.
      * @return Collection of Markers.
      */
-    public static Collection<Marker> getMarkers() {
+    public static List<Marker> getMarkers() {
         //If markers we added, zero out the altitude to recompute the collision detection
         if (dirty.compareAndSet(true, false)) {
             Log.v(TAG, "DIRTY flag found, resetting all marker heights to zero.");
@@ -191,7 +191,7 @@ public abstract class ARData {
             cache.clear();
             cache.addAll(copy);
         }
-        return Collections.unmodifiableCollection(cache);
+        return Collections.unmodifiableList(cache);
     }
     
     private static final Comparator<Marker> comparator = new Comparator<Marker>() {

@@ -1,6 +1,7 @@
 package com.jwetherell.augmented_reality.activity;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -95,10 +96,13 @@ public class AugmentedView extends View {
 	        if (lastZoom != ARData.getZoomProgress()) currentTxtContainter = generateCurrentZoom(canvas);
 	        currentTxtContainter.paint(canvas);
 
-	        Collection<Marker> collection = ARData.getMarkers();
+	        List<Marker> collection = ARData.getMarkers();
 	        if (useCollisionDetection) collection = adjustForCollisions(canvas,collection);
-	        //Draw AR markers
-	        for (Marker marker : collection) {
+	        
+	        //Draw AR markers in reverse order since the last drawn should be the closest
+	        ListIterator<Marker> iter = collection.listIterator(collection.size());
+	        while (iter.hasPrevious()) {
+	            Marker marker = iter.previous();
 	            marker.draw(canvas);
 	        }
 
@@ -108,7 +112,7 @@ public class AugmentedView extends View {
         }
     }
 	
-	private static Collection<Marker> adjustForCollisions(Canvas canvas, Collection<Marker> collection) {
+	private static List<Marker> adjustForCollisions(Canvas canvas, List<Marker> collection) {
         TreeSet<Marker> updated = new TreeSet<Marker>();
         //Update the AR markers for collisions
         for (Marker marker1 : collection) {
