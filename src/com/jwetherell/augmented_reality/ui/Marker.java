@@ -38,6 +38,8 @@ public class Marker implements Comparable<Marker> {
     private final float[] textArray = new float[3];
     private final float[] locationArray = new float[3];
     private final float[] screenPositionArray = new float[3];
+
+    private float initialY = 0.0f;
     
     private volatile static CameraModel cam = null;
 
@@ -82,7 +84,7 @@ public class Marker implements Comparable<Marker> {
 	 */
 	public synchronized void set(String name, double latitude, double longitude, double altitude, int color) {
 		if (name==null) throw new NullPointerException();
-		
+
 		this.name = name;
 		this.physicalLocation.set(latitude,longitude,altitude);
 		this.color = color;
@@ -91,6 +93,7 @@ public class Marker implements Comparable<Marker> {
 		this.symbolXyzRelativeToCameraView.set(0, 0, 0);
 		this.textXyzRelativeToCameraView.set(0, 0, 0);
 		this.locationXyzRelativeToPhysicalLocation.set(0, 0, 0);
+		this.initialY = 0.0f;
 	}
 	
 	/**
@@ -107,6 +110,22 @@ public class Marker implements Comparable<Marker> {
      */
     public synchronized int getColor() {
     	return this.color;
+    }
+
+    /**
+     * Get the distance of this Marker from the current GPS position.
+     * @return double representing the distance of this Marker from the current GPS position.
+     */
+    public synchronized double getDistance() {
+        return this.distance;
+    }
+
+    /**
+     * Get the initial Y coordinate of this Marker. Used to reset after collision detection.
+     * @return float representing the initial Y coordinate of this Marker.
+     */
+    public synchronized float getInitialY() {
+        return this.initialY;
     }
 
     /**
@@ -237,13 +256,16 @@ public class Marker implements Comparable<Marker> {
     public synchronized void calcRelativePosition(Location location) {
 		if (location==null) throw new NullPointerException();
 		
+		// Update the markers distance based on the new location.
 	    updateDistance(location);
+	    
 		// An elevation of 0.0 probably means that the elevation of the
 		// POI is not known and should be set to the users GPS height
 		if (physicalLocation.getAltitude()==0.0) physicalLocation.setAltitude(location.getAltitude());
 		 
-		// compute the relative position vector from user position to POI location
+		// Compute the relative position vector from user position to POI location
 		PhysicalLocation.convLocationToVector(location, physicalLocation, locationXyzRelativeToPhysicalLocation);
+		this.initialY = locationXyzRelativeToPhysicalLocation.getY();
 		updateRadar();
     }
     

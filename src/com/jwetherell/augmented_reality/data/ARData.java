@@ -1,9 +1,13 @@
 package com.jwetherell.augmented_reality.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.jwetherell.augmented_reality.common.Matrix;
@@ -21,6 +25,7 @@ import android.util.Log;
 public abstract class ARData {
     private static final String TAG = "ARData";
 	private static final Map<String,Marker> markerList = new ConcurrentHashMap<String,Marker>();
+    private static final List<Marker> cache = new CopyOnWriteArrayList<Marker>();
     private static final AtomicBoolean dirty = new AtomicBoolean(false);
     private static final float[] locationArray = new float[3];
     
@@ -37,7 +42,6 @@ public abstract class ARData {
     private static int zoomProgress = 0;
     private static Location currentLocation = hardFix;
     private static Matrix rotationMatrix = null;
-
 
     /**
      * Set the zoom level.
@@ -64,7 +68,10 @@ public abstract class ARData {
     public static void setZoomProgress(int zoomProgress) {
         if (ARData.zoomProgress != zoomProgress) {
             ARData.zoomProgress = zoomProgress;
-            dirty.set(true);
+            if (dirty.compareAndSet(false, true)) {
+                Log.v(TAG, "Setting DIRTY flag!");
+                cache.clear();
+            }
         }
     }
     
@@ -100,6 +107,7 @@ public abstract class ARData {
     public static void setCurrentLocation(Location currentLocation) {
     	if (currentLocation==null) throw new NullPointerException();
     	
+    	Log.d(TAG, "current location. location="+currentLocation.toString());
         ARData.currentLocation = currentLocation;
         onLocationChanged(currentLocation);
     }
@@ -110,8 +118,10 @@ public abstract class ARData {
             ma.calcRelativePosition(location);
         }
 
-        Log.v(TAG, "Setting DIRTY flag!");
-        dirty.set(true);
+        if (dirty.compareAndSet(false, true)) {
+            Log.v(TAG, "Setting DIRTY flag!");
+            cache.clear();
+        }
     }
     
     /**
@@ -153,8 +163,10 @@ public abstract class ARData {
     	    }
     	}
 
-    	Log.v(TAG, "Setting DIRTY flag!");
-    	dirty.set(true);
+    	if (dirty.compareAndSet(false, true)) {
+    	    Log.v(TAG, "Setting DIRTY flag!");
+    	    cache.clear();
+    	}
     }
 
     /**
@@ -167,10 +179,28 @@ public abstract class ARData {
             Log.v(TAG, "DIRTY flag found, resetting all marker heights to zero.");
             for(Marker ma : markerList.values()) {
                 ma.getLocation().get(locationArray);
-                locationArray[1]=0;
+                locationArray[1]=ma.getInitialY();
                 ma.getLocation().set(locationArray);
             }
+
+            Log.v(TAG, "Populating the cache.");
+            List<Marker> copy = new ArrayList<Marker>();
+            copy.addAll(markerList.values());
+            Collections.sort(copy,comparator);
+            //The cache should be sorted from closest to farthest marker.
+            cache.clear();
+            cache.addAll(copy);
         }
-        return Collections.unmodifiableCollection(markerList.values());
+        return Collections.unmodifiableCollection(cache);
     }
+    
+    private static final Comparator<Marker> comparator = new Comparator<Marker>() {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int compare(Marker arg0, Marker arg1) {
+            return Double.compare(arg0.getDistance(),arg1.getDistance());
+        }
+    };
 }
