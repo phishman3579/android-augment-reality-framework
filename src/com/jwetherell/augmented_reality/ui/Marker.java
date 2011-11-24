@@ -341,7 +341,7 @@ public class Marker implements Comparable<Marker> {
         float adjY = (y1 + y2)/2;
         float adjW = (getWidth()/2);
         float adjH = (getHeight()/2);
-        adjY += 15; // A bit of a fudge factor to account for the distance between text and symbol
+        adjY += (adjH - 25); // A bit of a fudge factor to account for the distance between text and symbol
         
         if (x>=(adjX-adjW) && x<=(adjX+adjW) && y>=(adjY-adjH) && y<=(adjY+adjH)) 
             return true;
