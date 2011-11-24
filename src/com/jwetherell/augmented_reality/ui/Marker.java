@@ -161,6 +161,8 @@ public class Marker implements Comparable<Marker> {
         float x = (symbolArray[0] + textArray[0])/2;
         float y = (symbolArray[1] + textArray[1])/2;
         float z = (symbolArray[2] + textArray[2])/2;
+        // If the marker has been visible, use the text box to offset the position.
+        if (textBox!=null) y += (textBox.getHeight()/2);
         screenPositionVector.set(x, y, z);
         return screenPositionVector;
     }
@@ -306,23 +308,26 @@ public class Marker implements Comparable<Marker> {
         boolean middle = isPointOnMarker(x,y);
         if (middle) return true;
 
-        float x1 = x - (marker.getWidth()/2);
-        float y1 = y - (marker.getHeight()/2);
+        float adjW = marker.getWidth()/2;
+        float adjH = marker.getHeight()/2;
+        
+        float x1 = x - adjW;
+        float y1 = y - adjH;
         boolean ul = isPointOnMarker(x1,y1);
         if (ul) return true;
         
-        float x2 = x + (marker.getWidth()/2);
-        float y2 = y - (marker.getHeight()/2);
+        float x2 = x + adjW;
+        float y2 = y - adjH;
         boolean ur = isPointOnMarker(x2,y2);
         if (ur) return true;
         
-        float x3 = x - (marker.getWidth()/2);
-        float y3 = y + (marker.getHeight()/2);
+        float x3 = x - adjW;
+        float y3 = y + adjH;
         boolean ll = isPointOnMarker(x3,y3);
         if (ll) return true;
         
-        float x4 = x + (marker.getWidth()/2);
-        float y4 = y + (marker.getHeight()/2);
+        float x4 = x + adjW;
+        float y4 = y + adjH;
         boolean lr = isPointOnMarker(x4,y4);
         if (lr) return true;
         
@@ -336,22 +341,13 @@ public class Marker implements Comparable<Marker> {
      * @return True if the point is on Marker.
      */
 	public synchronized boolean isPointOnMarker(float x, float y) {
-	    symbolXyzRelativeToCameraView.get(symbolArray);
-        textXyzRelativeToCameraView.get(textArray);        
-        float x1 = symbolArray[0];
-        float y1 = symbolArray[1];
-        float x2 = textArray[0];
-        float y2 = textArray[1];
-        float adjX = (x1 + x2)/2;
-        float adjY = (y1 + y2)/2;
-        float width = getWidth();
-        float height = getHeight();
-        float adjWidth = width/2;
-        float adjHeight = height/2;
-        // If the marker has been visible, use the text box to offset the position.
-        if (textBox!=null) adjY += (textBox.getHeight()/2);
+        getScreenPosition().get(screenPositionArray);
+        float myX = screenPositionArray[0];
+        float myY = screenPositionArray[1];
+        float adjWidth = getWidth()/2;
+        float adjHeight = getHeight()/2;
 
-        if (x>=(adjX-adjWidth) && x<=(adjX+adjWidth) && y>=(adjY-adjHeight) && y<=(adjY+adjHeight)) 
+        if (x>=(myX-adjWidth) && x<=(myX+adjWidth) && y>=(myY-adjHeight) && y<=(myY+adjHeight)) 
             return true;
         
         return false;
