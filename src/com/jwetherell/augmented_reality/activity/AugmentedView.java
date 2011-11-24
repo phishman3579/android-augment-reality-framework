@@ -40,7 +40,7 @@ public class AugmentedView extends View {
     private static PaintablePosition currentTxtContainter = null;
     private static int lastZoom = 0;
     private static boolean useCollisionDetection = false;
-    private static final int COLLISION_ADJUSTMENT = 1000;
+    private static final int COLLISION_ADJUSTMENT = 500;
 
     public AugmentedView(Context context, boolean useCollisionDetection) {
         super(context);
