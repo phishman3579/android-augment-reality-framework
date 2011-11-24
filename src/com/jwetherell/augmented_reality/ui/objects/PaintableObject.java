@@ -120,8 +120,8 @@ public abstract class PaintableObject {
     /**
      * Paint a rectangle on the given Canvas.
      * @param canvas Canvas to paint on.
-     * @param x1 X location of the rectangle.
-     * @param y1 Y location of the rectangle.
+     * @param x X location of the rectangle.
+     * @param y Y location of the rectangle.
      * @param width Width of the rectangle.
      * @param height Height of the rectangle.
      * @throws NullPointerException if Canvas is NULL.
