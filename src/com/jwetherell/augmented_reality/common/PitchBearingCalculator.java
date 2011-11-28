@@ -18,9 +18,6 @@
  */
 package com.jwetherell.augmented_reality.common;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
  * A state class used to calculate bearing and pitch given a Matrix.
@@ -33,13 +30,9 @@ import java.util.List;
 public class PitchBearingCalculator {
 	private static final Vector looking = new Vector();
 	private static final float[] lookingArray = new float[3];
-	
-	private static final int bearingListSize = 3;
-	private static List<Float> bearingList = new ArrayList<Float>();
+
 	private static volatile float bearing = 0;
-	
-	private static final int pitchListSize = 3;
-	private static List<Float> pitchList = new ArrayList<Float>();
+
 	private static volatile float pitch = 0;
 
 	private PitchBearingCalculator() {};
@@ -59,26 +52,12 @@ public class PitchBearingCalculator {
 		looking.set(1, 0, 0);
 		looking.prod(rotationM);
 		looking.get(lookingArray);
-		float bearing = ((Utilities.getAngle(0, 0, lookingArray[0], lookingArray[2])  + 360 ) % 360);
-		bearingList.add(bearing);
-		if (bearingList.size()>bearingListSize) bearingList.remove(0);
-		float adjBearing = 0;
-		for (float tempBearing : bearingList) {
-		    adjBearing += tempBearing;
-		}
-		PitchBearingCalculator.bearing = adjBearing/bearingList.size();
+		PitchBearingCalculator.bearing = ((Utilities.getAngle(0, 0, lookingArray[0], lookingArray[2])  + 360 ) % 360);
 
 		rotationM.transpose();
 		looking.set(0, 1, 0);
 		looking.prod(rotationM);
 		looking.get(lookingArray);
-		float pitch = -Utilities.getAngle(0, 0, lookingArray[1], lookingArray[2]);
-		pitchList.add(pitch);
-	    if (pitchList.size()>pitchListSize) pitchList.remove(0);
-	    float adjPitch = 0;
-	    for (float tempPitch : pitchList) {
-	        adjPitch += tempPitch;
-	    }
-	    PitchBearingCalculator.pitch = adjPitch/pitchList.size();
+	    PitchBearingCalculator.pitch = -Utilities.getAngle(0, 0, lookingArray[1], lookingArray[2]);
 	}
 }

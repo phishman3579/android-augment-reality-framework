@@ -41,7 +41,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static final Matrix worldCoord = new Matrix();
     private static final Matrix magneticCompensatedCoord = new Matrix();
     private static final Matrix smoothed = new Matrix();
-    private static final Matrix history[] = new Matrix[10];
+    private static final Matrix history[] = new Matrix[5];
     private static final Matrix xAxisRotation = new Matrix();
     private static final Matrix mageticNorthCompensation = new Matrix();
 
