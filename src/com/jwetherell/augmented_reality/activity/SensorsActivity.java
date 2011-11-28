@@ -32,19 +32,18 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static final int MIN_TIME = 30*1000;
     private static final int MIN_DISTANCE = 10;
 
-    private static final float RTmp[] = new float[9]; //Temporary rotation matrix in Android format
+    private static final float temp[] = new float[9]; //Temporary rotation matrix in Android format
     private static final float Rot[] = new float[9]; //Final rotation matrix in Android format
     private static final float grav[] = new float[3]; //Gravity (a.k.a accelerometer data)
     private static final float mag[] = new float[3]; //Magnetic 
 
-    private static int rHistIdx = 0;
-    private static final Matrix tempR = new Matrix();
-    private static final Matrix finalR = new Matrix();
+    private static int historyIndex = 0;
+    private static final Matrix position = new Matrix();
+    private static final Matrix heading = new Matrix();
     private static final Matrix smoothR = new Matrix();
-    private static final Matrix histR[] = new Matrix[10];
-    private static final Matrix m1 = new Matrix();
-    private static final Matrix m2 = new Matrix();
-    private static final Matrix m3 = new Matrix();
+    private static final Matrix history[] = new Matrix[10];
+    private static final Matrix xAxisRotation = new Matrix();
+    private static final Matrix yAxisRotation = new Matrix();
     private static final Matrix mageticNorthCompensation = new Matrix();
 
     private static SensorManager sensorMgr = null;
@@ -75,7 +74,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         // [ 1, 0,   0    ]
         // [ 0, cos, -sin ]
         // [ 0, sin, cos  ]
-        m1.set( 1f, 
+        xAxisRotation.set( 1f, 
                 0f, 
                 0f, 
                 0f, 
@@ -85,25 +84,11 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                 (float) Math.sin(angleX), 
                 (float) Math.cos(angleX));
 
-        //Counter-clockwise rotation at -90 degrees around the x-axis
-        // [ 1, 0,   0    ]
-        // [ 0, cos, -sin ]
-        // [ 0, sin, cos  ]
-        m2.set( 1f, 
-                0f, 
-                0f, 
-                0f, 
-                (float) Math.cos(angleX), 
-                (float) -Math.sin(angleX), 
-                0f, 
-                (float) Math.sin(angleX), 
-                (float) Math.cos(angleX));
-        
         //Counter-clockwise rotation at -90 degrees around the y-axis
         // [ cos,  0, sin ]
         // [ 0,    1, 0   ]
         // [ -sin, 0, cos ]
-        m3.set( (float) Math.cos(angleY), 
+        yAxisRotation.set( (float) Math.cos(angleY), 
                 0f, 
                 (float) Math.sin(angleY),
                 0f, 
@@ -119,8 +104,8 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         mageticNorthCompensation.toIdentity();
 
         //Historic matrices to "smooth" the data
-        for (int i = 0; i < histR.length; i++) {
-            histR[i] = new Matrix();
+        for (int i = 0; i < history.length; i++) {
+            history[i] = new Matrix();
         }
         
         try {
@@ -169,14 +154,14 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                 // [ 0,    1, 0   ]
                 // [ -sin, 0, cos ]
                 mageticNorthCompensation.set( (float) Math.cos(angleY), 
-                        0f, 
-                        (float) Math.sin(angleY), 
-                        0f, 
-                        1f, 
-                        0f, 
-                        (float) -Math.sin(angleY), 
-                        0f, 
-                        (float) Math.cos(angleY));
+                                              0f, 
+                                              (float) Math.sin(angleY), 
+                                              0f, 
+                                              1f, 
+                                              0f, 
+                                              (float) -Math.sin(angleY), 
+                                              0f, 
+                                              (float) Math.cos(angleY));
 
             } catch (Exception ex) {
             	ex.printStackTrace();
@@ -246,52 +231,56 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
             mag[2] = evt.values[2];
         }
 
+        //// Find position relative to phone location ////
         //Get rotation and inclination matrices given the gravity and geomagnetic matrices
-        SensorManager.getRotationMatrix(RTmp, null, grav, mag);
+        SensorManager.getRotationMatrix(temp, null, grav, mag);
 
         //Translate the rotation matrices from X and -Z (landscape)
-        SensorManager.remapCoordinateSystem(RTmp, SensorManager.AXIS_X, SensorManager.AXIS_MINUS_Z, Rot);
+        SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_X, SensorManager.AXIS_MINUS_Z, Rot);
 
         //Convert from float[9] to Matrix
-        tempR.set(Rot[0], Rot[1], Rot[2], Rot[3], Rot[4], Rot[5], Rot[6], Rot[7], Rot[8]);
- 
+        position.set(Rot[0], Rot[1], Rot[2], Rot[3], Rot[4], Rot[5], Rot[6], Rot[7], Rot[8]);
+
+        //// Find position relative to camera heading ////
         //Identity matrix
         // [ 1, 0, 0 ]
         // [ 0, 1, 0 ]
         // [ 0, 0, 1 ]
-        finalR.toIdentity();
+        heading.toIdentity();
 
         //Multiply by the counter-clockwise rotation at the negative declination around the y-axis
-        finalR.prod(mageticNorthCompensation);
+        heading.prod(mageticNorthCompensation);
 
         //Multiply by the counter-clockwise rotation at -90 degrees around the x-axis
-        finalR.prod(m1);
+        heading.prod(xAxisRotation);
 
         //Multiply by the translated rotation matrix
-        finalR.prod(tempR);
+        heading.prod(position);
 
         //Multiply by the counter-clockwise rotation at -90 degrees around the y-axis
-        finalR.prod(m3);
+        heading.prod(yAxisRotation);
 
         //Multiply by the counter-clockwise rotation at -90 degrees around the x-axis
-        finalR.prod(m2);
+        heading.prod(xAxisRotation);
 
-        finalR.invert(); 
+        //Invert the matrix
+        heading.invert(); 
 
         //Start to smooth the data (catch a boundary case)
-        histR[rHistIdx].set(finalR);
-        rHistIdx++;
-        if (rHistIdx >= histR.length) rHistIdx = 0;
+        history[historyIndex].set(heading);
+
+        historyIndex++;
+        if (historyIndex >= history.length) historyIndex = 0;
 
         //Zero out the smoothed rotation matrix
         smoothR.set(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
         
         //Add the historic data
-        for (int i = 0; i < histR.length; i++) {
-            smoothR.add(histR[i]);
+        for (int i = 0; i < history.length; i++) {
+            smoothR.add(history[i]);
         }
         //Smooth the historic data
-        smoothR.mult(1 / (float) histR.length);
+        smoothR.mult(1 / (float) history.length);
 
         //Set the rotation matrix (used to translate all object from lat/lon to x/y/z)
         ARData.setRotationMatrix(smoothR);

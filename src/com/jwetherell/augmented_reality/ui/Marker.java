@@ -28,13 +28,13 @@ import android.util.Log;
 public class Marker implements Comparable<Marker> {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("@#");
         
-    private static final Vector originVector = new Vector(0, 0, 0);
-    private static final Vector upVector = new Vector(0, 1, 0);
+    private static final Vector symbolVector = new Vector(0, 0, 0);
+    private static final Vector textVector = new Vector(0, 1, 0);
 
     private final Vector screenPositionVector = new Vector();
-    private final Vector tmpVector1 = new Vector();
-    private final Vector tmpVector2 = new Vector();
-    private final Vector tmpVector3 = new Vector();
+    private final Vector tmpSymbolVector = new Vector();
+    private final Vector tmpVector = new Vector();
+    private final Vector tmpTextVector = new Vector();
     private final float[] distanceArray = new float[1];
     private final float[] symbolArray = new float[3];
     private final float[] textArray = new float[3];
@@ -201,29 +201,30 @@ public class Marker implements Comparable<Marker> {
     	cam.set(canvas.getWidth(), canvas.getHeight(), false);
         cam.setViewAngle(CameraModel.DEFAULT_VIEW_ANGLE);
         cam.setTransform(ARData.getRotationMatrix());
-        populateMatrices(originVector, cam, addX, addY);
+        populateMatrices(cam, addX, addY);
         updateRadar();
         updateView();
     }
 
-	private synchronized void populateMatrices(Vector original, CameraModel cam, float addX, float addY) {
-		if (original==null || cam==null) throw new NullPointerException();
+	private synchronized void populateMatrices(CameraModel cam, float addX, float addY) {
+		if (cam==null) throw new NullPointerException();
 		
-		// Temp properties
-		tmpVector1.set(original);
-		tmpVector3.set(upVector);
-		tmpVector1.add(locationXyzRelativeToPhysicalLocation);
-		tmpVector3.add(locationXyzRelativeToPhysicalLocation);
-		tmpVector1.sub(cam.getLco());
-		tmpVector3.sub(cam.getLco());
-		tmpVector1.prod(cam.getTransform());
-		tmpVector3.prod(cam.getTransform());
+		// Find symbol position
+		tmpSymbolVector.set(symbolVector);
+		tmpSymbolVector.add(locationXyzRelativeToPhysicalLocation);        
+        tmpSymbolVector.sub(cam.getLco());
+        tmpSymbolVector.prod(cam.getTransform());
+		
+        // Find the text position
+		tmpTextVector.set(textVector);
+		tmpTextVector.add(locationXyzRelativeToPhysicalLocation);
+		tmpTextVector.sub(cam.getLco());
+		tmpTextVector.prod(cam.getTransform());
 
-		tmpVector2.set(0, 0, 0);
-		cam.projectPoint(tmpVector1, tmpVector2, addX, addY);
-		symbolXyzRelativeToCameraView.set(tmpVector2);
-		cam.projectPoint(tmpVector3, tmpVector2, addX, addY);
-		textXyzRelativeToCameraView.set(tmpVector2);
+		cam.projectPoint(tmpSymbolVector, tmpVector, addX, addY);
+		symbolXyzRelativeToCameraView.set(tmpVector);
+		cam.projectPoint(tmpTextVector, tmpVector, addX, addY);
+		textXyzRelativeToCameraView.set(tmpVector);
 	}
 
 	private synchronized void updateRadar() {
