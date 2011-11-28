@@ -37,9 +37,11 @@ public abstract class ARData {
         hardFix.setAltitude(1);
     }
     
-    private static Float radius = new Float(20);
+    private static final Object radiusLock = new Object();
+    private static float radius = new Float(20);
     private static String zoomLevel = new String();
-    private static Integer zoomProgress = 0;
+    private static final Object zoomProgressLock = new Object();
+    private static int zoomProgress = 0;
     private static Location currentLocation = hardFix;
     private static Matrix rotationMatrix = new Matrix();
 
@@ -70,7 +72,7 @@ public abstract class ARData {
      * @param zoomProgress int representing the zoom progress.
      */
     public static void setZoomProgress(int zoomProgress) {
-        synchronized (ARData.zoomProgress) {
+        synchronized (ARData.zoomProgressLock) {
             if (ARData.zoomProgress != zoomProgress) {
                 ARData.zoomProgress = zoomProgress;
                 if (dirty.compareAndSet(false, true)) {
@@ -86,7 +88,7 @@ public abstract class ARData {
      * @return int representing the zoom progress.
      */
     public static int getZoomProgress() {
-        synchronized (ARData.zoomProgress) {
+        synchronized (ARData.zoomProgressLock) {
             return ARData.zoomProgress;
         }
     }
@@ -96,7 +98,7 @@ public abstract class ARData {
      * @param radius float representing the radar screen.
      */
     public static void setRadius(float radius) {
-        synchronized (ARData.radius) {
+        synchronized (ARData.radiusLock) {
             ARData.radius = radius;
         }
     }
@@ -106,7 +108,7 @@ public abstract class ARData {
      * @return float representing the radar screen.
      */
     public static float getRadius() {
-        synchronized (ARData.radius) {
+        synchronized (ARData.radiusLock) {
             return ARData.radius;
         }
     }
