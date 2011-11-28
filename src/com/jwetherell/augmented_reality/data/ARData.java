@@ -37,11 +37,11 @@ public abstract class ARData {
         hardFix.setAltitude(1);
     }
     
-    private static float radius = 20;
-    private static String zoomLevel = null;
-    private static int zoomProgress = 0;
+    private static Float radius = new Float(20);
+    private static String zoomLevel = new String();
+    private static Integer zoomProgress = 0;
     private static Location currentLocation = hardFix;
-    private static Matrix rotationMatrix = null;
+    private static Matrix rotationMatrix = new Matrix();
 
     /**
      * Set the zoom level.
@@ -50,7 +50,9 @@ public abstract class ARData {
     public static void setZoomLevel(String zoomLevel) {
     	if (zoomLevel==null) throw new NullPointerException();
     	
-        ARData.zoomLevel = zoomLevel;
+    	synchronized (ARData.zoomLevel) {
+    	    ARData.zoomLevel = zoomLevel;
+    	}
     }
     
     /**
@@ -58,7 +60,9 @@ public abstract class ARData {
      * @return String representing the zoom level.
      */
     public static String getZoomLevel() {
-        return zoomLevel;
+        synchronized (ARData.zoomLevel) {
+            return ARData.zoomLevel;
+        }
     }
     
     /**
@@ -66,11 +70,13 @@ public abstract class ARData {
      * @param zoomProgress int representing the zoom progress.
      */
     public static void setZoomProgress(int zoomProgress) {
-        if (ARData.zoomProgress != zoomProgress) {
-            ARData.zoomProgress = zoomProgress;
-            if (dirty.compareAndSet(false, true)) {
-                Log.v(TAG, "Setting DIRTY flag!");
-                cache.clear();
+        synchronized (ARData.zoomProgress) {
+            if (ARData.zoomProgress != zoomProgress) {
+                ARData.zoomProgress = zoomProgress;
+                if (dirty.compareAndSet(false, true)) {
+                    Log.v(TAG, "Setting DIRTY flag!");
+                    cache.clear();
+                }
             }
         }
     }
@@ -80,7 +86,9 @@ public abstract class ARData {
      * @return int representing the zoom progress.
      */
     public static int getZoomProgress() {
-        return zoomProgress;
+        synchronized (ARData.zoomProgress) {
+            return ARData.zoomProgress;
+        }
     }
     
     /**
@@ -88,7 +96,9 @@ public abstract class ARData {
      * @param radius float representing the radar screen.
      */
     public static void setRadius(float radius) {
-        ARData.radius = radius;
+        synchronized (ARData.radius) {
+            ARData.radius = radius;
+        }
     }
     
     /**
@@ -96,7 +106,9 @@ public abstract class ARData {
      * @return float representing the radar screen.
      */
     public static float getRadius() {
-        return radius;
+        synchronized (ARData.radius) {
+            return ARData.radius;
+        }
     }
     
     /**
@@ -108,7 +120,9 @@ public abstract class ARData {
     	if (currentLocation==null) throw new NullPointerException();
     	
     	Log.d(TAG, "current location. location="+currentLocation.toString());
-        ARData.currentLocation = currentLocation;
+    	synchronized (currentLocation) {
+    	    ARData.currentLocation = currentLocation;
+    	}
         onLocationChanged(currentLocation);
     }
     
@@ -129,7 +143,9 @@ public abstract class ARData {
      * @return Location representing the current location.
      */
     public static Location getCurrentLocation() {
-        return currentLocation;
+        synchronized (ARData.currentLocation) {
+            return ARData.currentLocation;
+        }
     }
     
     /**
@@ -137,7 +153,9 @@ public abstract class ARData {
      * @param rotationMatrix Matrix to use for rotation.
      */
     public static void setRotationMatrix(Matrix rotationMatrix) {
-        ARData.rotationMatrix = rotationMatrix;
+        synchronized (ARData.rotationMatrix) {
+            ARData.rotationMatrix = rotationMatrix;
+        }
     }
     
     /**
@@ -145,7 +163,9 @@ public abstract class ARData {
      * @return Matrix representing the rotation matrix.
      */
     public static Matrix getRotationMatrix() {
-        return rotationMatrix;
+        synchronized (ARData.rotationMatrix) {
+            return rotationMatrix;
+        }
     }
 
     /**
