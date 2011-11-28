@@ -38,12 +38,11 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static final float mag[] = new float[3]; //Magnetic 
 
     private static int historyIndex = 0;
-    private static final Matrix position = new Matrix();
-    private static final Matrix heading = new Matrix();
+    private static final Matrix worldCoord = new Matrix();
+    private static final Matrix magneticCompensatedCoord = new Matrix();
     private static final Matrix smoothR = new Matrix();
     private static final Matrix history[] = new Matrix[10];
     private static final Matrix xAxisRotation = new Matrix();
-    private static final Matrix yAxisRotation = new Matrix();
     private static final Matrix mageticNorthCompensation = new Matrix();
 
     private static SensorManager sensorMgr = null;
@@ -83,19 +82,6 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                 0f, 
                 (float) Math.sin(angleX), 
                 (float) Math.cos(angleX));
-
-        //Counter-clockwise rotation at -90 degrees around the y-axis
-        // [ cos,  0, sin ]
-        // [ 0,    1, 0   ]
-        // [ -sin, 0, cos ]
-        yAxisRotation.set( (float) Math.cos(angleY), 
-                0f, 
-                (float) Math.sin(angleY),
-                0f, 
-                1f, 
-                0f, 
-                (float) -Math.sin(angleY), 
-                0f, (float) Math.cos(angleY));
 
         //Identity matrix
         // [ 1, 0, 0 ]
@@ -231,43 +217,37 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
             mag[2] = evt.values[2];
         }
 
-        //// Find position relative to phone location ////
+        //// Find real world position relative to phone location ////
         //Get rotation and inclination matrices given the gravity and geomagnetic matrices
         SensorManager.getRotationMatrix(temp, null, grav, mag);
 
-        //Translate the rotation matrices from X and -Z (landscape)
-        SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_X, SensorManager.AXIS_MINUS_Z, Rot);
+        //Translate the rotation matrices from Y and X (landscape)
+        SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, Rot);
 
         //Convert from float[9] to Matrix
-        position.set(Rot[0], Rot[1], Rot[2], Rot[3], Rot[4], Rot[5], Rot[6], Rot[7], Rot[8]);
+        worldCoord.set(Rot[0], Rot[1], Rot[2], Rot[3], Rot[4], Rot[5], Rot[6], Rot[7], Rot[8]);
 
-        //// Find position relative to camera heading ////
+        //// Find position relative to magnetic north ////
         //Identity matrix
         // [ 1, 0, 0 ]
         // [ 0, 1, 0 ]
         // [ 0, 0, 1 ]
-        heading.toIdentity();
+        magneticCompensatedCoord.toIdentity();
 
         //Multiply by the counter-clockwise rotation at the negative declination around the y-axis
-        heading.prod(mageticNorthCompensation);
+        magneticCompensatedCoord.prod(mageticNorthCompensation);
 
         //Multiply by the counter-clockwise rotation at -90 degrees around the x-axis
-        heading.prod(xAxisRotation);
+        magneticCompensatedCoord.prod(xAxisRotation);
 
         //Multiply by the translated rotation matrix
-        heading.prod(position);
-
-        //Multiply by the counter-clockwise rotation at -90 degrees around the y-axis
-        heading.prod(yAxisRotation);
-
-        //Multiply by the counter-clockwise rotation at -90 degrees around the x-axis
-        heading.prod(xAxisRotation);
+        magneticCompensatedCoord.prod(worldCoord);
 
         //Invert the matrix
-        heading.invert(); 
+        magneticCompensatedCoord.invert(); 
 
         //Start to smooth the data (catch a boundary case)
-        history[historyIndex].set(heading);
+        history[historyIndex].set(magneticCompensatedCoord);
 
         historyIndex++;
         if (historyIndex >= history.length) historyIndex = 0;

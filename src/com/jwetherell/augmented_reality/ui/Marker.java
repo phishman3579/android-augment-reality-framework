@@ -200,7 +200,6 @@ public class Marker implements Comparable<Marker> {
     	if (cam==null) cam = new CameraModel(canvas.getWidth(), canvas.getHeight(), true);
     	cam.set(canvas.getWidth(), canvas.getHeight(), false);
         cam.setViewAngle(CameraModel.DEFAULT_VIEW_ANGLE);
-        cam.setTransform(ARData.getRotationMatrix());
         populateMatrices(cam, addX, addY);
         updateRadar();
         updateView();
@@ -209,17 +208,15 @@ public class Marker implements Comparable<Marker> {
 	private synchronized void populateMatrices(CameraModel cam, float addX, float addY) {
 		if (cam==null) throw new NullPointerException();
 		
-		// Find symbol position
+		// Find symbol position given the rotation matrix
 		tmpSymbolVector.set(symbolVector);
 		tmpSymbolVector.add(locationXyzRelativeToPhysicalLocation);        
-        tmpSymbolVector.sub(cam.getLco());
-        tmpSymbolVector.prod(cam.getTransform());
+        tmpSymbolVector.prod(ARData.getRotationMatrix());
 		
-        // Find the text position
+        // Find the text position given the rotation matrix
 		tmpTextVector.set(textVector);
 		tmpTextVector.add(locationXyzRelativeToPhysicalLocation);
-		tmpTextVector.sub(cam.getLco());
-		tmpTextVector.prod(cam.getTransform());
+		tmpTextVector.prod(ARData.getRotationMatrix());
 
 		cam.projectPoint(tmpSymbolVector, tmpVector, addX, addY);
 		symbolXyzRelativeToCameraView.set(tmpVector);

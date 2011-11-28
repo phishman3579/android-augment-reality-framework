@@ -1,7 +1,7 @@
 package com.jwetherell.augmented_reality.camera;
 
-import com.jwetherell.augmented_reality.common.Matrix;
 import com.jwetherell.augmented_reality.common.Vector;
+
 
 /**
  * Represents the camera and it's view. It also allows a user to project a point given this camera's view.
@@ -14,9 +14,6 @@ import com.jwetherell.augmented_reality.common.Vector;
 public class CameraModel {
     private static final float[] tmp1 = new float[3];
     private static final float[] tmp2 = new float[3];
-    
-	private static Matrix transform = new Matrix();
-	private static Vector lco = new Vector();
 
 	private int width = 0; 
 	private int height = 0;
@@ -42,12 +39,6 @@ public class CameraModel {
 	public void set(int width, int height, boolean init) {
 		this.width = width;
 		this.height = height;
-
-		if (init) {
-			transform.set(0, 0, 0, 0, 0, 0, 0, 0, 0);
-			transform.toIdentity();
-			lco.set(0, 0, 0);
-		}
 	}
 	
 	/**
@@ -65,39 +56,7 @@ public class CameraModel {
     public int getHeight() {
         return height;
     }
-    
-	/**
-	 * Get transformation matrix.
-	 * @return Matrix representation of the transformation.
-	 */
-	public Matrix getTransform() {
-		return transform;
-	}
-	
-	/**
-	 * Set the transformation matrix.
-	 * @param transform Matrix representing the transformation.
-	 */
-	public void setTransform(Matrix transform) {
-		CameraModel.transform = transform;
-	}
 
-	/**
-	 * Get the Vector LCO.
-	 * @return Vector representing the LCO.
-	 */
-	public Vector getLco() {
-		return lco;
-	}
-	
-	/**
-	 * Set the Vector LCO.
-	 * @param lco Vector representing the LCO.
-	 */
-	public void setLco(Vector lco) {
-		CameraModel.lco = lco;
-	}
-	
 	/**
 	 * Set the View Angle of the camera model.
 	 * @param viewAngle float representing the camera model.
