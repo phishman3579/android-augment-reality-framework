@@ -40,7 +40,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static int historyIndex = 0;
     private static final Matrix worldCoord = new Matrix();
     private static final Matrix magneticCompensatedCoord = new Matrix();
-    private static final Matrix smoothR = new Matrix();
+    private static final Matrix smoothed = new Matrix();
     private static final Matrix history[] = new Matrix[10];
     private static final Matrix xAxisRotation = new Matrix();
     private static final Matrix mageticNorthCompensation = new Matrix();
@@ -221,7 +221,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         //Get rotation and inclination matrices given the gravity and geomagnetic matrices
         SensorManager.getRotationMatrix(temp, null, grav, mag);
 
-        //Translate the rotation matrices from Y and X (landscape)
+        //Translate the rotation matrices from Y and -X (landscape)
         SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, Rot);
 
         //Convert from float[9] to Matrix
@@ -253,17 +253,17 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         if (historyIndex >= history.length) historyIndex = 0;
 
         //Zero out the smoothed rotation matrix
-        smoothR.set(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
+        smoothed.set(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
         
         //Add the historic data
         for (int i = 0; i < history.length; i++) {
-            smoothR.add(history[i]);
+            smoothed.add(history[i]);
         }
         //Smooth the historic data
-        smoothR.mult(1 / (float) history.length);
+        smoothed.mult(1 / (float) history.length);
 
         //Set the rotation matrix (used to translate all object from lat/lon to x/y/z)
-        ARData.setRotationMatrix(smoothR);
+        ARData.setRotationMatrix(smoothed);
         
         computing.set(false);
     }
