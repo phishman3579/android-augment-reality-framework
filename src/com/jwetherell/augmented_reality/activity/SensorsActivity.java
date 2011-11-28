@@ -33,7 +33,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static final int MIN_DISTANCE = 10;
 
     private static final float temp[] = new float[9]; //Temporary rotation matrix in Android format
-    private static final float Rot[] = new float[9]; //Final rotation matrix in Android format
+    private static final float rotation[] = new float[9]; //Final rotation matrix in Android format
     private static final float grav[] = new float[3]; //Gravity (a.k.a accelerometer data)
     private static final float mag[] = new float[3]; //Magnetic 
 
@@ -222,10 +222,10 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         SensorManager.getRotationMatrix(temp, null, grav, mag);
 
         //Translate the rotation matrices from Y and -X (landscape)
-        SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, Rot);
+        SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, rotation);
 
         //Convert from float[9] to Matrix
-        worldCoord.set(Rot[0], Rot[1], Rot[2], Rot[3], Rot[4], Rot[5], Rot[6], Rot[7], Rot[8]);
+        worldCoord.set(rotation[0], rotation[1], rotation[2], rotation[3], rotation[4], rotation[5], rotation[6], rotation[7], rotation[8]);
 
         //// Find position relative to magnetic north ////
         //Identity matrix
