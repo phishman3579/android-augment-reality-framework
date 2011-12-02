@@ -1,9 +1,9 @@
 package com.jwetherell.augmented_reality.activity;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -31,7 +31,7 @@ public class Demo extends AugmentedReality {
     private static final String locale = Locale.getDefault().getLanguage();
 
     private static ThreadPoolExecutor exeService = (ThreadPoolExecutor)Executors.newFixedThreadPool(1);
-	private static Collection<NetworkDataSource> sources = new ArrayList<NetworkDataSource>();    
+	private static Map<String,NetworkDataSource> sources = new ConcurrentHashMap<String,NetworkDataSource>();    
 
     
 	/**
@@ -47,11 +47,11 @@ public class Demo extends AugmentedReality {
 
         //Network
         NetworkDataSource twitter = new TwitterDataSource(this.getResources());
-        sources.add(twitter);
+        sources.put("twitter",twitter);
         NetworkDataSource wikipedia = new WikipediaDataSource(this.getResources());
-        sources.add(wikipedia);
+        sources.put("wiki",wikipedia);
         NetworkDataSource buzz = new BuzzDataSource(this.getResources());
-        sources.add(buzz);
+        sources.put("buzz",buzz);
     }
 
 	/**
@@ -103,7 +103,7 @@ public class Demo extends AugmentedReality {
     		new Runnable(){
 				@Override
 				public void run() {
-				    for (NetworkDataSource source : sources)
+				    for (NetworkDataSource source : sources.values())
 						download(source, lat, lon, alt);
 				}
 			}
