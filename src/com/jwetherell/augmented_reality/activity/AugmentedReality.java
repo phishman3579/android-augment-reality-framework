@@ -123,7 +123,7 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
             camScreen.invalidate();
         }
     };
-    
+
     private static float calcZoomLevel(){
         int myZoomLevel = myZoomBar.getProgress();
         float myout = 5;
@@ -145,7 +145,10 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
         return myout;
     }
 
-    private static void updateDataOnZoom() {
+    /**
+     * Called when the zoom bar has changed.
+     */
+    protected void updateDataOnZoom() {
         float zoomLevel = calcZoomLevel();
         ARData.setRadius(zoomLevel);
         ARData.setZoomLevel(FORMAT.format(zoomLevel));
