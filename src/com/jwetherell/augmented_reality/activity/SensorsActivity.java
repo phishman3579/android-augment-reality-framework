@@ -3,6 +3,7 @@ package com.jwetherell.augmented_reality.activity;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.jwetherell.augmented_reality.common.LowPassFilter;
 import com.jwetherell.augmented_reality.common.Matrix;
 import com.jwetherell.augmented_reality.data.ARData;
 
@@ -37,14 +38,12 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static final float grav[] = new float[3]; //Gravity (a.k.a accelerometer data)
     private static final float mag[] = new float[3]; //Magnetic 
 
-    private static int historyIndex = 0;
     private static final Matrix worldCoord = new Matrix();
     private static final Matrix magneticCompensatedCoord = new Matrix();
-    private static final Matrix smoothed = new Matrix();
-    private static final Matrix history[] = new Matrix[5];
     private static final Matrix xAxisRotation = new Matrix();
     private static final Matrix mageticNorthCompensation = new Matrix();
 
+    private static float smooth[] = new float[3];
     private static SensorManager sensorMgr = null;
     private static List<Sensor> sensors = null;
     private static Sensor sensorGrav = null;
@@ -89,11 +88,6 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         // [ 0, 0, 1 ]
         mageticNorthCompensation.toIdentity();
 
-        //Historic matrices to "smooth" the data
-        for (int i = 0; i < history.length; i++) {
-            history[i] = new Matrix();
-        }
-        
         try {
             sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 
@@ -206,19 +200,21 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
 	@Override
     public void onSensorChanged(SensorEvent evt) {
     	if (!computing.compareAndSet(false, true)) return;
-    	
+
         if (evt.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            grav[0] = evt.values[0];
-            grav[1] = evt.values[1];
-            grav[2] = evt.values[2];
+            smooth = LowPassFilter.filter(evt.values, grav);
+            grav[0] = smooth[0];
+            grav[1] = smooth[1];
+            grav[2] = smooth[2];
         } else if (evt.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-            mag[0] = evt.values[0];
-            mag[1] = evt.values[1];
-            mag[2] = evt.values[2];
+            smooth = LowPassFilter.filter(evt.values, mag);
+            mag[0] = smooth[0];
+            mag[1] = smooth[1];
+            mag[2] = smooth[2];
         }
 
         //// Find real world position relative to phone location ////
-        //Get rotation and inclination matrices given the gravity and geomagnetic matrices
+        //Get rotation matrix given the gravity and geomagnetic matrices
         SensorManager.getRotationMatrix(temp, null, grav, mag);
 
         //Translate the rotation matrices from Y and -X (landscape)
@@ -246,24 +242,8 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         //Invert the matrix
         magneticCompensatedCoord.invert(); 
 
-        //Start to smooth the data (catch a boundary case)
-        history[historyIndex].set(magneticCompensatedCoord);
-
-        historyIndex++;
-        if (historyIndex >= history.length) historyIndex = 0;
-
-        //Zero out the smoothed rotation matrix
-        smoothed.set(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
-        
-        //Add the historic data
-        for (int i = 0; i < history.length; i++) {
-            smoothed.add(history[i]);
-        }
-        //Smooth the historic data
-        smoothed.mult(1 / (float) history.length);
-
         //Set the rotation matrix (used to translate all object from lat/lon to x/y/z)
-        ARData.setRotationMatrix(smoothed);
+        ARData.setRotationMatrix(magneticCompensatedCoord);
         
         computing.set(false);
     }
