@@ -84,12 +84,6 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                 (float) Math.sin(angleX), 
                 (float) Math.cos(angleX));
 
-        //Identity matrix
-        // [ 1, 0, 0 ]
-        // [ 0, 1, 0 ]
-        // [ 0, 0, 1 ]
-        mageticNorthCompensation.toIdentity();
-
         try {
             sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 
@@ -106,7 +100,6 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
             locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
 
             try {
-
 
                 try {
                     Location gps=locationMgr.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -126,28 +119,35 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                                            (float) ARData.getCurrentLocation().getAltitude(), 
                                            System.currentTimeMillis());
                 angleY = Math.toRadians(-gmf.getDeclination());
-                
-                //Counter-clockwise rotation at negative declination around the y-axis
-                //note: declination of the horizontal component of the magnetic field
-                //      from true north, in degrees (i.e. positive means the magnetic 
-                //      field is rotated east that much from true north). 
-                //note2: declination is the difference between true north and magnetic north
-                // [ cos,  0, sin ]
-                // [ 0,    1, 0   ]
-                // [ -sin, 0, cos ]
-                mageticNorthCompensation.set( (float) Math.cos(angleY), 
-                                              0f, 
-                                              (float) Math.sin(angleY), 
-                                              0f, 
-                                              1f, 
-                                              0f, 
-                                              (float) -Math.sin(angleY), 
-                                              0f, 
-                                              (float) Math.cos(angleY));
 
-                //Rotate the matrix to match the orientation
-                mageticNorthCompensation.prod(xAxisRotation);
-                
+                synchronized (mageticNorthCompensation) {
+                    //Identity matrix
+                    // [ 1, 0, 0 ]
+                    // [ 0, 1, 0 ]
+                    // [ 0, 0, 1 ]
+                    mageticNorthCompensation.toIdentity();
+    
+                    //Counter-clockwise rotation at negative declination around the y-axis
+                    //note: declination of the horizontal component of the magnetic field
+                    //      from true north, in degrees (i.e. positive means the magnetic 
+                    //      field is rotated east that much from true north). 
+                    //note2: declination is the difference between true north and magnetic north
+                    // [ cos,  0, sin ]
+                    // [ 0,    1, 0   ]
+                    // [ -sin, 0, cos ]
+                    mageticNorthCompensation.set( (float) Math.cos(angleY), 
+                                                  0f, 
+                                                  (float) Math.sin(angleY), 
+                                                  0f, 
+                                                  1f, 
+                                                  0f, 
+                                                  (float) -Math.sin(angleY), 
+                                                  0f, 
+                                                  (float) Math.cos(angleY));
+    
+                    //Rotate the matrix to match the orientation
+                    mageticNorthCompensation.prod(xAxisRotation);
+                }
             } catch (Exception ex) {
             	ex.printStackTrace();
             }
@@ -243,8 +243,10 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         // [ 0, 0, 1 ]
         magneticCompensatedCoord.toIdentity();
 
-        //Cross product the matrix with the magnetic north compensation
-        magneticCompensatedCoord.prod(mageticNorthCompensation);
+        synchronized (mageticNorthCompensation) {
+            //Cross product the matrix with the magnetic north compensation
+            magneticCompensatedCoord.prod(mageticNorthCompensation);
+        }
 
         //Cross product with the world coordinates
         magneticCompensatedCoord.prod(worldCoord);
@@ -295,18 +297,22 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         
         double angleY = Math.toRadians(-gmf.getDeclination());
 
-        mageticNorthCompensation.set((float) Math.cos(angleY), 
-                                     0f, 
-                                     (float) Math.sin(angleY), 
-                                     0f, 
-                                     1f, 
-                                     0f, 
-                                     (float) -Math.sin(angleY), 
-                                     0f, 
-                                     (float) Math.cos(angleY));
-
-        //Rotate the matrix to match the orientation
-        mageticNorthCompensation.prod(xAxisRotation);
+        synchronized (mageticNorthCompensation) {
+            mageticNorthCompensation.toIdentity();
+            
+            mageticNorthCompensation.set((float) Math.cos(angleY), 
+                                         0f, 
+                                         (float) Math.sin(angleY), 
+                                         0f, 
+                                         1f, 
+                                         0f, 
+                                         (float) -Math.sin(angleY), 
+                                         0f, 
+                                         (float) Math.cos(angleY));
+    
+            //Rotate the matrix to match the orientation
+            mageticNorthCompensation.prod(xAxisRotation);
+        }
     }
 
 	/**
