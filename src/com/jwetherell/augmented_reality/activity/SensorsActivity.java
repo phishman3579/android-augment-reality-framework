@@ -43,7 +43,8 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static final Matrix magneticCompensatedCoord = new Matrix();
     private static final Matrix xAxisRotation = new Matrix();
     private static final Matrix mageticNorthCompensation = new Matrix();
-
+    
+    private static GeomagneticField gmf = null;
     private static float smooth[] = new float[3];
     private static SensorManager sensorMgr = null;
     private static List<Sensor> sensors = null;
@@ -120,10 +121,10 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                     onLocationChanged(ARData.hardFix);
                 }
 
-                GeomagneticField gmf = new GeomagneticField((float) ARData.getCurrentLocation().getLatitude(), 
-                                                            (float) ARData.getCurrentLocation().getLongitude(),
-                                                            (float) ARData.getCurrentLocation().getAltitude(), 
-                                                            System.currentTimeMillis());
+                gmf = new GeomagneticField((float) ARData.getCurrentLocation().getLatitude(), 
+                                           (float) ARData.getCurrentLocation().getLongitude(),
+                                           (float) ARData.getCurrentLocation().getAltitude(), 
+                                           System.currentTimeMillis());
                 angleY = Math.toRadians(-gmf.getDeclination());
                 
                 //Counter-clockwise rotation at negative declination around the y-axis
@@ -144,6 +145,9 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                                               0f, 
                                               (float) Math.cos(angleY));
 
+                //Rotate the matrix to match the orientation
+                mageticNorthCompensation.prod(xAxisRotation);
+                
             } catch (Exception ex) {
             	ex.printStackTrace();
             }
@@ -228,7 +232,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         ARData.setAzimuth(floatAzimuth);
         ARData.setPitch((float)Math.toDegrees(apr[1]));
         ARData.setRoll((float)Math.toDegrees(apr[2]));
-        
+
         //Convert from float[9] to Matrix
         worldCoord.set(rotation[0], rotation[1], rotation[2], rotation[3], rotation[4], rotation[5], rotation[6], rotation[7], rotation[8]);
 
@@ -239,13 +243,10 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         // [ 0, 0, 1 ]
         magneticCompensatedCoord.toIdentity();
 
-        //Multiply by the counter-clockwise rotation at the negative declination around the y-axis
+        //Cross product the matrix with the magnetic north compensation
         magneticCompensatedCoord.prod(mageticNorthCompensation);
 
-        //Multiply by the counter-clockwise rotation at -90 degrees around the x-axis
-        magneticCompensatedCoord.prod(xAxisRotation);
-
-        //Multiply by the translated rotation matrix
+        //Cross product with the world coordinates
         magneticCompensatedCoord.prod(worldCoord);
 
         //Invert the matrix
@@ -253,7 +254,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
 
         //Set the rotation matrix (used to translate all object from lat/lon to x/y/z)
         ARData.setRotationMatrix(magneticCompensatedCoord);
-        
+
         computing.set(false);
     }
 
@@ -287,6 +288,25 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
 	@Override
     public void onLocationChanged(Location location) {
         ARData.setCurrentLocation(location);
+        gmf = new GeomagneticField((float) ARData.getCurrentLocation().getLatitude(), 
+                (float) ARData.getCurrentLocation().getLongitude(),
+                (float) ARData.getCurrentLocation().getAltitude(), 
+                System.currentTimeMillis());
+        
+        double angleY = Math.toRadians(-gmf.getDeclination());
+
+        mageticNorthCompensation.set((float) Math.cos(angleY), 
+                                     0f, 
+                                     (float) Math.sin(angleY), 
+                                     0f, 
+                                     1f, 
+                                     0f, 
+                                     (float) -Math.sin(angleY), 
+                                     0f, 
+                                     (float) Math.cos(angleY));
+
+        //Rotate the matrix to match the orientation
+        mageticNorthCompensation.prod(xAxisRotation);
     }
 
 	/**
