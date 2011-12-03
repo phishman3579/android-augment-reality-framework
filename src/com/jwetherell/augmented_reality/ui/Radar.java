@@ -4,7 +4,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 
 import com.jwetherell.augmented_reality.camera.CameraModel;
-import com.jwetherell.augmented_reality.common.PitchBearingCalculator;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.ScreenPosition;
 import com.jwetherell.augmented_reality.ui.objects.PaintableCircle;
@@ -56,7 +55,7 @@ public class Radar {
     	if (canvas==null) throw new NullPointerException();
 
     	//Update the pitch and bearing using the phone's rotation matrix
-    	PitchBearingCalculator.calcPitchBearing(ARData.getRotationMatrix());
+    	//PitchBearingCalculator.calcPitchBearing(ARData.getRotationMatrix());
 
         //Update the radar graphics and text based upon the new pitch and bearing
         drawRadarCircle(canvas);
@@ -84,13 +83,13 @@ public class Radar {
         	pointsContainer = new PaintablePosition( radarPoints, 
                                                      PAD_X, 
                                                      PAD_Y, 
-                                                     -PitchBearingCalculator.getBearing(), 
+                                                     -ARData.getAzimuth(), 
                                                      1);
         else 
         	pointsContainer.set(radarPoints, 
                     			PAD_X, 
                     			PAD_Y, 
-                    			-PitchBearingCalculator.getBearing(), 
+                    			-ARData.getAzimuth(), 
                     			1);
         
         pointsContainer.paint(canvas);
@@ -138,7 +137,7 @@ public class Radar {
     	if (canvas==null) throw new NullPointerException();
     	
         //Direction text
-        int range = (int) (PitchBearingCalculator.getBearing() / (360f / 16f)); 
+        int range = (int) (ARData.getAzimuth() / (360f / 16f)); 
         String  dirTxt = "";
         if (range == 15 || range == 0) dirTxt = "N"; 
         else if (range == 1 || range == 2) dirTxt = "NE"; 
@@ -148,7 +147,7 @@ public class Radar {
         else if (range == 9 || range == 10) dirTxt = "SW"; 
         else if (range == 11 || range == 12) dirTxt = "W"; 
         else if (range == 13 || range == 14) dirTxt = "NW";
-        int bearing = (int) PitchBearingCalculator.getBearing(); 
+        int bearing = (int) ARData.getAzimuth(); 
         radarText(  canvas, 
                     ""+bearing+((char)176)+" "+dirTxt, 
                     (PAD_X + RADIUS), 

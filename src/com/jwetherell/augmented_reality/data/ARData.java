@@ -44,6 +44,12 @@ public abstract class ARData {
     private static int zoomProgress = 0;
     private static Location currentLocation = hardFix;
     private static Matrix rotationMatrix = new Matrix();
+    private static final Object azimuthLock = new Object();
+    private static float azimuth = 0;
+    private static final Object pitchLock = new Object();
+    private static float pitch = 0;
+    private static final Object rollLock = new Object();
+    private static float roll = 0;
 
     /**
      * Set the zoom level.
@@ -225,4 +231,64 @@ public abstract class ARData {
             return Double.compare(arg0.getDistance(),arg1.getDistance());
         }
     };
+    
+    /**
+     * Set the current Azimuth.
+     * @param azimuth float representing the azimuth.
+     */
+    public static void setAzimuth(float azimuth) {
+        synchronized (azimuthLock) {
+            ARData.azimuth = azimuth;
+        }
+    }
+    
+    /**
+     * Get the current Azimuth.
+     * @return azimuth float representing the azimuth.
+     */
+    public static float getAzimuth() {
+        synchronized (azimuthLock) {
+            return ARData.azimuth;
+        }
+    }
+    
+    /**
+     * Set the current Pitch.
+     * @param pitch float representing the pitch.
+     */
+    public static void setPitch(float pitch) {
+        synchronized (pitchLock) {
+            ARData.pitch = pitch;
+        }
+    }
+    
+    /**
+     * Get the current Pitch.
+     * @return pitch float representing the pitch.
+     */
+    public static float getPitch() {
+        synchronized (pitchLock) {
+            return ARData.pitch;
+        }
+    }
+    
+    /**
+     * Set the current Roll.
+     * @param roll float representing the roll.
+     */
+    public static void setRoll(float roll) {
+        synchronized (rollLock) {
+            ARData.roll = roll;
+        }
+    }
+    
+    /**
+     * Get the current Roll.
+     * @return roll float representing the roll.
+     */
+    public static float getRoll() {
+        synchronized (rollLock) {
+            return ARData.roll;
+        }
+    }
 }
