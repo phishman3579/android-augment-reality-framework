@@ -3,9 +3,12 @@ package com.jwetherell.augmented_reality.activity;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.BuzzDataSource;
@@ -17,6 +20,7 @@ import com.jwetherell.augmented_reality.ui.Marker;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -28,10 +32,11 @@ import android.widget.Toast;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Demo extends AugmentedReality {
+    private static final String TAG = "Demo";
     private static final String locale = Locale.getDefault().getLanguage();
-
-    private static ThreadPoolExecutor exeService = (ThreadPoolExecutor)Executors.newFixedThreadPool(1);
-	private static Map<String,NetworkDataSource> sources = new ConcurrentHashMap<String,NetworkDataSource>();    
+    private static final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(1);
+    private static final ThreadPoolExecutor exeService = new ThreadPoolExecutor(1, 1, 20, TimeUnit.SECONDS, queue);
+	private static final Map<String,NetworkDataSource> sources = new ConcurrentHashMap<String,NetworkDataSource>();    
 
     
 	/**
@@ -96,18 +101,21 @@ public class Demo extends AugmentedReality {
 	}
     
     private void updateData(final double lat, final double lon, final double alt) {
-        int size = exeService.getQueue().size();
-        if (size>=1) return;
-        
-    	exeService.execute(
-    		new Runnable(){
-				@Override
-				public void run() {
-				    for (NetworkDataSource source : sources.values())
-						download(source, lat, lon, alt);
-				}
-			}
-    	);
+        try {
+            exeService.execute(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        for (NetworkDataSource source : sources.values())
+                            download(source, lat, lon, alt);
+                    }
+                }
+            );
+        } catch (RejectedExecutionException rej) {
+            Log.w(TAG, "Not running new download Runnable, queue is full.");
+        } catch (Exception e) {
+            Log.e(TAG, "Exception running download Runnable.",e);
+        }
     }
     
     private static boolean download(NetworkDataSource source, double lat, double lon, double alt) {

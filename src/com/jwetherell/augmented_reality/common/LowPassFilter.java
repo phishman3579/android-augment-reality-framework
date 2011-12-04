@@ -15,7 +15,7 @@ public class LowPassFilter {
      * 0 ≤ α ≤ 1 ; a smaller value basically means more smoothing
      * See: http://en.wikipedia.org/wiki/Low-pass_filter#Discrete-time_realization
      */
-    private static final float ALPHA = 0.2f;
+    private static final float ALPHA = 0.333f;
     
     private LowPassFilter() { }
     
