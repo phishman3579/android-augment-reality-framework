@@ -37,7 +37,9 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static final float rotation[] = new float[9]; //Final rotation matrix in Android format
     private static final float grav[] = new float[3]; //Gravity (a.k.a accelerometer data)
     private static final float mag[] = new float[3]; //Magnetic 
+    /* Using Matrix operations instead. This was way too inaccurate,
     private static final float apr[] = new float[3]; //Azimuth, pitch, roll
+    */
 
     private static final Matrix worldCoord = new Matrix();
     private static final Matrix magneticCompensatedCoord = new Matrix();
@@ -225,6 +227,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         //Translate the rotation matrices from Y and -X (landscape)
         SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, rotation);
 
+        /* Using Matrix operations instead. This was way too inaccurate,
         //Get the azimuth, pitch, roll
         SensorManager.getOrientation(rotation,apr);
         float floatAzimuth = (float)Math.toDegrees(apr[0]);
@@ -232,7 +235,8 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         ARData.setAzimuth(floatAzimuth);
         ARData.setPitch((float)Math.toDegrees(apr[1]));
         ARData.setRoll((float)Math.toDegrees(apr[2]));
-
+        */
+        
         //Convert from float[9] to Matrix
         worldCoord.set(rotation[0], rotation[1], rotation[2], rotation[3], rotation[4], rotation[5], rotation[6], rotation[7], rotation[8]);
 

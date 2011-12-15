@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 
 import com.jwetherell.augmented_reality.camera.CameraModel;
+import com.jwetherell.augmented_reality.common.PitchAzimuthCalculator;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.ScreenPosition;
 import com.jwetherell.augmented_reality.ui.objects.PaintableCircle;
@@ -55,8 +56,10 @@ public class Radar {
     	if (canvas==null) throw new NullPointerException();
 
     	//Update the pitch and bearing using the phone's rotation matrix
-    	//PitchBearingCalculator.calcPitchBearing(ARData.getRotationMatrix());
-
+    	PitchAzimuthCalculator.calcPitchBearing(ARData.getRotationMatrix());
+        ARData.setAzimuth(PitchAzimuthCalculator.getAzimuth());
+        ARData.setPitch(PitchAzimuthCalculator.getPitch());
+        
         //Update the radar graphics and text based upon the new pitch and bearing
         drawRadarCircle(canvas);
         drawRadarPoints(canvas);

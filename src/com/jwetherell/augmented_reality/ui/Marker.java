@@ -3,6 +3,7 @@ package com.jwetherell.augmented_reality.ui;
 import java.text.DecimalFormat;
 
 import com.jwetherell.augmented_reality.camera.CameraModel;
+import com.jwetherell.augmented_reality.common.Utilities;
 import com.jwetherell.augmented_reality.common.Vector;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.PhysicalLocation;
@@ -385,7 +386,7 @@ public class Marker implements Comparable<Marker> {
         float height = getHeight();
         float adjX = (x1 + x2)/2;
         float adjY = (y1 + y2)/2;
-        float currentAngle = getAngle(symbolArray[0], symbolArray[1], textArray[0], textArray[1])+90;
+        float currentAngle = Utilities.getAngle(symbolArray[0], symbolArray[1], textArray[0], textArray[1])+90;
         adjX -= (width/2);
         adjY -= (gpsSymbol.getHeight()/2);
         
@@ -431,25 +432,13 @@ public class Marker implements Comparable<Marker> {
 	    else textBox.set(textStr, Math.round(maxHeight / 2f) + 1, 300);
 	    float x = textArray[0] - textBox.getWidth() / 2;
 	    float y = textArray[1] + maxHeight;
-	    float currentAngle = getAngle(symbolArray[0], symbolArray[1], textArray[0], textArray[1]);
+	    float currentAngle = Utilities.getAngle(symbolArray[0], symbolArray[1], textArray[0], textArray[1]);
 	    float angle = currentAngle + 90;
 	    if (textContainer==null) textContainer = new PaintablePosition(textBox, x, y, angle, 1);
 	    else textContainer.set(textBox, x, y, angle, 1);
 	    textContainer.paint(canvas);
 	}
-    
-    private static final float getAngle(float center_x, float center_y, float post_x, float post_y) {
-        float tmpv_x = post_x - center_x;
-        float tmpv_y = post_y - center_y;
-        float d = (float) Math.sqrt(tmpv_x * tmpv_x + tmpv_y * tmpv_y);
-        float cos = tmpv_x / d;
-        float angle = (float) Math.toDegrees(Math.acos(cos));
 
-        angle = (tmpv_y < 0) ? angle * -1 : angle;
-
-        return angle;
-    }
-    
     /**
      * {@inheritDoc}
      */
