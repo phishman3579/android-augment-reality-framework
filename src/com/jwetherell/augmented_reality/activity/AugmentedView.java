@@ -26,12 +26,12 @@ public class AugmentedView extends View {
     
     private static final int fontSize = 14;
     private static final int startLabelX = 4;
-    private static final int endLabelX = 92;
+    private static final int endLabelX = 85;
     private static final int labelY = 95;
     private static final String startKM = "0km";
-    private static final String endKM = "80km";
+    private static final String endKM = AugmentedReality.MAX_ZOOM+"km";
     private static final int leftBound = 12;
-    private static final int rightBound = 87;
+    private static final int rightBound = 77;
     private static final int conflictHeight = 82;
     private static final Radar radar = new Radar();
     private static final float[] locationArray = new float[3];

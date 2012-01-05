@@ -30,13 +30,20 @@ import com.jwetherell.augmented_reality.ui.Marker;
 public class AugmentedReality extends SensorsActivity implements OnTouchListener {
     private static final String TAG = "AugmentedReality";
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
-    
+
     private static WakeLock wakeLock = null;
     private static CameraSurface camScreen = null;    
     private static SeekBar myZoomBar = null;
     private static FrameLayout frameLayout = null;
     private static AugmentedView augmentedView = null;
     private static boolean useCollisionDetection = true;
+    
+    public static float MAX_ZOOM = 100;
+    public static float ONE_PERCENT = MAX_ZOOM/100f;
+    public static float TEN_PERCENT = 10f*ONE_PERCENT;
+    public static float TWENTY_PERCENT = 2f*TEN_PERCENT;
+    public static float EIGHTY_PERCENTY = 4f*TWENTY_PERCENT;
+    
     
 	/**
 	 * {@inheritDoc}
@@ -126,20 +133,21 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
 
     private static float calcZoomLevel(){
         int myZoomLevel = myZoomBar.getProgress();
-        float myout = 5;
-    
-        if (myZoomLevel <= 26) {
-            myout = myZoomLevel / 25f;
-        } else if (25 < myZoomLevel && myZoomLevel < 50) {
-            myout = (1 + (myZoomLevel - 25)) * 0.38f;
-        } else if (25== myZoomLevel) {
-            myout = 1;
-        } else if (50== myZoomLevel) {
-            myout = 10;
-        } else if (50 < myZoomLevel && myZoomLevel < 75) {
-            myout = (10 + (myZoomLevel - 50)) * 0.83f;
+        float myout = 0;
+
+        float percent = 0;
+        if (myZoomLevel <= 25) {
+            percent = myZoomLevel/25f;
+            myout = ONE_PERCENT*percent;
+        } else if (myZoomLevel > 25 && myZoomLevel <= 50) {
+            percent = (myZoomLevel-25f)/25f;
+            myout = ONE_PERCENT+(TEN_PERCENT*percent);
+        } else if (myZoomLevel > 50 && myZoomLevel <= 75) {
+            percent = (myZoomLevel-50f)/25f;
+            myout = TEN_PERCENT+(TWENTY_PERCENT*percent);
         } else {
-            myout = (30 + (myZoomLevel - 75) * 2f);
+            percent = (myZoomLevel-75f)/25f;
+            myout = TWENTY_PERCENT+(EIGHTY_PERCENTY*percent);
         }
 
         return myout;
