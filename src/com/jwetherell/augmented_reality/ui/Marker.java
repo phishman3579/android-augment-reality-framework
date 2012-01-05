@@ -84,9 +84,9 @@ public class Marker implements Comparable<Marker> {
 	/**
 	 * Set the objects parameters. This should be used instead of creating new objects.
 	 * @param name String representing the Marker.
-	 * @param latitude Latitude of the Marker.
-	 * @param longitude Longitude of the Marker.
-	 * @param altitude Altitude of the Marker.
+	 * @param latitude Latitude of the Marker in decimal format (example 39.931269).
+	 * @param longitude Longitude of the Marker in decimal format (example -75.051261). 
+	 * @param altitude Altitude of the Marker in meters (>0 is above sea level). 
 	 * @param color Color of the Marker.
 	 */
 	public synchronized void set(String name, double latitude, double longitude, double altitude, int color) {

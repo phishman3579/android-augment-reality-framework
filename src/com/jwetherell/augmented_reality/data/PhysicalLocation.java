@@ -29,9 +29,9 @@ public class PhysicalLocation {
 
 	/**
 	 * Set this objects parameters. This should be used instead of creating new objects.
-	 * @param latitude Latitude of the Location.
-	 * @param longitude Longitude of the Location.
-	 * @param altitude Altitude of the Location.
+     * @param latitude Latitude of the location in decimal format (example 39.931269).
+     * @param longitude Longitude of the location in decimal format (example -75.051261).
+     * @param altitude Altitude of the location in meters (>0 is above sea level).
 	 */
 	public void set(double latitude, double longitude, double altitude) {
         this.latitude = latitude;
@@ -41,7 +41,7 @@ public class PhysicalLocation {
 
 	/**
 	 * Set the Latitude of the PhysicalLocation.
-	 * @param latitude double representing the latitude of the PhysicalLocation.
+	 * @param latitude Latitude of the location in decimal format (example 39.931269).
 	 */
 	public void setLatitude(double latitude) {
 		this.latitude = latitude;
@@ -49,7 +49,7 @@ public class PhysicalLocation {
 
 	/**
 	 * Get the Latitude of the PhysicalLocation.
-	 * @return double representation the latitude of the PhysicalLocation.
+	 * @return double representation the latitude of the location in decimal format (example 39.931269).
 	 */
 	public double getLatitude() {
 		return latitude;
@@ -57,7 +57,7 @@ public class PhysicalLocation {
 
 	/**
 	 * Set the Longitude of the PhysicalLocation.
-	 * @param longitude double representing the longitude of the PhysicalLocation.
+	 * @param longitude Longitude of the location in decimal format (example -75.051261).
 	 */
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
@@ -65,7 +65,7 @@ public class PhysicalLocation {
 
 	/**
 	 * Get the Longitude of the PhysicalLocation.
-	 * @return double representation the longitude of the PhysicalLocation.
+	 * @return double representation the longitude of the location in decimal format (example -75.051261).
 	 */
 	public double getLongitude() {
 		return longitude;
@@ -73,7 +73,7 @@ public class PhysicalLocation {
 
 	/**
 	 * Set the Altitude of the PhysicalLocation.
-	 * @param altitude double representing the altitude of the PhysicalLocation.
+	 * @param altitude Altitude of the location in meters (>0 is above sea level).
 	 */
 	public void setAltitude(double altitude) {
 		this.altitude = altitude;
@@ -81,7 +81,7 @@ public class PhysicalLocation {
 
 	/**
 	 * Get the Altitude of the PhysicalLocation.
-	 * @return double representation the altitude of the PhysicalLocation.
+	 * @return double representation the altitude of the location in meters (>0 is above sea level).
 	 */
 	public double getAltitude() {
 		return altitude;
