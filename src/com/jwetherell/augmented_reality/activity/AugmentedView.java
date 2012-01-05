@@ -1,5 +1,6 @@
 package com.jwetherell.augmented_reality.activity;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.TreeSet;
@@ -23,15 +24,16 @@ import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
  */
 public class AugmentedView extends View {
     private static final AtomicBoolean drawing = new AtomicBoolean(false);
+    private static final DecimalFormat FORMAT = new DecimalFormat("#");
     
     private static final int fontSize = 14;
     private static final int startLabelX = 4;
-    private static final int endLabelX = 85;
+    private static final int endLabelX = 87;
     private static final int labelY = 95;
     private static final String startKM = "0km";
-    private static final String endKM = AugmentedReality.MAX_ZOOM+"km";
+    private static final String endKM = FORMAT.format(AugmentedReality.MAX_ZOOM)+"km";
     private static final int leftBound = 12;
-    private static final int rightBound = 77;
+    private static final int rightBound = 79;
     private static final int conflictHeight = 82;
     private static final Radar radar = new Radar();
     private static final float[] locationArray = new float[3];
