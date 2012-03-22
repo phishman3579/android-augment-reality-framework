@@ -58,8 +58,7 @@ public class LocalDataSource extends DataSource{
         cachedMarkers.add(lon2);
         */
 
-        /*
-        float max = 100;
+        float max = 1000;
         for (float i=0; i<max; i++) {
             Marker marker = null;
             float decimal = i/max;
@@ -67,7 +66,6 @@ public class LocalDataSource extends DataSource{
             marker = new IconMarker("Test-"+i, 39.99+decimal, -75.33, 0, Color.LTGRAY, icon);
             cachedMarkers.add(marker);
         }
-        */
 
         return cachedMarkers;
     }

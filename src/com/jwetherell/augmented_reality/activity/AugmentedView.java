@@ -75,7 +75,7 @@ public class AugmentedView extends View {
 	@Override
     protected void onDraw(Canvas canvas) {
     	if (canvas==null) return;
-    	
+
         if (drawing.compareAndSet(false, true)) { 
 	        if (startTxtContainter==null) {
 	            PaintableBoxedText startTextBlock = new PaintableBoxedText(startKM, fontSize, 30);
@@ -104,7 +104,7 @@ public class AugmentedView extends View {
 	        //Get all the markers
 	        List<Marker> collection = ARData.getMarkers();
 
-	        //Prune all the markers that are out of view (speeds up drawing and collision detection)
+	        //Prune all the markers that are out of the radar's radius (speeds up drawing and collision detection)
             cache.clear();
             for (Marker m : collection) {
                 m.update(canvas, 0, 0);
@@ -113,7 +113,7 @@ public class AugmentedView extends View {
             collection = cache;
 
 	        if (useCollisionDetection) adjustForCollisions(canvas,collection);
-	        
+
 	        //Draw AR markers in reverse order since the last drawn should be the closest
 	        ListIterator<Marker> iter = collection.listIterator(collection.size());
 	        while (iter.hasPrevious()) {
@@ -132,14 +132,11 @@ public class AugmentedView extends View {
 	    
         //Update the AR markers for collisions
         for (Marker marker1 : collection) {
-            if (updated.contains(marker1)) continue;
+            if (updated.contains(marker1) || !marker1.isInView()) continue;
 
-            //Don't worry about the marker if it is not in view
-            if (!marker1.isInView()) continue;
-            
             int collisions = 1;
             for (Marker marker2 : collection) {
-                if (marker1.equals(marker2) || updated.contains(marker2)) continue;
+                if (marker1.equals(marker2) || updated.contains(marker2) || !marker2.isInView()) continue;
 
                 if (marker1.isMarkerOnMarker(marker2)) {
                     marker2.getLocation().get(locationArray);

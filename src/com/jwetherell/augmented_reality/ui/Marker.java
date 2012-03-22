@@ -233,7 +233,7 @@ public class Marker implements Comparable<Marker> {
         float x = locationArray[0] / scale;
         float y = locationArray[2] / scale;
         symbolXyzRelativeToCameraView.get(symbolArray);
-		if ((symbolArray[2] < -1f) && ((x*x+y*y)<=(Radar.RADIUS*Radar.RADIUS))) {
+		if ((symbolArray[2] < -1f) && ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS))) {
 			isOnRadar = true;
 		}
 	}
