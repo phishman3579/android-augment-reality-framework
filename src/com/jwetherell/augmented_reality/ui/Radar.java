@@ -192,7 +192,7 @@ public class Radar {
     private static String formatDec(float val, int dec) {
         int factor = (int) Math.pow(10, dec);
 
-        int front = (int) (val );
+        int front = (int) (val);
         int back = (int) Math.abs(val * (factor) ) % factor;
 
         return front + "." + back;
