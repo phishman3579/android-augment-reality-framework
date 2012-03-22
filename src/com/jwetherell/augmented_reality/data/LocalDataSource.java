@@ -39,10 +39,10 @@ public class LocalDataSource extends DataSource{
     public List<Marker> getMarkers() {
         Marker atl = new IconMarker("ATL", 39.931269, -75.051261, 0, Color.DKGRAY, icon);
         cachedMarkers.add(atl);
-        
+
         Marker home = new Marker("Mt Laurel", 39.95, -74.9, 0, Color.YELLOW);
         cachedMarkers.add(home);
-        
+
         /*
         Marker lon = new IconMarker("I am a really really long string which should wrap a number of times on the screen.", 
                                  39.95335, -74.9223445, 
@@ -58,7 +58,8 @@ public class LocalDataSource extends DataSource{
         cachedMarkers.add(lon2);
         */
 
-        float max = 500;
+        /*
+        float max = 100;
         for (float i=0; i<max; i++) {
             Marker marker = null;
             float decimal = i/max;
@@ -66,6 +67,7 @@ public class LocalDataSource extends DataSource{
             marker = new IconMarker("Test-"+i, 39.99+decimal, -75.33, 0, Color.LTGRAY, icon);
             cachedMarkers.add(marker);
         }
+        */
 
         return cachedMarkers;
     }
