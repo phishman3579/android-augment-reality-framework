@@ -27,13 +27,10 @@ public class AugmentedView extends View {
     private static final float[] locationArray = new float[3];
     private static final List<Marker> cache = new ArrayList<Marker>(); 
     private static final TreeSet<Marker> updated = new TreeSet<Marker>();
-
-    private static boolean useCollisionDetection = false;
     private static final int COLLISION_ADJUSTMENT = 500;
 
-    public AugmentedView(Context context, boolean useCollisionDetection) {
+    public AugmentedView(Context context) {
         super(context);
-        AugmentedView.useCollisionDetection=useCollisionDetection;
     }
 
 	/**
@@ -55,7 +52,7 @@ public class AugmentedView extends View {
 	        }
             collection = cache;
 
-	        if (useCollisionDetection) adjustForCollisions(canvas,collection);
+	        if (AugmentedReality.useCollisionDetection) adjustForCollisions(canvas,collection);
 
 	        //Draw AR markers in reverse order since the last drawn should be the closest
 	        ListIterator<Marker> iter = collection.listIterator(collection.size());
@@ -65,7 +62,7 @@ public class AugmentedView extends View {
 	        }
 
 	        //Radar circle and radar markers
-	        if (AugmentedReality.SHOW_RADAR) radar.draw(canvas);
+	        if (AugmentedReality.showRadar) radar.draw(canvas);
 	        drawing.set(false);
         }
     }

@@ -10,6 +10,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.jwetherell.augmented_reality.R;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.BuzzDataSource;
 import com.jwetherell.augmented_reality.data.LocalDataSource;
@@ -22,6 +23,10 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 
@@ -68,6 +73,39 @@ public class Demo extends AugmentedReality {
         
         Location last = ARData.getCurrentLocation();
         updateData(last.getLatitude(),last.getLongitude(),last.getAltitude());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.v(TAG, "onOptionsItemSelected() item="+item);
+        switch (item.getItemId()) {
+            case R.id.showRadar:
+                showRadar = !showRadar;
+                item.setTitle(((showRadar)? "Hide" : "Show")+" Radar");
+                break;
+            case R.id.showZoomBar:
+                showZoomBar = !showZoomBar;
+                item.setTitle(((showZoomBar)? "Hide" : "Show")+" Zoom Bar");
+                zoomLayout.setVisibility((showZoomBar)?LinearLayout.VISIBLE:LinearLayout.GONE);
+                break;
+            case R.id.exit:
+                finish();
+                break;
+        }
+        return true;
     }
 
 	/**

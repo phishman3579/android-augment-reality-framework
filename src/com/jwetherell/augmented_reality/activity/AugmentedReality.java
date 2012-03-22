@@ -37,21 +37,22 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
     private static final int ZOOMBAR_BACKGROUND_COLOR = Color.argb((255/2),55,55,55);
     private static final String endKM = FORMAT.format(AugmentedReality.MAX_ZOOM)+"km";
 
-    private static WakeLock wakeLock = null;
-    private static CameraSurface camScreen = null;    
-    private static SeekBar myZoomBar = null;
-    private static TextView endLabel = null;
-    private static LinearLayout zoomLayout = null;
-    private static AugmentedView augmentedView = null;
-    private static boolean useCollisionDetection = true;
-    
-    public static final boolean SHOW_RADAR = true;
+    protected static WakeLock wakeLock = null;
+    protected static CameraSurface camScreen = null;    
+    protected static SeekBar myZoomBar = null;
+    protected static TextView endLabel = null;
+    protected static LinearLayout zoomLayout = null;
+    protected static AugmentedView augmentedView = null;
+
     public static final float MAX_ZOOM = 100; //in KM
     public static final float ONE_PERCENT = MAX_ZOOM/100f;
     public static final float TEN_PERCENT = 10f*ONE_PERCENT;
     public static final float TWENTY_PERCENT = 2f*TEN_PERCENT;
     public static final float EIGHTY_PERCENTY = 4f*TWENTY_PERCENT;
-    
+
+    public static boolean useCollisionDetection = true;
+    public static boolean showRadar = true;
+    public static boolean showZoomBar = true;
     
 	/**
 	 * {@inheritDoc}
@@ -73,6 +74,7 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
         endLabel.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL);
 
         zoomLayout = new LinearLayout(this);
+        zoomLayout.setVisibility((showZoomBar)?LinearLayout.VISIBLE:LinearLayout.GONE);
         zoomLayout.setOrientation(LinearLayout.HORIZONTAL);
         zoomLayout.setMinimumWidth(3000);
         zoomLayout.setPadding(10, 10, 10, 10);
@@ -80,21 +82,18 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
         LinearLayout.LayoutParams zoomBarParams =  new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT);
         zoomBarParams.weight = 0.10f;
         zoomLayout.addView(myZoomBar, zoomBarParams);
-        
         LinearLayout textLayout = new LinearLayout(this);
         LinearLayout.LayoutParams textParams =  new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
         textLayout.addView(endLabel,textParams);
-
         LinearLayout.LayoutParams zoomTextParams =  new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
         zoomTextParams.weight = 0.9f;
         zoomLayout.addView(textLayout, zoomTextParams);
-        
         FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(  LayoutParams.FILL_PARENT, 
                                                                                     LayoutParams.WRAP_CONTENT, 
                                                                                     Gravity.BOTTOM);
         addContentView(zoomLayout,frameLayoutParams);
 
-        augmentedView = new AugmentedView(this,useCollisionDetection);
+        augmentedView = new AugmentedView(this);
         augmentedView.setOnTouchListener(this);
         LayoutParams augLayout = new LayoutParams(  LayoutParams.WRAP_CONTENT, 
                                                     LayoutParams.WRAP_CONTENT);
