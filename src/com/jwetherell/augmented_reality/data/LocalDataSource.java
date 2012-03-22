@@ -57,16 +57,16 @@ public class LocalDataSource extends DataSource{
                 icon);
         cachedMarkers.add(lon2);
         */
-        
-        /*
-        for (int i=0; i<10; i++) {
+
+        float max = 500;
+        for (float i=0; i<max; i++) {
             Marker marker = null;
-            if (i%2==0) marker = new Marker("Test-"+i, 39.99, -75.33, 0, Color.LTGRAY);
-            marker = new IconMarker("Test-"+i, 39.99, -75.33, 0, Color.LTGRAY, icon);
+            float decimal = i/max;
+            if (i%2==0) marker = new Marker("Test-"+i, 39.99, -75.33+decimal, 0, Color.LTGRAY);
+            marker = new IconMarker("Test-"+i, 39.99+decimal, -75.33, 0, Color.LTGRAY, icon);
             cachedMarkers.add(marker);
         }
-        */
-        
+
         return cachedMarkers;
     }
 }

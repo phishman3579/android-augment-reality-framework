@@ -233,7 +233,7 @@ public class Marker implements Comparable<Marker> {
         float x = locationArray[0] / scale;
         float y = locationArray[2] / scale;
         symbolXyzRelativeToCameraView.get(symbolArray);
-		if ((symbolArray[2] < -1f) && ((x*x+y*y)<(Radar.RADIUS*Radar.RADIUS))) {
+		if ((symbolArray[2] < -1f) && ((x*x+y*y)<=(Radar.RADIUS*Radar.RADIUS))) {
 			isOnRadar = true;
 		}
 	}
@@ -246,10 +246,9 @@ public class Marker implements Comparable<Marker> {
         float y1 = symbolArray[1] + (getHeight()/2);
         float x2 = symbolArray[0] - (getWidth()/2);
         float y2 = symbolArray[1] - (getHeight()/2);
-        if (x1>=0 && 
-            x2<=cam.getWidth() &&
-            y1>=0 &&
-            y2<=cam.getHeight()
+        if (x1>=-1 && x2<=(cam.getWidth()+1) 
+            &&
+            y1>=-1 && y2<=(cam.getHeight()+1)
         ) {
             isInView = true;
         }
@@ -359,9 +358,6 @@ public class Marker implements Comparable<Marker> {
     public synchronized void draw(Canvas canvas) {
         if (canvas==null) throw new NullPointerException();
 
-        //Calculate the visibility of this Marker
-        update(canvas,0,0);
-        
         //If not visible then do nothing
         if (!isOnRadar || !isInView) return;
         

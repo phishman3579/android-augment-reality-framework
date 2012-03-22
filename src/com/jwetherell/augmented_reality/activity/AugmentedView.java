@@ -1,6 +1,7 @@
 package com.jwetherell.augmented_reality.activity;
 
 import java.text.DecimalFormat;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.TreeSet;
@@ -37,6 +38,8 @@ public class AugmentedView extends View {
     private static final int conflictHeight = 82;
     private static final Radar radar = new Radar();
     private static final float[] locationArray = new float[3];
+    private static final List<Marker> cache = new LinkedList<Marker>(); 
+    private static final TreeSet<Marker> updated = new TreeSet<Marker>();
     
     private static PaintablePosition startTxtContainter = null;
     private static PaintablePosition endTxtContainter = null;
@@ -98,8 +101,18 @@ public class AugmentedView extends View {
 	        if (lastZoom != ARData.getZoomProgress()) currentTxtContainter = generateCurrentZoom(canvas);
 	        currentTxtContainter.paint(canvas);
 
+	        //Get all the markers
 	        List<Marker> collection = ARData.getMarkers();
-	        if (useCollisionDetection) collection = adjustForCollisions(canvas,collection);
+
+	        //Prune all the markers that are out of view (speeds up drawing and collision detection)
+            cache.clear();
+            for (Marker m : collection) {
+                m.update(canvas, 0, 0);
+                if (m.isOnRadar()) cache.add(m);
+	        }
+            collection = cache;
+
+	        if (useCollisionDetection) adjustForCollisions(canvas,collection);
 	        
 	        //Draw AR markers in reverse order since the last drawn should be the closest
 	        ListIterator<Marker> iter = collection.listIterator(collection.size());
@@ -113,13 +126,17 @@ public class AugmentedView extends View {
 	        drawing.set(false);
         }
     }
-	
-	private static List<Marker> adjustForCollisions(Canvas canvas, List<Marker> collection) {
-        TreeSet<Marker> updated = new TreeSet<Marker>();
+
+	private static void adjustForCollisions(Canvas canvas, List<Marker> collection) {
+	    updated.clear();
+	    
         //Update the AR markers for collisions
         for (Marker marker1 : collection) {
             if (updated.contains(marker1)) continue;
 
+            //Don't worry about the marker if it is not in view
+            if (!marker1.isInView()) continue;
+            
             int collisions = 1;
             for (Marker marker2 : collection) {
                 if (marker1.equals(marker2) || updated.contains(marker2)) continue;
@@ -130,12 +147,12 @@ public class AugmentedView extends View {
                     float h = collisions*COLLISION_ADJUSTMENT;
                     locationArray[1] = y+h;
                     marker2.getLocation().set(locationArray);
+                    marker2.update(canvas, 0, 0);
                     collisions++;
                     updated.add(marker2);
                 }
             }
             updated.add(marker1);
         }
-        return collection;
 	}
 }
