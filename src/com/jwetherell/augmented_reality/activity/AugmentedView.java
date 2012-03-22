@@ -1,7 +1,7 @@
 package com.jwetherell.augmented_reality.activity;
 
 import java.text.DecimalFormat;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.TreeSet;
@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.View;
 
 import com.jwetherell.augmented_reality.data.ARData;
@@ -38,7 +39,7 @@ public class AugmentedView extends View {
     private static final int conflictHeight = 82;
     private static final Radar radar = new Radar();
     private static final float[] locationArray = new float[3];
-    private static final List<Marker> cache = new LinkedList<Marker>(); 
+    private static final List<Marker> cache = new ArrayList<Marker>(); 
     private static final TreeSet<Marker> updated = new TreeSet<Marker>();
     
     private static PaintablePosition startTxtContainter = null;
@@ -75,7 +76,8 @@ public class AugmentedView extends View {
 	@Override
     protected void onDraw(Canvas canvas) {
     	if (canvas==null) return;
-
+    	
+    	long before = System.currentTimeMillis();
         if (drawing.compareAndSet(false, true)) { 
 	        if (startTxtContainter==null) {
 	            PaintableBoxedText startTextBlock = new PaintableBoxedText(startKM, fontSize, 30);
@@ -125,6 +127,8 @@ public class AugmentedView extends View {
 	        radar.draw(canvas);
 	        drawing.set(false);
         }
+        long after = System.currentTimeMillis();
+        Log.v("TIME", "time="+(after-before));
     }
 
 	private static void adjustForCollisions(Canvas canvas, List<Marker> collection) {
