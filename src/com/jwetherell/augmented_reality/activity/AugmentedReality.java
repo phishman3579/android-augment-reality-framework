@@ -3,6 +3,7 @@ package com.jwetherell.augmented_reality.activity;
 import java.text.DecimalFormat;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.os.Bundle;
@@ -15,8 +16,11 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+
 import com.jwetherell.augmented_reality.camera.CameraSurface;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.ui.Marker;
@@ -30,19 +34,23 @@ import com.jwetherell.augmented_reality.ui.Marker;
 public class AugmentedReality extends SensorsActivity implements OnTouchListener {
     private static final String TAG = "AugmentedReality";
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
+    private static final int ZOOMBAR_BACKGROUND_COLOR = Color.argb((255/2),55,55,55);
+    private static final String endKM = FORMAT.format(AugmentedReality.MAX_ZOOM)+"km";
 
     private static WakeLock wakeLock = null;
     private static CameraSurface camScreen = null;    
     private static SeekBar myZoomBar = null;
-    private static FrameLayout frameLayout = null;
+    private static TextView endLabel = null;
+    private static LinearLayout zoomLayout = null;
     private static AugmentedView augmentedView = null;
     private static boolean useCollisionDetection = true;
     
-    public static float MAX_ZOOM = 100;
-    public static float ONE_PERCENT = MAX_ZOOM/100f;
-    public static float TEN_PERCENT = 10f*ONE_PERCENT;
-    public static float TWENTY_PERCENT = 2f*TEN_PERCENT;
-    public static float EIGHTY_PERCENTY = 4f*TWENTY_PERCENT;
+    public static final boolean SHOW_RADAR = true;
+    public static final float MAX_ZOOM = 100; //in KM
+    public static final float ONE_PERCENT = MAX_ZOOM/100f;
+    public static final float TEN_PERCENT = 10f*ONE_PERCENT;
+    public static final float TWENTY_PERCENT = 2f*TEN_PERCENT;
+    public static final float EIGHTY_PERCENTY = 4f*TWENTY_PERCENT;
     
     
 	/**
@@ -57,17 +65,34 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
         
         myZoomBar = new SeekBar(this);
         myZoomBar.setMax(100);
-        myZoomBar.setProgress(25);
+        myZoomBar.setProgress(50);
         myZoomBar.setOnSeekBarChangeListener(myZoomBarOnSeekBarChangeListener);
 
-        frameLayout = new FrameLayout(this);
-        frameLayout.setMinimumWidth(3000);
-        frameLayout.addView(myZoomBar);
-        frameLayout.setPadding(10, 0, 10, 10);
+        endLabel = new TextView(this);
+        endLabel.setText(endKM);
+        endLabel.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL);
+
+        zoomLayout = new LinearLayout(this);
+        zoomLayout.setOrientation(LinearLayout.HORIZONTAL);
+        zoomLayout.setMinimumWidth(3000);
+        zoomLayout.setPadding(10, 10, 10, 10);
+        zoomLayout.setBackgroundColor(ZOOMBAR_BACKGROUND_COLOR);
+        LinearLayout.LayoutParams zoomBarParams =  new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT);
+        zoomBarParams.weight = 0.10f;
+        zoomLayout.addView(myZoomBar, zoomBarParams);
+        
+        LinearLayout textLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams textParams =  new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
+        textLayout.addView(endLabel,textParams);
+
+        LinearLayout.LayoutParams zoomTextParams =  new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
+        zoomTextParams.weight = 0.9f;
+        zoomLayout.addView(textLayout, zoomTextParams);
+        
         FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(  LayoutParams.FILL_PARENT, 
                                                                                     LayoutParams.WRAP_CONTENT, 
                                                                                     Gravity.BOTTOM);
-        addContentView(frameLayout,frameLayoutParams);
+        addContentView(zoomLayout,frameLayoutParams);
 
         augmentedView = new AugmentedView(this,useCollisionDetection);
         augmentedView.setOnTouchListener(this);

@@ -1,6 +1,5 @@
 package com.jwetherell.augmented_reality.activity;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -14,8 +13,6 @@ import android.view.View;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.ui.Marker;
 import com.jwetherell.augmented_reality.ui.Radar;
-import com.jwetherell.augmented_reality.ui.objects.PaintableBoxedText;
-import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
 
 
 /**
@@ -25,48 +22,18 @@ import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
  */
 public class AugmentedView extends View {
     private static final AtomicBoolean drawing = new AtomicBoolean(false);
-    private static final DecimalFormat FORMAT = new DecimalFormat("#");
-    
-    private static final int fontSize = 14;
-    private static final int startLabelX = 4;
-    private static final int endLabelX = 87;
-    private static final int labelY = 95;
-    private static final String startKM = "0km";
-    private static final String endKM = FORMAT.format(AugmentedReality.MAX_ZOOM)+"km";
-    private static final int leftBound = 12;
-    private static final int rightBound = 79;
-    private static final int conflictHeight = 82;
+
     private static final Radar radar = new Radar();
     private static final float[] locationArray = new float[3];
     private static final List<Marker> cache = new ArrayList<Marker>(); 
     private static final TreeSet<Marker> updated = new TreeSet<Marker>();
-    
-    private static PaintablePosition startTxtContainter = null;
-    private static PaintablePosition endTxtContainter = null;
-    private static PaintablePosition currentTxtContainter = null;
-    private static int lastZoom = 0;
+
     private static boolean useCollisionDetection = false;
     private static final int COLLISION_ADJUSTMENT = 500;
 
     public AugmentedView(Context context, boolean useCollisionDetection) {
         super(context);
         AugmentedView.useCollisionDetection=useCollisionDetection;
-    }
-
-    private static PaintablePosition generateCurrentZoom(Canvas canvas) {
-        lastZoom = ARData.getZoomProgress();
-        PaintableBoxedText currentTxtBlock = new PaintableBoxedText(ARData.getZoomLevel(), fontSize, 30);
-        int x = canvas.getWidth()/100*lastZoom;
-        int y = canvas.getHeight()/100*labelY;
-        if (lastZoom < leftBound || lastZoom > rightBound) {
-            y = canvas.getHeight()/100*conflictHeight;
-            if (lastZoom < leftBound)
-                x = canvas.getWidth()/100*startLabelX;
-            else
-                x = canvas.getWidth()/100*endLabelX;
-        }
-        PaintablePosition container = new PaintablePosition(currentTxtBlock, x, y, 0, 1);
-        return container;
     }
 
 	/**
@@ -77,30 +44,6 @@ public class AugmentedView extends View {
     	if (canvas==null) return;
 
         if (drawing.compareAndSet(false, true)) { 
-	        if (startTxtContainter==null) {
-	            PaintableBoxedText startTextBlock = new PaintableBoxedText(startKM, fontSize, 30);
-	            startTxtContainter = new PaintablePosition( startTextBlock, 
-	                                                         (canvas.getWidth()/100*startLabelX), 
-	                                                         (canvas.getHeight()/100*labelY), 
-	                                                         0, 
-	                                                         1);
-	        }
-	        startTxtContainter.paint(canvas);
-	        
-	        if (endTxtContainter==null) {
-	            PaintableBoxedText endTextBlock = new PaintableBoxedText(endKM, fontSize, 30);
-	            endTxtContainter = new PaintablePosition( endTextBlock, 
-	                                                       (canvas.getWidth()/100*endLabelX), 
-	                                                       (canvas.getHeight()/100*labelY), 
-	                                                       0, 
-	                                                       1);
-	        }
-	        endTxtContainter.paint(canvas);
-        	
-	        //Re-factor zoom text, if it has changed.
-	        if (lastZoom != ARData.getZoomProgress()) currentTxtContainter = generateCurrentZoom(canvas);
-	        currentTxtContainter.paint(canvas);
-
 	        //Get all the markers
 	        List<Marker> collection = ARData.getMarkers();
 
@@ -122,7 +65,7 @@ public class AugmentedView extends View {
 	        }
 
 	        //Radar circle and radar markers
-	        radar.draw(canvas);
+	        if (AugmentedReality.SHOW_RADAR) radar.draw(canvas);
 	        drawing.set(false);
         }
     }
