@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.util.Log;
 import android.view.View;
 
 import com.jwetherell.augmented_reality.data.ARData;
@@ -76,8 +75,7 @@ public class AugmentedView extends View {
 	@Override
     protected void onDraw(Canvas canvas) {
     	if (canvas==null) return;
-    	
-    	long before = System.currentTimeMillis();
+
         if (drawing.compareAndSet(false, true)) { 
 	        if (startTxtContainter==null) {
 	            PaintableBoxedText startTextBlock = new PaintableBoxedText(startKM, fontSize, 30);
@@ -127,8 +125,6 @@ public class AugmentedView extends View {
 	        radar.draw(canvas);
 	        drawing.set(false);
         }
-        long after = System.currentTimeMillis();
-        Log.v("TIME", "time="+(after-before));
     }
 
 	private static void adjustForCollisions(Canvas canvas, List<Marker> collection) {
