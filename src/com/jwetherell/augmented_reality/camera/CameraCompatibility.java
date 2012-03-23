@@ -4,7 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import android.app.Activity;
+import android.content.Context;
 import android.hardware.Camera;
+import android.view.Display;
+import android.view.WindowManager;
+
 
 /**
  * Ensures compatibility with older and newer versions of the API. 
@@ -17,7 +22,8 @@ import android.hardware.Camera;
  */
 public class CameraCompatibility {
 	private static Method getSupportedPreviewSizes = null;
-
+	private static Method mDefaultDisplay_getRotation = null;
+	
 	static {
 		initCompatibility();
 	};
@@ -28,12 +34,30 @@ public class CameraCompatibility {
 	private static void initCompatibility() {
 		try {
 			getSupportedPreviewSizes = Camera.Parameters.class.getMethod("getSupportedPreviewSizes", new Class[] { } );
+			mDefaultDisplay_getRotation = Display.class.getMethod("getRotation", new Class[] { } );
 			/* success, this is a newer device */
 		} catch (NoSuchMethodException nsme) {
 			/* failure, must be older device */
 		}
 	}
 
+	/**
+	 * Get the current roation of the device
+	 * @param activity Current running activity
+	 * @return The rotation of the screen from its "natural" orientation. 
+	 */
+	public static int getRotation(Activity activity) {
+	     int result = 1;
+	     try {
+    	     Display display = ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+    	     Object retObj = mDefaultDisplay_getRotation.invoke(display);
+    	     if(retObj != null) result = (Integer) retObj;
+	     } catch (Exception ex) {
+	         ex.printStackTrace();
+	     }
+	     return result;
+	}
+	
 	/**
 	 * If it's running on a new phone, let's get the supported preview sizes, before it was fixed to 480 x 320
 	 * @param params Camera's parameters.

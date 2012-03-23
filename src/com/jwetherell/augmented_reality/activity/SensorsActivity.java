@@ -209,12 +209,12 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     	if (!computing.compareAndSet(false, true)) return;
 
         if (evt.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            smooth = LowPassFilter.filter(evt.values, grav);
+            smooth = LowPassFilter.filter(0.5f, 1.0f, evt.values, grav);
             grav[0] = smooth[0];
             grav[1] = smooth[1];
             grav[2] = smooth[2];
         } else if (evt.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-            smooth = LowPassFilter.filter(evt.values, mag);
+            smooth = LowPassFilter.filter(2.0f, 4.0f, evt.values, mag);
             mag[0] = smooth[0];
             mag[1] = smooth[1];
             mag[2] = smooth[2];
