@@ -35,7 +35,7 @@ import com.jwetherell.augmented_reality.widget.VerticalSeekBar;
 public class AugmentedReality extends SensorsActivity implements OnTouchListener {
     private static final String TAG = "AugmentedReality";
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
-    private static final int ZOOMBAR_BACKGROUND_COLOR = Color.argb((255/2),55,55,55);
+    private static final int ZOOMBAR_BACKGROUND_COLOR = Color.argb(125,55,55,55);
     private static final String END_TEXT = FORMAT.format(AugmentedReality.MAX_ZOOM)+" km";
     private static final int END_TEXT_COLOR = Color.WHITE;
 

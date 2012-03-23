@@ -27,7 +27,7 @@ public class AugmentedView extends View {
     private static final float[] locationArray = new float[3];
     private static final List<Marker> cache = new ArrayList<Marker>(); 
     private static final TreeSet<Marker> updated = new TreeSet<Marker>();
-    private static final int COLLISION_ADJUSTMENT = 500;
+    private static final int COLLISION_ADJUSTMENT = 250;
 
     public AugmentedView(Context context) {
         super(context);
