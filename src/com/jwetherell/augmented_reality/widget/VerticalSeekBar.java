@@ -14,24 +14,15 @@ import android.widget.SeekBar;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class VerticalSeekBar extends SeekBar {
-    
-    /**
-     * {@inheritDoc}
-     */
+
     public VerticalSeekBar(Context context) {
         super(context);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
     public VerticalSeekBar(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public VerticalSeekBar(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
