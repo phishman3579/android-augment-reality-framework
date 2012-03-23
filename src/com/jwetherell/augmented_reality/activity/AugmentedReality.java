@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.jwetherell.augmented_reality.camera.CameraSurface;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.ui.Marker;
+import com.jwetherell.augmented_reality.widget.VerticalSeekBar;
 
 
 /**
@@ -35,11 +36,12 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
     private static final String TAG = "AugmentedReality";
     private static final DecimalFormat FORMAT = new DecimalFormat("#.##");
     private static final int ZOOMBAR_BACKGROUND_COLOR = Color.argb((255/2),55,55,55);
-    private static final String endKM = FORMAT.format(AugmentedReality.MAX_ZOOM)+"km";
+    private static final String END_TEXT = FORMAT.format(AugmentedReality.MAX_ZOOM)+" km";
+    private static final int END_TEXT_COLOR = Color.WHITE;
 
     protected static WakeLock wakeLock = null;
     protected static CameraSurface camScreen = null;    
-    protected static SeekBar myZoomBar = null;
+    protected static VerticalSeekBar myZoomBar = null;
     protected static TextView endLabel = null;
     protected static LinearLayout zoomLayout = null;
     protected static AugmentedView augmentedView = null;
@@ -63,41 +65,37 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
 
         camScreen = new CameraSurface(this);
         setContentView(camScreen);
-        
-        myZoomBar = new SeekBar(this);
-        myZoomBar.setMax(100);
-        myZoomBar.setProgress(50);
-        myZoomBar.setOnSeekBarChangeListener(myZoomBarOnSeekBarChangeListener);
-
-        endLabel = new TextView(this);
-        endLabel.setText(endKM);
-        endLabel.setGravity(Gravity.CENTER_VERTICAL|Gravity.CENTER_HORIZONTAL);
-
-        zoomLayout = new LinearLayout(this);
-        zoomLayout.setVisibility((showZoomBar)?LinearLayout.VISIBLE:LinearLayout.GONE);
-        zoomLayout.setOrientation(LinearLayout.HORIZONTAL);
-        zoomLayout.setMinimumWidth(3000);
-        zoomLayout.setPadding(10, 10, 10, 10);
-        zoomLayout.setBackgroundColor(ZOOMBAR_BACKGROUND_COLOR);
-        LinearLayout.LayoutParams zoomBarParams =  new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT);
-        zoomBarParams.weight = 0.10f;
-        zoomLayout.addView(myZoomBar, zoomBarParams);
-        LinearLayout textLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams textParams =  new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
-        textLayout.addView(endLabel,textParams);
-        LinearLayout.LayoutParams zoomTextParams =  new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT);
-        zoomTextParams.weight = 0.9f;
-        zoomLayout.addView(textLayout, zoomTextParams);
-        FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(  LayoutParams.FILL_PARENT, 
-                                                                                    LayoutParams.WRAP_CONTENT, 
-                                                                                    Gravity.BOTTOM);
-        addContentView(zoomLayout,frameLayoutParams);
 
         augmentedView = new AugmentedView(this);
         augmentedView.setOnTouchListener(this);
         LayoutParams augLayout = new LayoutParams(  LayoutParams.WRAP_CONTENT, 
                                                     LayoutParams.WRAP_CONTENT);
         addContentView(augmentedView,augLayout);
+        
+        zoomLayout = new LinearLayout(this);
+        zoomLayout.setVisibility((showZoomBar)?LinearLayout.VISIBLE:LinearLayout.GONE);
+        zoomLayout.setOrientation(LinearLayout.VERTICAL);
+        zoomLayout.setPadding(5, 5, 5, 5);
+        zoomLayout.setBackgroundColor(ZOOMBAR_BACKGROUND_COLOR);
+
+        endLabel = new TextView(this);
+        endLabel.setText(END_TEXT);
+        endLabel.setTextColor(END_TEXT_COLOR);
+        LinearLayout.LayoutParams zoomTextParams =  new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+        zoomLayout.addView(endLabel, zoomTextParams);
+
+        myZoomBar = new VerticalSeekBar(this);
+        myZoomBar.setMax(100);
+        myZoomBar.setProgress(50);
+        myZoomBar.setOnSeekBarChangeListener(myZoomBarOnSeekBarChangeListener);
+        LinearLayout.LayoutParams zoomBarParams =  new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.FILL_PARENT);
+        zoomBarParams.gravity = Gravity.CENTER_HORIZONTAL;
+        zoomLayout.addView(myZoomBar, zoomBarParams);
+
+        FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(  LayoutParams.WRAP_CONTENT, 
+                                                                                    LayoutParams.FILL_PARENT, 
+                                                                                    Gravity.RIGHT);
+        addContentView(zoomLayout,frameLayoutParams);
         
         updateDataOnZoom();
 
