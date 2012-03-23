@@ -81,7 +81,7 @@ public class AugmentedView extends View {
                 if (marker1.isMarkerOnMarker(marker2)) {
                     marker2.getLocation().get(locationArray);
                     float y = locationArray[1];
-                    float h = collisions*COLLISION_ADJUSTMENT;
+                    float h = marker1.getHeight()+(collisions*COLLISION_ADJUSTMENT);
                     locationArray[1] = y+h;
                     marker2.getLocation().set(locationArray);
                     marker2.update(canvas, 0, 0);

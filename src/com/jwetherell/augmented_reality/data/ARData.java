@@ -183,6 +183,8 @@ public abstract class ARData {
     public static void addMarkers(Collection<Marker> markers) {
     	if (markers==null) throw new NullPointerException();
 
+    	if (markers.size()<=0) return;
+    	
     	Log.d(TAG, "New markers, updating markers. new markers="+markers.toString());
     	for(Marker marker : markers) {
     	    if (!markerList.containsKey(marker.getName())) {
