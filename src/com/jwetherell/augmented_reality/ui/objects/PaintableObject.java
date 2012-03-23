@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.graphics.RectF;
 
 
 /**
@@ -130,6 +131,22 @@ public abstract class PaintableObject {
     	if (canvas==null) throw new NullPointerException();
     	
         canvas.drawRect(x, y, x + width, y + height, paint);
+    }
+
+    /**
+     * Paint a rectangle with round corners on the given Canvas.
+     * @param canvas Canvas to paint on.
+     * @param x X location of the rectangle.
+     * @param y Y location of the rectangle.
+     * @param width Width of the rectangle.
+     * @param height Height of the rectangle.
+     * @throws NullPointerException if Canvas is NULL.
+     */
+    public void paintRoundedRect(Canvas canvas, float x, float y, float width, float height) {
+        if (canvas==null) throw new NullPointerException();
+
+        RectF rect = new RectF(x, y, x + width, y + height);
+        canvas.drawRoundRect(rect, 15F, 15F, paint);
     }
 
     /**

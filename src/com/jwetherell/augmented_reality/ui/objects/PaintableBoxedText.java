@@ -140,11 +140,11 @@ public class PaintableBoxedText extends PaintableObject {
 
 		setFill(true);
 		setColor(backgroundColor);
-		paintRect(canvas, 0, 0, width, height);
+		paintRoundedRect(canvas, 0, 0, width, height);
 
 		setFill(false);
 		setColor(borderColor);
-		paintRect(canvas, 0, 0, width, height);
+		paintRoundedRect(canvas, 0, 0, width, height);
 		
 		for (int i = 0; i < lines.length; i++) {
 			String line = lines[i];
