@@ -59,7 +59,7 @@ public class LocalDataSource extends DataSource{
         */
 
         /*
-        float max = 1000;
+        float max = 100;
         for (float i=0; i<max; i++) {
             Marker marker = null;
             float decimal = i/max;

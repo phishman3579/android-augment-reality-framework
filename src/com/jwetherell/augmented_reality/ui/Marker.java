@@ -16,7 +16,6 @@ import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.location.Location;
-import android.util.Log;
 
 
 /**
@@ -246,9 +245,9 @@ public class Marker implements Comparable<Marker> {
         float y1 = symbolArray[1] + (getHeight()/2);
         float x2 = symbolArray[0] - (getWidth()/2);
         float y2 = symbolArray[1] - (getHeight()/2);
-        if (x1>=-1 && x2<=(cam.getWidth()+1) 
+        if (x1>=-1 && x2<=(cam.getWidth()) 
             &&
-            y1>=-1 && y2<=(cam.getHeight()+1)
+            y1>=-1 && y2<=(cam.getHeight())
         ) {
             isInView = true;
         }
@@ -301,33 +300,55 @@ public class Marker implements Comparable<Marker> {
     public synchronized boolean isMarkerOnMarker(Marker marker) {
         marker.getScreenPosition().get(screenPositionArray);
         float x = screenPositionArray[0];
-        float y = screenPositionArray[1];
-        boolean middle = isPointOnMarker(x,y);
-        if (middle) return true;
+        float y = screenPositionArray[1];        
+        boolean middleOfMarker = isPointOnMarker(x,y);
+        if (middleOfMarker) return true;
 
-        float adjW = marker.getWidth()/2;
-        float adjH = marker.getHeight()/2;
+        float halfWidth = marker.getWidth()/2;
+        float halfHeight = marker.getHeight()/2;
+        float quarterWidth = halfWidth/2;
+        float quarterHeight = halfHeight/2;
         
-        float x1 = x - adjW;
-        float y1 = y - adjH;
-        boolean ul = isPointOnMarker(x1,y1);
-        if (ul) return true;
+        float x1 = x - halfWidth;
+        float y1 = y - halfHeight;
+        boolean upperLeftOfMarker = isPointOnMarker(x1,y1);
+        if (upperLeftOfMarker) return true;
         
-        float x2 = x + adjW;
-        float y2 = y - adjH;
-        boolean ur = isPointOnMarker(x2,y2);
-        if (ur) return true;
-        
-        float x3 = x - adjW;
-        float y3 = y + adjH;
-        boolean ll = isPointOnMarker(x3,y3);
-        if (ll) return true;
-        
-        float x4 = x + adjW;
-        float y4 = y + adjH;
-        boolean lr = isPointOnMarker(x4,y4);
-        if (lr) return true;
-        
+        float x5 = x - quarterWidth;
+        float y5 = y;
+        boolean middleLeftOfMarker = isPointOnMarker(x5,y5);
+        if (middleLeftOfMarker) return true;
+
+        float x3 = x1;
+        float y3 = y + halfHeight;
+        boolean lowerLeftOfMarker = isPointOnMarker(x3,y3);
+        if (lowerLeftOfMarker) return true;
+
+        float x6 = x;
+        float y6 = y + quarterHeight;
+        boolean topMiddleOfMarker = isPointOnMarker(x6,y6);
+        if (topMiddleOfMarker) return true;
+
+        float x2 = x + halfWidth;
+        float y2 = y1;
+        boolean upperRightOfMarker = isPointOnMarker(x2,y2);
+        if (upperRightOfMarker) return true;
+
+        float x7 = x + quarterWidth;
+        float y7 = y;
+        boolean middleRightOfMarker = isPointOnMarker(x7,y7);
+        if (middleRightOfMarker) return true;
+
+        float x4 = x2;
+        float y4 = y3;
+        boolean lowerRightOfMarker = isPointOnMarker(x4,y4);
+        if (lowerRightOfMarker) return true;
+
+        float x8 = x;
+        float y8 = y - quarterHeight;
+        boolean bottomMiddleOfMarker = isPointOnMarker(x8,y8);
+        if (bottomMiddleOfMarker) return true;
+
         return false;
     }
 
@@ -344,8 +365,12 @@ public class Marker implements Comparable<Marker> {
         float adjWidth = getWidth()/2;
         float adjHeight = getHeight()/2;
 
-        if (x>=(myX-adjWidth) && x<=(myX+adjWidth) && y>=(myY-adjHeight) && y<=(myY+adjHeight)) 
-            return true;
+        float x1 = myX-adjWidth;
+        float y1 = myY-adjHeight;
+        float x2 = myX+adjWidth;
+        float y2 = myY+adjHeight;
+
+        if (x>=x1 && x<=x2 && y>=y1 && y<=y2) return true;
         
         return false;
 	}
@@ -386,10 +411,10 @@ public class Marker implements Comparable<Marker> {
         adjX -= (width/2);
         adjY -= (gpsSymbol.getHeight()/2);
         
-        Log.w("touchBox", "ul (x="+(adjX)+" y="+(adjY)+")");
-        Log.w("touchBox", "ur (x="+(adjX+width)+" y="+(adjY)+")");
-        Log.w("touchBox", "ll (x="+(adjX)+" y="+(adjY+height)+")");
-        Log.w("touchBox", "lr (x="+(adjX+width)+" y="+(adjY+height)+")");
+        //Log.w("touchBox", "ul (x="+(adjX)+" y="+(adjY)+")");
+        //Log.w("touchBox", "ur (x="+(adjX+width)+" y="+(adjY)+")");
+        //Log.w("touchBox", "ll (x="+(adjX)+" y="+(adjY+height)+")");
+        //Log.w("touchBox", "lr (x="+(adjX+width)+" y="+(adjY+height)+")");
         
         if (touchBox==null) touchBox = new PaintableBox(width,height);
         else touchBox.set(width,height);
