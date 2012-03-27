@@ -1,5 +1,6 @@
 package com.jwetherell.augmented_reality.ui;
 
+import com.jwetherell.augmented_reality.common.Utilities;
 import com.jwetherell.augmented_reality.ui.objects.PaintableIcon;
 import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
 import android.graphics.Bitmap;
@@ -11,7 +12,6 @@ import android.graphics.Canvas;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class IconMarker extends Marker {
-    private static final float[] symbolArray = new float[3];
     private Bitmap bitmap = null;
 
     public IconMarker(String name, double latitude, double longitude, double altitude, int color, Bitmap bitmap) {
@@ -25,14 +25,18 @@ public class IconMarker extends Marker {
     @Override
     public void drawIcon(Canvas canvas) {
     	if (canvas==null || bitmap==null) throw new NullPointerException();
-    	
+
         if (gpsSymbol==null) gpsSymbol = new PaintableIcon(bitmap,96,96);
-    	
+
+        textXyzRelativeToCameraView.get(textArray);
         symbolXyzRelativeToCameraView.get(symbolArray);
-        if (symbolContainer==null) 
-            symbolContainer = new PaintablePosition(gpsSymbol, symbolArray[0], symbolArray[1], 0, 1);
-        else 
-            symbolContainer.set(gpsSymbol, symbolArray[0], symbolArray[1], 0, 1);
+
+        float currentAngle = Utilities.getAngle(symbolArray[0], symbolArray[1], textArray[0], textArray[1]);
+        float angle = currentAngle + 90;
+
+        if (symbolContainer==null) symbolContainer = new PaintablePosition(gpsSymbol, symbolArray[0], symbolArray[1], angle, 1);
+        else symbolContainer.set(gpsSymbol, symbolArray[0], symbolArray[1], angle, 1);
+
         symbolContainer.paint(canvas);
     }
 }

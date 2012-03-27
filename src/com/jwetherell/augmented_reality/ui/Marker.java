@@ -16,6 +16,7 @@ import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.location.Location;
+import android.util.Log;
 
 
 /**
@@ -35,8 +36,6 @@ public class Marker implements Comparable<Marker> {
     private final Vector tmpVector = new Vector();
     private final Vector tmpTextVector = new Vector();
     private final float[] distanceArray = new float[1];
-    private final float[] symbolArray = new float[3];
-    private final float[] textArray = new float[3];
     private final float[] locationArray = new float[3];
     private final float[] screenPositionArray = new float[3];
 
@@ -47,6 +46,9 @@ public class Marker implements Comparable<Marker> {
     private volatile PaintableBoxedText textBox = null;
     private volatile PaintablePosition textContainer = null;
 
+    protected final float[] symbolArray = new float[3];
+    protected final float[] textArray = new float[3];
+    
     //Container for the circle or icon symbol
     protected volatile PaintableObject gpsSymbol = null;
     protected volatile PaintablePosition symbolContainer = null;
@@ -75,7 +77,12 @@ public class Marker implements Comparable<Marker> {
     private static boolean debugTouchZone = false;
     private static PaintableBox touchBox = null;
     private static PaintablePosition touchPosition = null;
-    
+
+    //Used to debug the collision mechanism
+    private static boolean debugCollisionZone = false;
+    private static PaintableBox collisionBox = null;
+    private static PaintablePosition collisionPosition = null;
+
 	public Marker(String name, double latitude, double longitude, double altitude, int color) {
 		set(name, latitude, longitude, altitude, color);
 	}
@@ -289,7 +296,7 @@ public class Marker implements Comparable<Marker> {
      */
     public synchronized boolean handleClick(float x, float y) {
     	if (!isOnRadar || !isInView) return false;
-    	return isPointOnMarker(x,y);
+    	return isPointOnMarker(x,y,this);
     }
 
     /**
@@ -298,72 +305,62 @@ public class Marker implements Comparable<Marker> {
      * @return True if the marker is on Marker.
      */
     public synchronized boolean isMarkerOnMarker(Marker marker) {
+        return isMarkerOnMarker(marker,true);
+    }
+
+    /**
+     * Determines if the marker is on this Marker.
+     * @param marker Marker to test for overlap.
+     * @param reflect if True the Marker will call it's self recursively with the opposite arguments.
+     * @return True if the marker is on Marker.
+     */
+    private synchronized boolean isMarkerOnMarker(Marker marker, boolean reflect) {
         marker.getScreenPosition().get(screenPositionArray);
         float x = screenPositionArray[0];
         float y = screenPositionArray[1];        
-        boolean middleOfMarker = isPointOnMarker(x,y);
+        boolean middleOfMarker = isPointOnMarker(x,y,this);
         if (middleOfMarker) return true;
 
         float halfWidth = marker.getWidth()/2;
         float halfHeight = marker.getHeight()/2;
-        float quarterWidth = halfWidth/2;
-        float quarterHeight = halfHeight/2;
-        
+
         float x1 = x - halfWidth;
         float y1 = y - halfHeight;
-        boolean upperLeftOfMarker = isPointOnMarker(x1,y1);
+        boolean upperLeftOfMarker = isPointOnMarker(x1,y1,this);
         if (upperLeftOfMarker) return true;
-        
-        float x5 = x - quarterWidth;
-        float y5 = y;
-        boolean middleLeftOfMarker = isPointOnMarker(x5,y5);
-        if (middleLeftOfMarker) return true;
-
-        float x3 = x1;
-        float y3 = y + halfHeight;
-        boolean lowerLeftOfMarker = isPointOnMarker(x3,y3);
-        if (lowerLeftOfMarker) return true;
-
-        float x6 = x;
-        float y6 = y + quarterHeight;
-        boolean topMiddleOfMarker = isPointOnMarker(x6,y6);
-        if (topMiddleOfMarker) return true;
 
         float x2 = x + halfWidth;
         float y2 = y1;
-        boolean upperRightOfMarker = isPointOnMarker(x2,y2);
+        boolean upperRightOfMarker = isPointOnMarker(x2,y2,this);
         if (upperRightOfMarker) return true;
 
-        float x7 = x + quarterWidth;
-        float y7 = y;
-        boolean middleRightOfMarker = isPointOnMarker(x7,y7);
-        if (middleRightOfMarker) return true;
+        float x3 = x1;
+        float y3 = y + halfHeight;
+        boolean lowerLeftOfMarker = isPointOnMarker(x3,y3,this);
+        if (lowerLeftOfMarker) return true;
 
         float x4 = x2;
         float y4 = y3;
-        boolean lowerRightOfMarker = isPointOnMarker(x4,y4);
+        boolean lowerRightOfMarker = isPointOnMarker(x4,y4,this);
         if (lowerRightOfMarker) return true;
 
-        float x8 = x;
-        float y8 = y - quarterHeight;
-        boolean bottomMiddleOfMarker = isPointOnMarker(x8,y8);
-        if (bottomMiddleOfMarker) return true;
-
-        return false;
+        //If reflect is True then reverse the arguments and see if this Marker is on the marker.
+        return (reflect)?marker.isMarkerOnMarker(this,false):false;
     }
 
     /**
      * Determines if the point is on this Marker.
      * @param x X point.
      * @param y Y point.
+     * @param marker Marker to determine if the point is on.
      * @return True if the point is on Marker.
      */
-	public synchronized boolean isPointOnMarker(float x, float y) {
-        getScreenPosition().get(screenPositionArray);
+	private synchronized boolean isPointOnMarker(float x, float y, Marker marker) {
+	    marker.getScreenPosition().get(screenPositionArray);
         float myX = screenPositionArray[0];
         float myY = screenPositionArray[1];
-        float adjWidth = getWidth()/2;
-        float adjHeight = getHeight()/2;
+        float adjWidth = marker.getWidth()/2;
+        float adjHeight = marker.getHeight()/2;
 
         float x1 = myX-adjWidth;
         float y1 = myY-adjHeight;
@@ -388,8 +385,48 @@ public class Marker implements Comparable<Marker> {
         
         //Draw the Icon and Text
         if (debugTouchZone) drawTouchZone(canvas);
+        if (debugCollisionZone) drawCollisionZone(canvas);
         drawIcon(canvas);
         drawText(canvas);
+    }
+
+    protected synchronized void drawCollisionZone(Canvas canvas) {
+        if (canvas==null) throw new NullPointerException();
+        
+        getScreenPosition().get(screenPositionArray);
+        float x = screenPositionArray[0];
+        float y = screenPositionArray[1];        
+
+        float width = getWidth();
+        float height = getHeight();
+        float halfWidth = width/2;
+        float halfHeight = height/2;
+
+        float x1 = x - halfWidth;
+        float y1 = y - halfHeight;
+
+        float x2 = x + halfWidth;
+        float y2 = y1;
+
+        float x3 = x1;
+        float y3 = y + halfHeight;
+
+        float x4 = x2;
+        float y4 = y3;
+
+        Log.w("collisionBox", "ul (x="+x1+" y="+y1+")");
+        Log.w("collisionBox", "ur (x="+x2+" y="+y2+")");
+        Log.w("collisionBox", "ll (x="+x3+" y="+y3+")");
+        Log.w("collisionBox", "lr (x="+x4+" y="+y4+")");
+        
+        if (collisionBox==null) collisionBox = new PaintableBox(width,height,Color.WHITE,Color.RED);
+        else collisionBox.set(width,height);
+
+        float currentAngle = Utilities.getAngle(symbolArray[0], symbolArray[1], textArray[0], textArray[1])+90;
+        
+        if (collisionPosition==null) collisionPosition = new PaintablePosition(collisionBox, x1, y1, currentAngle, 1);
+        else collisionPosition.set(collisionBox, x1, y1, currentAngle, 1);
+        collisionPosition.paint(canvas);
     }
 
     protected synchronized void drawTouchZone(Canvas canvas) {
@@ -411,12 +448,12 @@ public class Marker implements Comparable<Marker> {
         adjX -= (width/2);
         adjY -= (gpsSymbol.getHeight()/2);
         
-        //Log.w("touchBox", "ul (x="+(adjX)+" y="+(adjY)+")");
-        //Log.w("touchBox", "ur (x="+(adjX+width)+" y="+(adjY)+")");
-        //Log.w("touchBox", "ll (x="+(adjX)+" y="+(adjY+height)+")");
-        //Log.w("touchBox", "lr (x="+(adjX+width)+" y="+(adjY+height)+")");
+        Log.w("touchBox", "ul (x="+(adjX)+" y="+(adjY)+")");
+        Log.w("touchBox", "ur (x="+(adjX+width)+" y="+(adjY)+")");
+        Log.w("touchBox", "ll (x="+(adjX)+" y="+(adjY+height)+")");
+        Log.w("touchBox", "lr (x="+(adjX+width)+" y="+(adjY+height)+")");
         
-        if (touchBox==null) touchBox = new PaintableBox(width,height);
+        if (touchBox==null) touchBox = new PaintableBox(width,height,Color.WHITE,Color.GREEN);
         else touchBox.set(width,height);
 
         if (touchPosition==null) touchPosition = new PaintablePosition(touchBox, adjX, adjY, currentAngle, 1);
@@ -426,12 +463,18 @@ public class Marker implements Comparable<Marker> {
     
     protected synchronized void drawIcon(Canvas canvas) {
     	if (canvas==null) throw new NullPointerException();
-    	
+
         if (gpsSymbol==null) gpsSymbol = new PaintableGps(36, 36, true, getColor());
-        
+
+        textXyzRelativeToCameraView.get(textArray);
         symbolXyzRelativeToCameraView.get(symbolArray);
-        if (symbolContainer==null) symbolContainer = new PaintablePosition(gpsSymbol, symbolArray[0], symbolArray[1], 0, 1);
-        else symbolContainer.set(gpsSymbol, symbolArray[0], symbolArray[1], 0, 1);
+
+        float currentAngle = Utilities.getAngle(symbolArray[0], symbolArray[1], textArray[0], textArray[1]);
+        float angle = currentAngle + 90;
+
+        if (symbolContainer==null) symbolContainer = new PaintablePosition(gpsSymbol, symbolArray[0], symbolArray[1], angle, 1);
+        else symbolContainer.set(gpsSymbol, symbolArray[0], symbolArray[1], angle, 1);
+
         symbolContainer.paint(canvas);
     }
 
@@ -448,13 +491,17 @@ public class Marker implements Comparable<Marker> {
 
 	    textXyzRelativeToCameraView.get(textArray);
 	    symbolXyzRelativeToCameraView.get(symbolArray);
+
 	    float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
 	    if (textBox==null) textBox = new PaintableBoxedText(textStr, Math.round(maxHeight / 2f) + 1, 300);
 	    else textBox.set(textStr, Math.round(maxHeight / 2f) + 1, 300);
-	    float x = textArray[0] - textBox.getWidth() / 2;
-	    float y = textArray[1] + maxHeight;
+
 	    float currentAngle = Utilities.getAngle(symbolArray[0], symbolArray[1], textArray[0], textArray[1]);
 	    float angle = currentAngle + 90;
+
+	    float x = textArray[0] - (textBox.getWidth() / 2);
+	    float y = textArray[1] + maxHeight;
+
 	    if (textContainer==null) textContainer = new PaintablePosition(textBox, x, y, angle, 1);
 	    else textContainer.set(textBox, x, y, angle, 1);
 	    textContainer.paint(canvas);
