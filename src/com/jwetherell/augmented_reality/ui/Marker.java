@@ -167,8 +167,10 @@ public class Marker implements Comparable<Marker> {
         float x = (symbolArray[0] + textArray[0])/2;
         float y = (symbolArray[1] + textArray[1])/2;
         float z = (symbolArray[2] + textArray[2])/2;
+
         // If the marker has been visible, use the text box to offset the position.
         if (textBox!=null) y += (textBox.getHeight()/2);
+
         screenPositionVector.set(x, y, z);
         return screenPositionVector;
     }
@@ -478,7 +480,7 @@ public class Marker implements Comparable<Marker> {
         symbolContainer.paint(canvas);
     }
 
-    private synchronized void drawText(Canvas canvas) {
+    protected synchronized void drawText(Canvas canvas) {
 		if (canvas==null) throw new NullPointerException();
 		
 	    String textStr = null;
@@ -497,7 +499,7 @@ public class Marker implements Comparable<Marker> {
 	    else textBox.set(textStr, Math.round(maxHeight / 2f) + 1, 300);
 
 	    float currentAngle = Utilities.getAngle(symbolArray[0], symbolArray[1], textArray[0], textArray[1]);
-	    float angle = currentAngle + 90;
+        float angle = currentAngle + 90;
 
 	    float x = textArray[0] - (textBox.getWidth() / 2);
 	    float y = textArray[1] + maxHeight;
