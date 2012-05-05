@@ -19,12 +19,12 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.TextView;
 
 import com.jwetherell.augmented_reality.camera.CameraSurface;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.ui.Marker;
 import com.jwetherell.augmented_reality.widget.VerticalSeekBar;
+import com.jwetherell.augmented_reality.widget.VerticalTextView;
 
 
 /**
@@ -42,7 +42,7 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
     protected static WakeLock wakeLock = null;
     protected static CameraSurface camScreen = null;    
     protected static VerticalSeekBar myZoomBar = null;
-    protected static TextView endLabel = null;
+    protected static VerticalTextView endLabel = null;
     protected static LinearLayout zoomLayout = null;
     protected static AugmentedView augmentedView = null;
 
@@ -52,6 +52,7 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
     public static final float TWENTY_PERCENT = 2f*TEN_PERCENT;
     public static final float EIGHTY_PERCENTY = 4f*TWENTY_PERCENT;
 
+    public static boolean portrait = false;
     public static boolean useCollisionDetection = true;
     public static boolean showRadar = true;
     public static boolean showZoomBar = true;
@@ -78,10 +79,11 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
         zoomLayout.setPadding(5, 5, 5, 5);
         zoomLayout.setBackgroundColor(ZOOMBAR_BACKGROUND_COLOR);
 
-        endLabel = new TextView(this);
+        endLabel = new VerticalTextView(this);
         endLabel.setText(END_TEXT);
         endLabel.setTextColor(END_TEXT_COLOR);
         LinearLayout.LayoutParams zoomTextParams =  new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+        zoomTextParams.gravity = Gravity.CENTER;
         zoomLayout.addView(endLabel, zoomTextParams);
 
         myZoomBar = new VerticalSeekBar(this);

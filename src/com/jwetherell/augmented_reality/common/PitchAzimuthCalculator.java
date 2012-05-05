@@ -18,6 +18,8 @@
  */
 package com.jwetherell.augmented_reality.common;
 
+import com.jwetherell.augmented_reality.activity.AugmentedReality;
+
 
 /**
  * A state class used to calculate bearing and pitch given a Matrix.
@@ -49,7 +51,11 @@ public class PitchAzimuthCalculator {
 
         looking.set(0, 0, 0);
         rotationM.transpose();
-        looking.set(1, 0, 0);
+        if (AugmentedReality.portrait) {
+        	looking.set(0, 1, 0);
+        } else {
+        	looking.set(1, 0, 0);
+        }
         looking.prod(rotationM);
         looking.get(lookingArray);
         PitchAzimuthCalculator.azimuth = ((Utilities.getAngle(0, 0, lookingArray[0], lookingArray[2])  + 360 ) % 360);

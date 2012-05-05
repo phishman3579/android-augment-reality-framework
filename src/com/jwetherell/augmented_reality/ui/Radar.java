@@ -3,6 +3,7 @@ package com.jwetherell.augmented_reality.ui;
 import android.graphics.Canvas;
 import android.graphics.Color;
 
+import com.jwetherell.augmented_reality.activity.AugmentedReality;
 import com.jwetherell.augmented_reality.camera.CameraModel;
 import com.jwetherell.augmented_reality.common.PitchAzimuthCalculator;
 import com.jwetherell.augmented_reality.data.ARData;
@@ -60,11 +61,22 @@ public class Radar {
         ARData.setAzimuth(PitchAzimuthCalculator.getAzimuth());
         ARData.setPitch(PitchAzimuthCalculator.getPitch());
         
+        if (AugmentedReality.portrait) {
+        	canvas.save();
+        	canvas.getWidth();
+        	canvas.translate(5, canvas.getHeight()-5);
+        	canvas.rotate(-90);
+        }
+        
         //Update the radar graphics and text based upon the new pitch and bearing
         drawRadarCircle(canvas);
         drawRadarPoints(canvas);
         drawRadarLines(canvas);
         drawRadarText(canvas);
+        
+        if (AugmentedReality.portrait) {
+        	canvas.restore();
+        }
     }
     
     private void drawRadarCircle(Canvas canvas) {
