@@ -222,7 +222,7 @@ public abstract class PaintableObject {
     	if (canvas==null || obj==null) throw new NullPointerException();
     	
         canvas.save();
-        canvas.translate(x+obj.getWidth()/2, y+obj.getHeight()/2);
+        canvas.translate((x+obj.getWidth()/2), (y+obj.getHeight()/2));
         canvas.rotate(rotation);
         canvas.scale(scale,scale);
         canvas.translate(-(obj.getWidth()/2), -(obj.getHeight()/2));

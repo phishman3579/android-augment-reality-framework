@@ -15,10 +15,10 @@ public class LowPassFilter {
      * 0 ≤ α ≤ 1 ; a smaller value basically means more smoothing
      * See: http://en.wikipedia.org/wiki/Low-pass_filter#Discrete-time_realization
      */
-    private static final float ALPHA_DEFAULT = 0.333f;
+    private static final float ALPHA_DEFAULT      = 0.333f;
     private static final float ALPHA_STEADY       = 0.001f;
-    private static final float ALPHA_START_MOVING = 0.6f;
-    private static final float ALPHA_MOVING       = 0.9f;
+    private static final float ALPHA_START_MOVING = 0.3f;
+    private static final float ALPHA_MOVING       = 0.6f;
 
     private LowPassFilter() { }
     
@@ -46,7 +46,7 @@ public class LowPassFilter {
     }
     
     private static final float computeAlpha(float low, float high, float[] current, float[] previous) {
-        if(previous.length != 3 || current.length != 3) return ALPHA_DEFAULT;
+        if (previous.length != 3 || current.length != 3) return ALPHA_DEFAULT;
         
         float x1 = current[0],
               y1 = current[1],

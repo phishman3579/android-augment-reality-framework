@@ -37,7 +37,7 @@ public class PaintablePoint extends PaintableObject {
     	
         setFill(fill);
         setColor(color);
-        paintRect(canvas, -1, -1, width, height);
+        paintRect(canvas, -width/2, -height/2, width, height);
     }
 
 	/**

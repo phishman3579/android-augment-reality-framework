@@ -9,6 +9,8 @@ import android.graphics.Canvas;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class PaintableGps extends PaintableObject {
+    private static final int FRAME_SIZE = 15;
+    
     private float radius = 0;
     private float strokeWidth = 0;
     private boolean fill = false;
@@ -50,7 +52,7 @@ public class PaintableGps extends PaintableObject {
 	 */
 	@Override
     public float getWidth() {
-        return radius*2;
+        return (radius*2) + FRAME_SIZE;
     }
 
 	/**
@@ -58,6 +60,6 @@ public class PaintableGps extends PaintableObject {
 	 */
 	@Override
     public float getHeight() {
-	    return radius*2;
+	    return (radius*2) + FRAME_SIZE;
     }
 }

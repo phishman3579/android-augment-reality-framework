@@ -60,20 +60,19 @@ public class Radar {
     	PitchAzimuthCalculator.calcPitchBearing(ARData.getRotationMatrix());
         ARData.setAzimuth(PitchAzimuthCalculator.getAzimuth());
         ARData.setPitch(PitchAzimuthCalculator.getPitch());
-        
+
         if (AugmentedReality.portrait) {
         	canvas.save();
-        	canvas.getWidth();
         	canvas.translate(5, canvas.getHeight()-5);
         	canvas.rotate(-90);
         }
-        
+
         //Update the radar graphics and text based upon the new pitch and bearing
         drawRadarCircle(canvas);
         drawRadarPoints(canvas);
         drawRadarLines(canvas);
         drawRadarText(canvas);
-        
+
         if (AugmentedReality.portrait) {
         	canvas.restore();
         }
