@@ -46,8 +46,6 @@ public abstract class ARData {
     private static Matrix rotationMatrix = new Matrix();
     private static final Object azimuthLock = new Object();
     private static float azimuth = 0;
-    private static final Object pitchLock = new Object();
-    private static float pitch = 0;
     private static final Object rollLock = new Object();
     private static float roll = 0;
 
@@ -253,27 +251,7 @@ public abstract class ARData {
             return ARData.azimuth;
         }
     }
-    
-    /**
-     * Set the current Pitch.
-     * @param pitch float representing the pitch.
-     */
-    public static void setPitch(float pitch) {
-        synchronized (pitchLock) {
-            ARData.pitch = pitch;
-        }
-    }
-    
-    /**
-     * Get the current Pitch.
-     * @return pitch float representing the pitch.
-     */
-    public static float getPitch() {
-        synchronized (pitchLock) {
-            return ARData.pitch;
-        }
-    }
-    
+
     /**
      * Set the current Roll.
      * @param roll float representing the roll.

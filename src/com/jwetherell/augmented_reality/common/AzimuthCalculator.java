@@ -29,15 +29,13 @@ import com.jwetherell.augmented_reality.activity.AugmentedReality;
  * @author Daniele Gobbetti <info@mixare.org>
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class PitchAzimuthCalculator {
+public class AzimuthCalculator {
     private static final Vector looking = new Vector();
     private static final float[] lookingArray = new float[3];
 
     private static volatile float azimuth = 0;
 
-    private static volatile float pitch = 0;
-
-    private PitchAzimuthCalculator() {};
+    private AzimuthCalculator() {};
 
     private static final float getAngle(float center_x, float center_y, float post_x, float post_y) {
         float tmpv_x = post_x - center_x;
@@ -52,10 +50,7 @@ public class PitchAzimuthCalculator {
     }
 
     public static synchronized float getAzimuth() {
-        return PitchAzimuthCalculator.azimuth;
-    }
-    public static synchronized float getPitch() {
-        return PitchAzimuthCalculator.pitch;
+        return AzimuthCalculator.azimuth;
     }
 
     public static synchronized void calcPitchBearing(Matrix rotationM) {
@@ -70,13 +65,7 @@ public class PitchAzimuthCalculator {
         }
         looking.prod(rotationM);
         looking.get(lookingArray);
-        PitchAzimuthCalculator.azimuth = ((getAngle(0, 0, lookingArray[0], lookingArray[2])  + 360 ) % 360);
-
-        rotationM.transpose();
-        looking.set(0, 1, 0);
-        looking.prod(rotationM);
-        looking.get(lookingArray);
-        PitchAzimuthCalculator.pitch = -getAngle(0, 0, lookingArray[1], lookingArray[2]);
+        AzimuthCalculator.azimuth = ((getAngle(0, 0, lookingArray[0], lookingArray[2])  + 360 ) % 360);
     }
 }
 
