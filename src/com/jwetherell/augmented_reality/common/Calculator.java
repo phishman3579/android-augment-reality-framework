@@ -22,7 +22,7 @@ import com.jwetherell.augmented_reality.activity.AugmentedReality;
 
 
 /**
- * A state class used to calculate azimuth, pitch, and roll given a rotation matrix.
+ * A static class used to calculate azimuth, pitch, and roll given a rotation matrix.
  * 
  * This file was adapted from Mixare <http://www.mixare.org/>
  * 
