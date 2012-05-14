@@ -52,45 +52,50 @@ public class Calculator {
         return angle;
     }
 
+    /**
+     * Azimuth the phone's camera is pointing. From 0 to 360 with magnetic north compensation.
+     * 
+     * @return float representing the azimuth the phone's camera is pointing
+     */
     public static synchronized float getAzimuth() {
         return Calculator.azimuth;
     }
-    
+
+    /**
+     * Pitch of the phone's camera. From -90 to 90, where negative is pointing down and zero is level.
+     * 
+     * @return float representing the pitch of the phone's camera.
+     */
     public static synchronized float getPitch() {
         return Calculator.pitch;
     }
-    
+
+    /**
+     * Roll of the phone's camera. From -90 to 90, where negative is rolled left and zero is level.
+     * 
+     * @return float representing the roll of the phone's camera.
+     */
     public static synchronized float getRoll() {
         return Calculator.roll;
     }
 
-    public static synchronized void calcPitchBearing(Matrix rotationM) {
-        if (rotationM==null) return;
+    public static synchronized void calcPitchBearing(Matrix rotationMatrix) {
+        if (rotationMatrix==null) return;
 
-        rotationM.transpose();
+        rotationMatrix.transpose();
         if (AugmentedReality.portrait) {
         	looking.set(0, 1, 0);
         } else {
         	looking.set(1, 0, 0);
         }
-        looking.prod(rotationM);
+        looking.prod(rotationMatrix);
         looking.get(lookingArray);
-        Calculator.azimuth = ((getAngle(0, 0, lookingArray[0], lookingArray[2])  + 360 ) % 360); //X & Z
-
-        rotationM.transpose();
-        if (AugmentedReality.portrait) {
-            looking.set(1, 0, 0);
-        } else {
-            looking.set(0, 1, 0);
-        }
-
-        looking.prod(rotationM);
+        Calculator.azimuth = ((getAngle(0, 0, lookingArray[0], lookingArray[2])  + 360 ) % 360);
+        Calculator.roll = -(90-Math.abs(getAngle(0, 0, lookingArray[1], lookingArray[2])));
+        looking.set(0, 0, 1);
+        looking.prod(rotationMatrix);
         looking.get(lookingArray);
-        Calculator.pitch = -getAngle(0, 0, lookingArray[1], lookingArray[2]); // Y & Z
-
-        looking.prod(rotationM);
-        looking.get(lookingArray);
-        Calculator.roll = 90-getAngle(0, 0, lookingArray[0], lookingArray[1]); // X & Y
+        Calculator.pitch = -(90-Math.abs(getAngle(0, 0, lookingArray[1], lookingArray[2])));
     }
 }
 
