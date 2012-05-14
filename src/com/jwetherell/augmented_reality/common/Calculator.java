@@ -22,22 +22,25 @@ import com.jwetherell.augmented_reality.activity.AugmentedReality;
 
 
 /**
- * A state class used to calculate bearing and pitch given a Matrix.
+ * A state class used to calculate azimuth, pitch, and roll given a rotation matrix.
  * 
  * This file was adapted from Mixare <http://www.mixare.org/>
  * 
  * @author Daniele Gobbetti <info@mixare.org>
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class AzimuthCalculator {
+public class Calculator {
     private static final Vector looking = new Vector();
     private static final float[] lookingArray = new float[3];
 
     private static volatile float azimuth = 0;
+    private static volatile float pitch = 0;
+    private static volatile float roll = 0;
 
-    private AzimuthCalculator() {};
 
-    private static final float getAngle(float center_x, float center_y, float post_x, float post_y) {
+    private Calculator() {};
+
+    public static final float getAngle(float center_x, float center_y, float post_x, float post_y) {
         float tmpv_x = post_x - center_x;
         float tmpv_y = post_y - center_y;
         float d = (float) Math.sqrt(tmpv_x * tmpv_x + tmpv_y * tmpv_y);
@@ -50,13 +53,20 @@ public class AzimuthCalculator {
     }
 
     public static synchronized float getAzimuth() {
-        return AzimuthCalculator.azimuth;
+        return Calculator.azimuth;
+    }
+    
+    public static synchronized float getPitch() {
+        return Calculator.pitch;
+    }
+    
+    public static synchronized float getRoll() {
+        return Calculator.roll;
     }
 
     public static synchronized void calcPitchBearing(Matrix rotationM) {
         if (rotationM==null) return;
 
-        looking.set(0, 0, 0);
         rotationM.transpose();
         if (AugmentedReality.portrait) {
         	looking.set(0, 1, 0);
@@ -65,7 +75,22 @@ public class AzimuthCalculator {
         }
         looking.prod(rotationM);
         looking.get(lookingArray);
-        AzimuthCalculator.azimuth = ((getAngle(0, 0, lookingArray[0], lookingArray[2])  + 360 ) % 360);
+        Calculator.azimuth = ((getAngle(0, 0, lookingArray[0], lookingArray[2])  + 360 ) % 360); //X & Z
+
+        rotationM.transpose();
+        if (AugmentedReality.portrait) {
+            looking.set(1, 0, 0);
+        } else {
+            looking.set(0, 1, 0);
+        }
+
+        looking.prod(rotationM);
+        looking.get(lookingArray);
+        Calculator.pitch = -getAngle(0, 0, lookingArray[1], lookingArray[2]); // Y & Z
+
+        looking.prod(rotationM);
+        looking.get(lookingArray);
+        Calculator.roll = 90-getAngle(0, 0, lookingArray[0], lookingArray[1]); // X & Y
     }
 }
 
