@@ -6,11 +6,13 @@ import android.graphics.Canvas;
 
 
 /**
- * This class extends Marker and draws an icon instead of a circle for it's visual representation.
+ * This class extends Marker and draws an icon instead of a circle for it's
+ * visual representation.
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class IconMarker extends Marker {
+
     private Bitmap bitmap = null;
 
     public IconMarker(String name, double latitude, double longitude, double altitude, int color, Bitmap bitmap) {
@@ -18,14 +20,14 @@ public class IconMarker extends Marker {
         this.bitmap = bitmap;
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void drawIcon(Canvas canvas) {
-    	if (canvas==null || bitmap==null) throw new NullPointerException();
+        if (canvas == null || bitmap == null) throw new NullPointerException();
 
-        if (gpsSymbol==null) gpsSymbol = new PaintableIcon(bitmap,96,96);
+        if (gpsSymbol == null) gpsSymbol = new PaintableIcon(bitmap, 96, 96);
         super.drawIcon(canvas);
     }
 }

@@ -10,52 +10,53 @@ import android.widget.TextView;
 
 
 /**
- * This class extends the TextView class and is designed to work vertically and horizontally.
+ * This class extends the TextView class and is designed to work vertically and
+ * horizontally.
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class VerticalTextView extends TextView {
 
-	public VerticalTextView(Context context) {
-		super(context);
-	}
-	
-	public VerticalTextView(Context context, AttributeSet attrs){
-		super(context, attrs);
-	}
+    public VerticalTextView(Context context) {
+        super(context);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
-		if (AugmentedReality.portrait) {
-			super.onMeasure(heightMeasureSpec, widthMeasureSpec);
-			setMeasuredDimension(getMeasuredHeight(), getMeasuredWidth());
-		} else {
-			super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-			setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight());
-		}
-	}
+    public VerticalTextView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void onDraw(Canvas canvas){
-		if (AugmentedReality.portrait) {
-			TextPaint textPaint = getPaint(); 
-			textPaint.setColor(getCurrentTextColor());
-			textPaint.drawableState = getDrawableState();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        if (AugmentedReality.portrait) {
+            super.onMeasure(heightMeasureSpec, widthMeasureSpec);
+            setMeasuredDimension(getMeasuredHeight(), getMeasuredWidth());
+        } else {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            setMeasuredDimension(getMeasuredWidth(), getMeasuredHeight());
+        }
+    }
 
-			canvas.save();
-			canvas.translate(0, getHeight());
-			canvas.rotate(-90);
-			canvas.translate(getCompoundPaddingLeft(), getExtendedPaddingTop());
-			getLayout().draw(canvas);
-			canvas.restore();
-		} else {
-			super.onDraw(canvas);
-		}
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void onDraw(Canvas canvas) {
+        if (AugmentedReality.portrait) {
+            TextPaint textPaint = getPaint();
+            textPaint.setColor(getCurrentTextColor());
+            textPaint.drawableState = getDrawableState();
+
+            canvas.save();
+            canvas.translate(0, getHeight());
+            canvas.rotate(-90);
+            canvas.translate(getCompoundPaddingLeft(), getExtendedPaddingTop());
+            getLayout().draw(canvas);
+            canvas.restore();
+        } else {
+            super.onDraw(canvas);
+        }
+    }
 }

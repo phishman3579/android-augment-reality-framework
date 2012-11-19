@@ -33,29 +33,30 @@ import android.widget.Toast;
 
 
 /**
- * This class extends the AugmentedReality and is designed to be an example on how to extends the AugmentedReality
- * class to show multiple data sources.
+ * This class extends the AugmentedReality and is designed to be an example on
+ * how to extends the AugmentedReality class to show multiple data sources.
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Demo extends AugmentedReality {
+
     private static final String TAG = "Demo";
     private static final String locale = Locale.getDefault().getLanguage();
     private static final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(1);
     private static final ThreadPoolExecutor exeService = new ThreadPoolExecutor(1, 1, 20, TimeUnit.SECONDS, queue);
-	private static final Map<String,NetworkDataSource> sources = new ConcurrentHashMap<String,NetworkDataSource>();    
-	
-	private static Toast myToast = null;
-	private static VerticalTextView text = null;
+    private static final Map<String, NetworkDataSource> sources = new ConcurrentHashMap<String, NetworkDataSource>();
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
+    private static Toast myToast = null;
+    private static VerticalTextView text = null;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Create toast
+        // Create toast
         myToast = new Toast(getApplicationContext());
         myToast.setGravity(Gravity.CENTER, 0, 0);
         // Creating our custom text view, and setting text/rotation
@@ -69,26 +70,26 @@ public class Demo extends AugmentedReality {
         // Setting duration and displaying the toast
         myToast.setDuration(Toast.LENGTH_SHORT);
 
-        //Local
+        // Local
         LocalDataSource localData = new LocalDataSource(this.getResources());
         ARData.addMarkers(localData.getMarkers());
 
-        //Network
+        // Network
         NetworkDataSource twitter = new TwitterDataSource(this.getResources());
-        sources.put("twitter",twitter);
+        sources.put("twitter", twitter);
         NetworkDataSource wikipedia = new WikipediaDataSource(this.getResources());
-        sources.put("wiki",wikipedia);
+        sources.put("wiki", wikipedia);
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void onStart() {
         super.onStart();
-        
+
         Location last = ARData.getCurrentLocation();
-        updateData(last.getLatitude(),last.getLongitude(),last.getAltitude());
+        updateData(last.getLatitude(), last.getLongitude(), last.getAltitude());
     }
 
     /**
@@ -106,16 +107,16 @@ public class Demo extends AugmentedReality {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.v(TAG, "onOptionsItemSelected() item="+item);
+        Log.v(TAG, "onOptionsItemSelected() item=" + item);
         switch (item.getItemId()) {
             case R.id.showRadar:
                 showRadar = !showRadar;
-                item.setTitle(((showRadar)? "Hide" : "Show")+" Radar");
+                item.setTitle(((showRadar) ? "Hide" : "Show") + " Radar");
                 break;
             case R.id.showZoomBar:
                 showZoomBar = !showZoomBar;
-                item.setTitle(((showZoomBar)? "Hide" : "Show")+" Zoom Bar");
-                zoomLayout.setVisibility((showZoomBar)?LinearLayout.VISIBLE:LinearLayout.GONE);
+                item.setTitle(((showZoomBar) ? "Hide" : "Show") + " Zoom Bar");
+                zoomLayout.setVisibility((showZoomBar) ? LinearLayout.VISIBLE : LinearLayout.GONE);
                 break;
             case R.id.exit:
                 finish();
@@ -124,71 +125,70 @@ public class Demo extends AugmentedReality {
         return true;
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void onLocationChanged(Location location) {
         super.onLocationChanged(location);
-        
-        updateData(location.getLatitude(),location.getLongitude(),location.getAltitude());
-    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected void markerTouched(Marker marker) {
-        text.setText(marker.getName());
-        myToast.show();
-	}
+        updateData(location.getLatitude(), location.getLongitude(), location.getAltitude());
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-	protected void updateDataOnZoom() {
-	    super.updateDataOnZoom();
+    protected void markerTouched(Marker marker) {
+        text.setText(marker.getName());
+        myToast.show();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void updateDataOnZoom() {
+        super.updateDataOnZoom();
         Location last = ARData.getCurrentLocation();
-        updateData(last.getLatitude(),last.getLongitude(),last.getAltitude());
-	}
-    
+        updateData(last.getLatitude(), last.getLongitude(), last.getAltitude());
+    }
+
     private void updateData(final double lat, final double lon, final double alt) {
         try {
-            exeService.execute(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        for (NetworkDataSource source : sources.values())
-                            download(source, lat, lon, alt);
-                    }
+            exeService.execute(new Runnable() {
+
+                @Override
+                public void run() {
+                    for (NetworkDataSource source : sources.values())
+                        download(source, lat, lon, alt);
                 }
-            );
+            });
         } catch (RejectedExecutionException rej) {
             Log.w(TAG, "Not running new download Runnable, queue is full.");
         } catch (Exception e) {
-            Log.e(TAG, "Exception running download Runnable.",e);
+            Log.e(TAG, "Exception running download Runnable.", e);
         }
     }
-    
-    private static boolean download(NetworkDataSource source, double lat, double lon, double alt) {
-		if (source==null) return false;
-		
-		String url = null;
-		try {
-			url = source.createRequestURL(lat, lon, alt, ARData.getRadius(), locale);    	
-		} catch (NullPointerException e) {
-			return false;
-		}
-    	
-		List<Marker> markers = null;
-		try {
-			markers = source.parse(url);
-		} catch (NullPointerException e) {
-			return false;
-		}
 
-    	ARData.addMarkers(markers);
-    	return true;
+    private static boolean download(NetworkDataSource source, double lat, double lon, double alt) {
+        if (source == null) return false;
+
+        String url = null;
+        try {
+            url = source.createRequestURL(lat, lon, alt, ARData.getRadius(), locale);
+        } catch (NullPointerException e) {
+            return false;
+        }
+
+        List<Marker> markers = null;
+        try {
+            markers = source.parse(url);
+        } catch (NullPointerException e) {
+            return false;
+        }
+
+        ARData.addMarkers(markers);
+        return true;
     }
 }

@@ -22,7 +22,8 @@ import com.jwetherell.augmented_reality.activity.AugmentedReality;
 
 
 /**
- * A static class used to calculate azimuth, pitch, and roll given a rotation matrix.
+ * A static class used to calculate azimuth, pitch, and roll given a rotation
+ * matrix.
  * 
  * This file was adapted from Mixare <http://www.mixare.org/>
  * 
@@ -30,6 +31,7 @@ import com.jwetherell.augmented_reality.activity.AugmentedReality;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Calculator {
+
     private static final Vector looking = new Vector();
     private static final float[] lookingArray = new float[3];
 
@@ -37,8 +39,8 @@ public class Calculator {
     private static volatile float pitch = 0;
     private static volatile float roll = 0;
 
-
-    private Calculator() {};
+    private Calculator() {
+    };
 
     public static final float getAngle(float center_x, float center_y, float post_x, float post_y) {
         float tmpv_x = post_x - center_x;
@@ -53,7 +55,8 @@ public class Calculator {
     }
 
     /**
-     * Azimuth the phone's camera is pointing. From 0 to 360 with magnetic north compensation.
+     * Azimuth the phone's camera is pointing. From 0 to 360 with magnetic north
+     * compensation.
      * 
      * @return float representing the azimuth the phone's camera is pointing
      */
@@ -62,7 +65,8 @@ public class Calculator {
     }
 
     /**
-     * Pitch of the phone's camera. From -90 to 90, where negative is pointing down and zero is level.
+     * Pitch of the phone's camera. From -90 to 90, where negative is pointing
+     * down and zero is level.
      * 
      * @return float representing the pitch of the phone's camera.
      */
@@ -71,7 +75,8 @@ public class Calculator {
     }
 
     /**
-     * Roll of the phone's camera. From -90 to 90, where negative is rolled left and zero is level.
+     * Roll of the phone's camera. From -90 to 90, where negative is rolled left
+     * and zero is level.
      * 
      * @return float representing the roll of the phone's camera.
      */
@@ -80,22 +85,21 @@ public class Calculator {
     }
 
     public static synchronized void calcPitchBearing(Matrix rotationMatrix) {
-        if (rotationMatrix==null) return;
+        if (rotationMatrix == null) return;
 
         rotationMatrix.transpose();
         if (AugmentedReality.portrait) {
-        	looking.set(0, 1, 0);
+            looking.set(0, 1, 0);
         } else {
-        	looking.set(1, 0, 0);
+            looking.set(1, 0, 0);
         }
         looking.prod(rotationMatrix);
         looking.get(lookingArray);
-        Calculator.azimuth = ((getAngle(0, 0, lookingArray[0], lookingArray[2])  + 360 ) % 360);
-        Calculator.roll = -(90-Math.abs(getAngle(0, 0, lookingArray[1], lookingArray[2])));
+        Calculator.azimuth = ((getAngle(0, 0, lookingArray[0], lookingArray[2]) + 360) % 360);
+        Calculator.roll = -(90 - Math.abs(getAngle(0, 0, lookingArray[1], lookingArray[2])));
         looking.set(0, 0, 1);
         looking.prod(rotationMatrix);
         looking.get(lookingArray);
-        Calculator.pitch = -(90-Math.abs(getAngle(0, 0, lookingArray[1], lookingArray[2])));
+        Calculator.pitch = -(90 - Math.abs(getAngle(0, 0, lookingArray[1], lookingArray[2])));
     }
 }
-

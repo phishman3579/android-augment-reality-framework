@@ -15,6 +15,7 @@ import org.json.JSONObject;
 
 import com.jwetherell.augmented_reality.ui.Marker;
 
+
 /**
  * This abstract class should be extended for new data sources. It has many
  * methods to get and parse data from numerous web sources.
@@ -22,14 +23,14 @@ import com.jwetherell.augmented_reality.ui.Marker;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public abstract class NetworkDataSource extends DataSource {
+
     protected static final int MAX = 5;
     protected static final int READ_TIMEOUT = 10000;
     protected static final int CONNECT_TIMEOUT = 10000;
 
     protected List<Marker> markersCache = null;
-    
-    public abstract String createRequestURL(double lat, double lon, double alt,
-                                            float radius, String locale);
+
+    public abstract String createRequestURL(double lat, double lon, double alt, float radius, String locale);
 
     public abstract List<Marker> parse(JSONObject root);
 
@@ -41,17 +42,15 @@ public abstract class NetworkDataSource extends DataSource {
     public List<Marker> getMarkers() {
         return markersCache;
     }
-    
+
     protected static InputStream getHttpGETInputStream(String urlStr) {
-        if (urlStr == null)
-            throw new NullPointerException();
+        if (urlStr == null) throw new NullPointerException();
 
         InputStream is = null;
         URLConnection conn = null;
 
         try {
-            if (urlStr.startsWith("file://"))
-                return new FileInputStream(urlStr.replace("file://", ""));
+            if (urlStr.startsWith("file://")) return new FileInputStream(urlStr.replace("file://", ""));
 
             URL url = new URL(urlStr);
             conn = url.openConnection();
@@ -68,8 +67,7 @@ public abstract class NetworkDataSource extends DataSource {
                 // Ignore
             }
             try {
-                if (conn instanceof HttpURLConnection)
-                    ((HttpURLConnection) conn).disconnect();
+                if (conn instanceof HttpURLConnection) ((HttpURLConnection) conn).disconnect();
             } catch (Exception e) {
                 // Ignore
             }
@@ -80,11 +78,9 @@ public abstract class NetworkDataSource extends DataSource {
     }
 
     protected String getHttpInputString(InputStream is) {
-        if (is == null)
-            throw new NullPointerException();
+        if (is == null) throw new NullPointerException();
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is),
-                8 * 1024);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is), 8 * 1024);
         StringBuilder sb = new StringBuilder();
 
         try {
@@ -114,18 +110,15 @@ public abstract class NetworkDataSource extends DataSource {
      *             if the String URL is NULL.
      */
     public List<Marker> parse(String url) {
-        if (url == null)
-            throw new NullPointerException();
+        if (url == null) throw new NullPointerException();
 
         InputStream stream = null;
         stream = getHttpGETInputStream(url);
-        if (stream == null)
-            throw new NullPointerException();
+        if (stream == null) throw new NullPointerException();
 
         String string = null;
         string = getHttpInputString(stream);
-        if (string == null)
-            throw new NullPointerException();
+        if (string == null) throw new NullPointerException();
 
         JSONObject json = null;
         try {
@@ -133,11 +126,8 @@ public abstract class NetworkDataSource extends DataSource {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (json == null)
-            throw new NullPointerException();
+        if (json == null) throw new NullPointerException();
 
-        
-        
         return parse(json);
     }
 }
