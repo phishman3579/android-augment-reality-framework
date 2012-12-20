@@ -224,7 +224,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
             mag[2] = smooth[2];
         }
 
-        // // Find real world position relative to phone location ////
+        //// Find real world position relative to phone location ////
         // Get rotation matrix given the gravity and geomagnetic matrices
         SensorManager.getRotationMatrix(temp, null, grav, mag);
 
