@@ -31,7 +31,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-
 /**
  * This class extends the AugmentedReality and is designed to be an example on
  * how to extends the AugmentedReality class to show multiple data sources.

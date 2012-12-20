@@ -1,5 +1,7 @@
 package com.jwetherell.augmented_reality.common;
 
+import android.util.FloatMath;
+
 /**
  * This class implements a low-pass filter. A low-pass filter is an electronic
  * filter that passes low-frequency signals but attenuates (reduces the
@@ -55,10 +57,8 @@ public class LowPassFilter {
         if (previous.length != 3 || current.length != 3) return ALPHA_DEFAULT;
 
         float x1 = current[0], y1 = current[1], z1 = current[2];
-
         float x2 = previous[0], y2 = previous[1], z2 = previous[2];
-
-        float distance = (float) (Math.sqrt(Math.pow((double) (x2 - x1), 2d) + Math.pow((double) (y2 - y1), 2d) + Math.pow((double) (z2 - z1), 2d)));
+        float distance = FloatMath.sqrt((float)(Math.pow((double) (x2 - x1), 2d) + Math.pow((double) (y2 - y1), 2d) + Math.pow((double) (z2 - z1), 2d)));
 
         if (distance < low) {
             return ALPHA_STEADY;

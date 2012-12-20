@@ -198,7 +198,8 @@ public class Matrix {
      * @param c3
      *            float representing the bottom row left value.
      */
-    public synchronized void set(float a1, float a2, float a3, float b1, float b2, float b3, float c1, float c2, float c3) {
+    public synchronized void set(float a1, float a2, float a3, float b1, float b2, float b3, float c1, float c2,
+            float c3) {
         this.a1 = a1;
         this.a2 = a2;
         this.a3 = a3;
@@ -213,7 +214,9 @@ public class Matrix {
     }
 
     public void toIdentity() {
-        set(1, 0, 0, 0, 1, 0, 0, 0, 1);
+        set(1, 0, 0, 
+            0, 1, 0, 
+            0, 0, 1);
     }
 
     public void toXRot(float angleX) {
@@ -229,7 +232,9 @@ public class Matrix {
     }
 
     public void toScale(float scale) {
-        set(scale, 0, 0, 0, scale, 0, 0, 0, scale);
+        set(scale, 0,     0, 
+            0,     scale, 0, 
+            0,     0,     scale);
     }
 
     public void toAt(Vector cam, Vector obj) {
@@ -252,7 +257,9 @@ public class Matrix {
         up.norm();
         up.get(upArray);
 
-        set(rightArray[0], rightArray[1], rightArray[2], upArray[0], upArray[1], upArray[2], dirArray[0], dirArray[1], dirArray[2]);
+        set(rightArray[0], rightArray[1], rightArray[2], 
+            upArray[0],    upArray[1],    upArray[2], 
+            dirArray[0],   dirArray[1],   dirArray[2]);
     }
 
     public synchronized void adj() {
@@ -283,7 +290,6 @@ public class Matrix {
 
     public void invert() {
         float det = this.det();
-
         adj();
         mult(1 / det);
     }
@@ -372,17 +378,26 @@ public class Matrix {
     public synchronized boolean equals(Matrix n) {
         if (n == null) return false;
 
-        if (this.a1 != n.a1) return false;
-        if (this.a2 != n.a2) return false;
-        if (this.a3 != n.a3) return false;
+        if (this.a1 != n.a1)
+            return false;
+        if (this.a2 != n.a2)
+            return false;
+        if (this.a3 != n.a3)
+            return false;
 
-        if (this.b1 != n.b1) return false;
-        if (this.b2 != n.b2) return false;
-        if (this.b3 != n.b3) return false;
+        if (this.b1 != n.b1)
+            return false;
+        if (this.b2 != n.b2)
+            return false;
+        if (this.b3 != n.b3)
+            return false;
 
-        if (this.c1 != n.c1) return false;
-        if (this.c2 != n.c2) return false;
-        if (this.c3 != n.c3) return false;
+        if (this.c1 != n.c1)
+            return false;
+        if (this.c2 != n.c2)
+            return false;
+        if (this.c3 != n.c3)
+            return false;
 
         return true;
     }

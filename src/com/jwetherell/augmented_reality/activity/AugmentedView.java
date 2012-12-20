@@ -14,7 +14,6 @@ import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.ui.Marker;
 import com.jwetherell.augmented_reality.ui.Radar;
 
-
 /**
  * This class extends the View class and is designed draw the zoom bar, radar
  * circle, and markers on the View.
@@ -76,11 +75,13 @@ public class AugmentedView extends View {
 
         // Update the AR markers for collisions
         for (Marker marker1 : collection) {
-            if (updated.contains(marker1) || !marker1.isInView()) continue;
+            if (updated.contains(marker1) || !marker1.isInView())
+                continue;
 
             int collisions = 1;
             for (Marker marker2 : collection) {
-                if (marker1.equals(marker2) || updated.contains(marker2) || !marker2.isInView()) continue;
+                if (marker1.equals(marker2) || updated.contains(marker2) || !marker2.isInView())
+                    continue;
 
                 if (marker1.isMarkerOnMarker(marker2)) {
                     marker2.getLocation().get(locationArray);

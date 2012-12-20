@@ -18,8 +18,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.FloatMath;
 import android.util.Log;
-
 
 /**
  * This class extends Activity and processes sensor data and location data.
@@ -51,6 +51,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static final Matrix worldCoord = new Matrix();
     private static final Matrix magneticCompensatedCoord = new Matrix();
     private static final Matrix xAxisRotation = new Matrix();
+    private static final Matrix yAxisRotation = new Matrix();
     private static final Matrix mageticNorthCompensation = new Matrix();
 
     private static GeomagneticField gmf = null;
@@ -76,23 +77,36 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     public void onStart() {
         super.onStart();
 
-        double angleX = Math.toRadians(-90);
-        double angleY = Math.toRadians(-90);
+        float neg90rads = (float)Math.toRadians(-90);
+        float angleX = neg90rads;
+        float angleY = neg90rads;
 
         // Counter-clockwise rotation at -90 degrees around the x-axis
         // [ 1, 0, 0 ]
         // [ 0, cos, -sin ]
         // [ 0, sin, cos ]
-        xAxisRotation.set(1f, 0f, 0f, 0f, (float) Math.cos(angleX), (float) -Math.sin(angleX), 0f, (float) Math.sin(angleX), (float) Math.cos(angleX));
+        xAxisRotation.set(1f, 0f,                    0f, 
+                          0f, FloatMath.cos(angleX), -FloatMath.sin(angleX), 
+                          0f, FloatMath.sin(angleX), FloatMath.cos(angleX));
+
+        // Counter-clockwise rotation at -90 degrees around the y-axis
+        // [ cos,  0,   sin ]
+        // [ 0,    1,   0   ]
+        // [ -sin, 0,   cos ]
+        yAxisRotation.set(FloatMath.cos(angleY),  0f, FloatMath.sin(angleY),
+                          0f,                     1f, 0f,
+                          -FloatMath.sin(angleY), 0f, FloatMath.cos(angleY));
 
         try {
             sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 
             sensors = sensorMgr.getSensorList(Sensor.TYPE_ACCELEROMETER);
-            if (sensors.size() > 0) sensorGrav = sensors.get(0);
+            if (sensors.size() > 0)
+                sensorGrav = sensors.get(0);
 
             sensors = sensorMgr.getSensorList(Sensor.TYPE_MAGNETIC_FIELD);
-            if (sensors.size() > 0) sensorMag = sensors.get(0);
+            if (sensors.size() > 0)
+                sensorMag = sensors.get(0);
 
             sensorMgr.registerListener(this, sensorGrav, SensorManager.SENSOR_DELAY_NORMAL);
             sensorMgr.registerListener(this, sensorMag, SensorManager.SENSOR_DELAY_NORMAL);
@@ -112,9 +126,12 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                     onLocationChanged(ARData.hardFix);
                 }
 
-                gmf = new GeomagneticField((float) ARData.getCurrentLocation().getLatitude(), (float) ARData.getCurrentLocation().getLongitude(),
-                        (float) ARData.getCurrentLocation().getAltitude(), System.currentTimeMillis());
-                angleY = Math.toRadians(-gmf.getDeclination());
+                gmf = new GeomagneticField((float) ARData.getCurrentLocation().getLatitude(), 
+                                           (float) ARData.getCurrentLocation().getLongitude(),
+                                           (float) ARData.getCurrentLocation().getAltitude(), 
+                                           System.currentTimeMillis());
+
+                float dec = (float)Math.toRadians(-gmf.getDeclination());
 
                 synchronized (mageticNorthCompensation) {
                     // Identity matrix
@@ -135,10 +152,12 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                     // [ cos, 0, sin ]
                     // [ 0, 1, 0 ]
                     // [ -sin, 0, cos ]
-                    mageticNorthCompensation.set((float) Math.cos(angleY), 0f, (float) Math.sin(angleY), 0f, 1f, 0f, (float) -Math.sin(angleY), 0f,
-                            (float) Math.cos(angleY));
+                    mageticNorthCompensation.set(FloatMath.cos(dec),     0f, FloatMath.sin(angleY), 
+                                                 0f,                     1f, 0f, 
+                                                 -FloatMath.sin(angleY), 0f, FloatMath.cos(angleY));
 
-                    // Rotate the matrix to match the orientation
+                    // The compass assumes the screen is parallel to the ground with the screen pointing
+                    // to the sky, rotate to compensate.
                     mageticNorthCompensation.prod(xAxisRotation);
                 }
             } catch (Exception ex) {
@@ -217,6 +236,8 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
 
         // Translate the rotation matrices from Y and -X (landscape)
         SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, rotation);
+        //SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_X, SensorManager.AXIS_MINUS_Z, rotation);
+        //SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_Z, rotation);
 
         /*
          * Using Matrix operations instead. This was way too inaccurate, //Get
@@ -242,14 +263,13 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
             magneticCompensatedCoord.prod(mageticNorthCompensation);
         }
 
-        // Cross product with the world coordinates
+        // Cross product with the world coordinates to get a mag north compensated coords
         magneticCompensatedCoord.prod(worldCoord);
 
-        // Invert the matrix
+        // Invert the matrix since up-down and left-right are reversed in landscape mode
         magneticCompensatedCoord.invert();
 
-        // Set the rotation matrix (used to translate all object from lat/lon to
-        // x/y/z)
+        // Set the rotation matrix (used to translate all object from lat/lon to x/y/z)
         ARData.setRotationMatrix(magneticCompensatedCoord);
 
         computing.set(false);
@@ -285,18 +305,19 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     @Override
     public void onLocationChanged(Location location) {
         ARData.setCurrentLocation(location);
-        gmf = new GeomagneticField((float) ARData.getCurrentLocation().getLatitude(), (float) ARData.getCurrentLocation().getLongitude(), (float) ARData
-                .getCurrentLocation().getAltitude(), System.currentTimeMillis());
+        gmf = new GeomagneticField((float) ARData.getCurrentLocation().getLatitude(), 
+                                   (float) ARData.getCurrentLocation().getLongitude(), 
+                                   (float) ARData.getCurrentLocation().getAltitude(), System.currentTimeMillis());
 
-        double angleY = Math.toRadians(-gmf.getDeclination());
+        float dec = (float)Math.toRadians(-gmf.getDeclination());
 
         synchronized (mageticNorthCompensation) {
             mageticNorthCompensation.toIdentity();
 
-            mageticNorthCompensation.set((float) Math.cos(angleY), 0f, (float) Math.sin(angleY), 0f, 1f, 0f, (float) -Math.sin(angleY), 0f,
-                    (float) Math.cos(angleY));
+            mageticNorthCompensation.set(FloatMath.cos(dec), 0f, FloatMath.sin(dec), 
+                                         0f,                 1f, 0f, 
+                                         -FloatMath.sin(dec), 0f, FloatMath.cos(dec));
 
-            // Rotate the matrix to match the orientation
             mageticNorthCompensation.prod(xAxisRotation);
         }
     }

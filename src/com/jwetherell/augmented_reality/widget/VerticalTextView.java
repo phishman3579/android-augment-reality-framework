@@ -8,7 +8,6 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-
 /**
  * This class extends the TextView class and is designed to work vertically and
  * horizontally.

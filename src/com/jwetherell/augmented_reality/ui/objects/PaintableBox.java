@@ -3,7 +3,6 @@ package com.jwetherell.augmented_reality.ui.objects;
 import android.graphics.Canvas;
 import android.graphics.Color;
 
-
 /**
  * This class extends PaintableObject to draw an outlined box.
  * 

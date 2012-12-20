@@ -16,7 +16,6 @@ import com.jwetherell.augmented_reality.ui.Marker;
 import android.location.Location;
 import android.util.Log;
 
-
 /**
  * Abstract class which should be used to set global data.
  * 

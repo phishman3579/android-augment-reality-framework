@@ -2,7 +2,6 @@ package com.jwetherell.augmented_reality.ui.objects;
 
 import android.graphics.Canvas;
 
-
 /**
  * This class extends PaintableObject to draw a circle with a given radius and a
  * stroke width.

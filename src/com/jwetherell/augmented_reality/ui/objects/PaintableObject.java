@@ -8,7 +8,6 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
-
 /**
  * This abstract class provides many methods paint objects on a given Canvas.
  * 

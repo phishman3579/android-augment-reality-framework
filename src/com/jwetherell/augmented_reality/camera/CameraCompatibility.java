@@ -10,7 +10,6 @@ import android.hardware.Camera;
 import android.view.Display;
 import android.view.WindowManager;
 
-
 /**
  * Ensures compatibility with older and newer versions of the API. See the SDK
  * docs for comments

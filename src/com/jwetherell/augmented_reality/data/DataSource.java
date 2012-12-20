@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.jwetherell.augmented_reality.ui.Marker;
 
-
 /**
  * This abstract class should be extended for new data sources.
  * 

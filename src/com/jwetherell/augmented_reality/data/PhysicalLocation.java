@@ -4,7 +4,6 @@ import com.jwetherell.augmented_reality.common.Vector;
 
 import android.location.Location;
 
-
 /**
  * This class is used to represent a physical locations which have a latitude,
  * longitude, and alitude.

@@ -16,7 +16,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
-
 /**
  * This class extends DataSource to fetch data from Twitter.
  * 

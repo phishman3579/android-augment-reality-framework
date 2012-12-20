@@ -8,7 +8,6 @@ import android.hardware.Camera;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-
 /**
  * Represents the camera's surface and all the initialization involved with it.
  * 

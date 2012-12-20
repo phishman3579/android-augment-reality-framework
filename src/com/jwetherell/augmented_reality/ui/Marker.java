@@ -18,7 +18,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.location.Location;
 
-
 /**
  * This class will represent a physical location and will calculate it's
  * visibility and draw it's text and visual representation accordingly. This
@@ -214,7 +213,8 @@ public class Marker implements Comparable<Marker> {
         cam.setViewAngle(CameraModel.DEFAULT_VIEW_ANGLE);
         populateMatrices(cam, addX, addY);
         updateRadar();
-        if (isOnRadar) updateView();
+        if (isOnRadar)
+            updateView();
     }
 
     private synchronized void populateMatrices(CameraModel cam, float addX, float addY) {
@@ -525,7 +525,8 @@ public class Marker implements Comparable<Marker> {
 
         getScreenPosition().get(locationArray);
         float currentAngle = 0;
-        if (AugmentedReality.portrait) currentAngle = -90;
+        if (AugmentedReality.portrait)
+            currentAngle = -90;
 
         if (positionContainer == null) positionContainer = new PaintablePosition(positionPoint, locationArray[0], locationArray[1], currentAngle, 1);
         else positionContainer.set(positionPoint, locationArray[0], locationArray[1], currentAngle, 1);
@@ -553,7 +554,8 @@ public class Marker implements Comparable<Marker> {
             y -= gpsSymbol.getHeight();
         }
         float currentAngle = 0;
-        if (AugmentedReality.portrait) currentAngle = -90;
+        if (AugmentedReality.portrait)
+            currentAngle = -90;
 
         if (touchPosition == null) touchPosition = new PaintablePosition(touchBox, x, y, currentAngle, 1);
         else touchPosition.set(touchBox, x, y, currentAngle, 1);
@@ -575,7 +577,8 @@ public class Marker implements Comparable<Marker> {
             y -= gpsSymbol.getHeight() / 2;
         }
         float currentAngle = 0;
-        if (AugmentedReality.portrait) currentAngle = -90;
+        if (AugmentedReality.portrait)
+            currentAngle = -90;
 
         if (symbolContainer == null) symbolContainer = new PaintablePosition(gpsSymbol, x, y, currentAngle, 1);
         else symbolContainer.set(gpsSymbol, x, y, currentAngle, 1);
@@ -608,7 +611,8 @@ public class Marker implements Comparable<Marker> {
             x -= textBox.getWidth() / 2;
         }
         float currentAngle = 0;
-        if (AugmentedReality.portrait) currentAngle = -90;
+        if (AugmentedReality.portrait)
+            currentAngle = -90;
 
         if (textContainer == null) textContainer = new PaintablePosition(textBox, x, y, currentAngle, 1);
         else textContainer.set(textBox, x, y, currentAngle, 1);

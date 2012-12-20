@@ -14,7 +14,6 @@ import com.jwetherell.augmented_reality.ui.objects.PaintablePosition;
 import com.jwetherell.augmented_reality.ui.objects.PaintableRadarPoints;
 import com.jwetherell.augmented_reality.ui.objects.PaintableText;
 
-
 /**
  * This class will visually represent a radar screen with a radar radius and
  * blips on the screen in their appropriate locations.

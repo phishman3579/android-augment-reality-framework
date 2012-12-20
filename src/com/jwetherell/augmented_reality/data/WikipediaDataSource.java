@@ -15,7 +15,6 @@ import com.jwetherell.augmented_reality.R;
 import com.jwetherell.augmented_reality.ui.IconMarker;
 import com.jwetherell.augmented_reality.ui.Marker;
 
-
 /**
  * This class extends DataSource to fetch data from Wikipedia.
  * 

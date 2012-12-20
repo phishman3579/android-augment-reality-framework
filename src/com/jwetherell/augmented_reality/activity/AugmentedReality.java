@@ -26,7 +26,6 @@ import com.jwetherell.augmented_reality.ui.Marker;
 import com.jwetherell.augmented_reality.widget.VerticalSeekBar;
 import com.jwetherell.augmented_reality.widget.VerticalTextView;
 
-
 /**
  * This class extends the SensorsActivity and is designed tie the AugmentedView
  * and zoom bar together.
@@ -55,7 +54,7 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
     public static final float EIGHTY_PERCENTY = 4f * TWENTY_PERCENT;
 
     public static boolean portrait = false;
-    public static boolean useCollisionDetection = true;
+    public static boolean useCollisionDetection = false;
     public static boolean showRadar = true;
     public static boolean showZoomBar = true;
 

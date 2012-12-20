@@ -12,7 +12,6 @@ import com.jwetherell.augmented_reality.R;
 import com.jwetherell.augmented_reality.ui.IconMarker;
 import com.jwetherell.augmented_reality.ui.Marker;
 
-
 /**
  * This class should be used as a example local data source. It is an example of
  * how to add data programatically. You can add data either programatically,

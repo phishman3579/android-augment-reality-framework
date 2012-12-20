@@ -4,7 +4,6 @@ import com.jwetherell.augmented_reality.ui.objects.PaintableIcon;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-
 /**
  * This class extends Marker and draws an icon instead of a circle for it's
  * visual representation.

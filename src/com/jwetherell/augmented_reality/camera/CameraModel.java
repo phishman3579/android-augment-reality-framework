@@ -2,7 +2,6 @@ package com.jwetherell.augmented_reality.camera;
 
 import com.jwetherell.augmented_reality.common.Vector;
 
-
 /**
  * Represents the camera and it's view. It also allows a user to project a point
  * given this camera's view.

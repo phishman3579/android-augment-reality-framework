@@ -6,7 +6,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.SeekBar;
 
-
 /**
  * This class extends the SeekBar class and is designed to work vertically.
  * 

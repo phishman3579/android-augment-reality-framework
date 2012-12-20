@@ -3,7 +3,6 @@ package com.jwetherell.augmented_reality.ui.objects;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-
 /**
  * This class extends PaintableObject to draw an icon.
  * 

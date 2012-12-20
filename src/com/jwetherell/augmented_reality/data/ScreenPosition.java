@@ -1,5 +1,7 @@
 package com.jwetherell.augmented_reality.data;
 
+import android.util.FloatMath;
+
 /**
  * This class is used mostly as a utility to calculate relative positions.
  * 
@@ -71,10 +73,9 @@ public class ScreenPosition {
      * @param t
      *            Angle to rotate around.
      */
-    public void rotate(double t) {
-        float xp = (float) Math.cos(t) * x - (float) Math.sin(t) * y;
-        float yp = (float) Math.sin(t) * x + (float) Math.cos(t) * y;
-
+    public void rotate(float t) {
+        float xp = FloatMath.cos(t) * x - FloatMath.sin(t) * y;
+        float yp = FloatMath.sin(t) * x + FloatMath.cos(t) * y;
         x = xp;
         y = yp;
     }
