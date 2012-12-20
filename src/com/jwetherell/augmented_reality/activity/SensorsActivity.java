@@ -78,24 +78,22 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         super.onStart();
 
         float neg90rads = (float)Math.toRadians(-90);
-        float angleX = neg90rads;
-        float angleY = neg90rads;
 
         // Counter-clockwise rotation at -90 degrees around the x-axis
         // [ 1, 0, 0 ]
         // [ 0, cos, -sin ]
         // [ 0, sin, cos ]
         xAxisRotation.set(1f, 0f,                    0f, 
-                          0f, FloatMath.cos(angleX), -FloatMath.sin(angleX), 
-                          0f, FloatMath.sin(angleX), FloatMath.cos(angleX));
+                          0f, FloatMath.cos(neg90rads), -FloatMath.sin(neg90rads), 
+                          0f, FloatMath.sin(neg90rads), FloatMath.cos(neg90rads));
 
         // Counter-clockwise rotation at -90 degrees around the y-axis
         // [ cos,  0,   sin ]
         // [ 0,    1,   0   ]
         // [ -sin, 0,   cos ]
-        yAxisRotation.set(FloatMath.cos(angleY),  0f, FloatMath.sin(angleY),
+        yAxisRotation.set(FloatMath.cos(neg90rads),  0f, FloatMath.sin(neg90rads),
                           0f,                     1f, 0f,
-                          -FloatMath.sin(angleY), 0f, FloatMath.cos(angleY));
+                          -FloatMath.sin(neg90rads), 0f, FloatMath.cos(neg90rads));
 
         try {
             sensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -152,13 +150,9 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                     // [ cos, 0, sin ]
                     // [ 0, 1, 0 ]
                     // [ -sin, 0, cos ]
-                    mageticNorthCompensation.set(FloatMath.cos(dec),     0f, FloatMath.sin(angleY), 
+                    mageticNorthCompensation.set(FloatMath.cos(dec),     0f, FloatMath.sin(dec), 
                                                  0f,                     1f, 0f, 
-                                                 -FloatMath.sin(angleY), 0f, FloatMath.cos(angleY));
-
-                    // The compass assumes the screen is parallel to the ground with the screen pointing
-                    // to the sky, rotate to compensate.
-                    mageticNorthCompensation.prod(xAxisRotation);
+                                                 -FloatMath.sin(dec), 0f, FloatMath.cos(dec));
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -234,14 +228,14 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         // Get rotation matrix given the gravity and geomagnetic matrices
         SensorManager.getRotationMatrix(temp, null, grav, mag);
 
-        // Translate the rotation matrices from Y and -X (landscape)
-        SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, rotation);
+        // Translate the rotation matrices from Y and -Z (landscape)
+        //SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, rotation);
         //SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_X, SensorManager.AXIS_MINUS_Z, rotation);
-        //SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_Z, rotation);
+        SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_Z, rotation);
 
         /*
-         * Using Matrix operations instead. This was way too inaccurate, //Get
-         * the azimuth, pitch, roll SensorManager.getOrientation(rotation,apr);
+         * Using Matrix operations instead. This was way too inaccurate, 
+         * //Get the azimuth, pitch, roll SensorManager.getOrientation(rotation,apr);
          * float floatAzimuth = (float)Math.toDegrees(apr[0]); if
          * (floatAzimuth<0) floatAzimuth+=360; ARData.setAzimuth(floatAzimuth);
          * ARData.setPitch((float)Math.toDegrees(apr[1]));
@@ -263,8 +257,15 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
             magneticCompensatedCoord.prod(mageticNorthCompensation);
         }
 
+        // The compass assumes the screen is parallel to the ground with the screen pointing
+        // to the sky, rotate to compensate.
+        magneticCompensatedCoord.prod(xAxisRotation);
+
         // Cross product with the world coordinates to get a mag north compensated coords
         magneticCompensatedCoord.prod(worldCoord);
+
+        // Y axis
+        magneticCompensatedCoord.prod(yAxisRotation);
 
         // Invert the matrix since up-down and left-right are reversed in landscape mode
         magneticCompensatedCoord.invert();
@@ -318,7 +319,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
                                          0f,                 1f, 0f, 
                                          -FloatMath.sin(dec), 0f, FloatMath.cos(dec));
 
-            mageticNorthCompensation.prod(xAxisRotation);
+            //mageticNorthCompensation.prod(xAxisRotation);
         }
     }
 
