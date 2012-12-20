@@ -318,8 +318,6 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
             mageticNorthCompensation.set(FloatMath.cos(dec), 0f, FloatMath.sin(dec), 
                                          0f,                 1f, 0f, 
                                          -FloatMath.sin(dec), 0f, FloatMath.cos(dec));
-
-            //mageticNorthCompensation.prod(xAxisRotation);
         }
     }
 
