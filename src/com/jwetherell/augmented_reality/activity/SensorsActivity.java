@@ -245,7 +245,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         // Convert from float[9] to Matrix
         worldCoord.set(rotation[0], rotation[1], rotation[2], rotation[3], rotation[4], rotation[5], rotation[6], rotation[7], rotation[8]);
 
-        // // Find position relative to magnetic north ////
+        //// Find position relative to magnetic north ////
         // Identity matrix
         // [ 1, 0, 0 ]
         // [ 0, 1, 0 ]

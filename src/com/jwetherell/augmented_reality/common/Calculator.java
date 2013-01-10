@@ -40,19 +40,21 @@ public class Calculator {
     private static volatile float pitch = 0;
     private static volatile float roll = 0;
 
-    private Calculator() {
-    };
+    private Calculator() { }
 
+    /**
+     * Get angle in degrees between two points.
+     * 
+     * @param center_x Lesser point's X
+     * @param center_y Lesser point's Y
+     * @param post_x Greater point's X
+     * @param post_y Greater point's Y
+     * @return Angle in degrees
+     */
     public static final float getAngle(float center_x, float center_y, float post_x, float post_y) {
-        float tmpv_x = post_x - center_x;
-        float tmpv_y = post_y - center_y;
-        float d = FloatMath.sqrt(tmpv_x * tmpv_x + tmpv_y * tmpv_y);
-        float cos = tmpv_x / d;
-        float angle = (float) Math.toDegrees(Math.acos(cos));
-
-        angle = (tmpv_y < 0) ? angle * -1 : angle;
-
-        return angle;
+        float delta_x = post_x - center_x;
+        float delta_y = post_y - center_y;
+        return (float)(Math.atan2(delta_y, delta_x) * 180 / Math.PI);
     }
 
     /**
@@ -85,6 +87,11 @@ public class Calculator {
         return Calculator.roll;
     }
 
+    /**
+     * Calculate and populate the Azimuth, Pitch, and Roll.
+     * 
+     * @param rotationMatrix Rotation matrix used in calculations.
+     */
     public static synchronized void calcPitchBearing(Matrix rotationMatrix) {
         if (rotationMatrix == null) return;
 
