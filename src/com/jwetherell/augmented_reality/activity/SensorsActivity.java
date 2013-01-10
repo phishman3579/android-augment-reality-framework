@@ -235,9 +235,11 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
 
         /*
          * Using Matrix operations instead. This was way too inaccurate, 
-         * //Get the azimuth, pitch, roll SensorManager.getOrientation(rotation,apr);
-         * float floatAzimuth = (float)Math.toDegrees(apr[0]); if
-         * (floatAzimuth<0) floatAzimuth+=360; ARData.setAzimuth(floatAzimuth);
+         * //Get the azimuth, pitch, roll 
+         * SensorManager.getOrientation(rotation,apr);
+         * float floatAzimuth = (float)Math.toDegrees(apr[0]); 
+         * if (floatAzimuth<0) floatAzimuth+=360; 
+         * ARData.setAzimuth(floatAzimuth);
          * ARData.setPitch((float)Math.toDegrees(apr[1]));
          * ARData.setRoll((float)Math.toDegrees(apr[2]));
          */
