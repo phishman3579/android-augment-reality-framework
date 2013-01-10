@@ -18,8 +18,6 @@
  */
 package com.jwetherell.augmented_reality.common;
 
-import android.util.FloatMath;
-
 import com.jwetherell.augmented_reality.activity.AugmentedReality;
 
 /**
