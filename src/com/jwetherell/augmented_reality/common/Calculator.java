@@ -33,6 +33,7 @@ public class Calculator {
 
     private static final Vector looking = new Vector();
     private static final float[] lookingArray = new float[3];
+    private static final Matrix tempMatrix = new Matrix();
 
     private static volatile float azimuth = 0;
     private static volatile float pitch = 0;
@@ -93,18 +94,19 @@ public class Calculator {
     public static synchronized void calcPitchBearing(Matrix rotationMatrix) {
         if (rotationMatrix == null) return;
 
-        rotationMatrix.transpose();
+        tempMatrix.set(rotationMatrix);
+        tempMatrix.transpose();
         if (AugmentedReality.portrait) {
             looking.set(0, 1, 0);
         } else {
             looking.set(1, 0, 0);
         }
-        looking.prod(rotationMatrix);
+        looking.prod(tempMatrix);
         looking.get(lookingArray);
         Calculator.azimuth = ((getAngle(0, 0, lookingArray[0], lookingArray[2]) + 360) % 360);
         Calculator.roll = -(90 - Math.abs(getAngle(0, 0, lookingArray[1], lookingArray[2])));
         looking.set(0, 0, 1);
-        looking.prod(rotationMatrix);
+        looking.prod(tempMatrix);
         looking.get(lookingArray);
         Calculator.pitch = -(90 - Math.abs(getAngle(0, 0, lookingArray[1], lookingArray[2])));
     }
