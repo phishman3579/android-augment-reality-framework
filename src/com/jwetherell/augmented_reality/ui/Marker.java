@@ -233,10 +233,10 @@ public class Marker implements Comparable<Marker> {
 
         float range = ARData.getRadius() * 1000;
         float scale = range / Radar.RADIUS;
-        locationXyzRelativeToCameraView.get(locationArray);
+        locationXyzRelativeToPhysicalLocation.get(locationArray);
         float x = locationArray[0] / scale;
         float y = locationArray[2] / scale; // z==y Switched on purpose
-        if ((locationArray[2] <= -1f) && (x * x + y * y) < (Radar.RADIUS * Radar.RADIUS)) {
+        if ((locationArray[2] <= -1f) && (x*x + y*y) < (Radar.RADIUS*Radar.RADIUS)) {
             isOnRadar = true;
         }
     }
