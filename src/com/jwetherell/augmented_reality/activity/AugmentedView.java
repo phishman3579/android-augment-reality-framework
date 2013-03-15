@@ -50,7 +50,7 @@ public class AugmentedView extends View {
             cache.clear();
             for (Marker m : collection) {
                 m.update(canvas, 0, 0);
-                if (m.isOnRadar()) cache.add(m);
+                if (m.isOnRadar() && m.isInView()) cache.add(m);
             }
             collection = cache;
 

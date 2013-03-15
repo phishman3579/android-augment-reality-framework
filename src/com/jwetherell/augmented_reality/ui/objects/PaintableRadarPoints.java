@@ -33,7 +33,7 @@ public class PaintableRadarPoints extends PaintableObject {
             pm.getLocation().get(locationArray);
             float x = locationArray[0] / scale;
             float y = locationArray[2] / scale;
-            if ((x * x + y * y) < (Radar.RADIUS * Radar.RADIUS)) {
+            if ((x*x + y*y) < (Radar.RADIUS * Radar.RADIUS)) {
                 if (paintablePoint == null) paintablePoint = new PaintablePoint(pm.getColor(), true);
                 else paintablePoint.set(pm.getColor(), true);
 

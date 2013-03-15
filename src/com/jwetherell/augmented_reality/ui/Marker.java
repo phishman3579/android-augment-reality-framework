@@ -64,6 +64,8 @@ public class Marker implements Comparable<Marker> {
     private final Vector locationXyzRelativeToPhysicalLocation = new Vector();
     // Marker's default color
     private int color = Color.WHITE;
+    // For tracking Markers which have no altitude
+    private boolean noAltitude = false;
 
     // Used to show exact GPS position
     private static boolean debugGpsPosition = false;
@@ -105,6 +107,7 @@ public class Marker implements Comparable<Marker> {
         this.isInView = false;
         this.locationXyzRelativeToPhysicalLocation.set(0, 0, 0);
         this.initialY = 0.0f;
+        if (altitude==0.0d) this.noAltitude = true;
     }
 
     /**
@@ -213,8 +216,7 @@ public class Marker implements Comparable<Marker> {
         cam.setViewAngle(CameraModel.DEFAULT_VIEW_ANGLE);
         populateMatrices(cam, addX, addY);
         updateRadar();
-        if (isOnRadar)
-            updateView();
+        updateView();
     }
 
     private synchronized void populateMatrices(CameraModel cam, float addX, float addY) {
@@ -236,13 +238,20 @@ public class Marker implements Comparable<Marker> {
         locationXyzRelativeToPhysicalLocation.get(locationArray);
         float x = locationArray[0] / scale;
         float y = locationArray[2] / scale; // z==y Switched on purpose
-        if ((locationArray[2] <= -1f) && (x*x + y*y) < (Radar.RADIUS*Radar.RADIUS)) {
+        if ((x*x + y*y) < (Radar.RADIUS * Radar.RADIUS)) {
             isOnRadar = true;
         }
     }
 
     private synchronized void updateView() {
         isInView = false;
+        
+        // If it's not on the radar, can't be in view3
+        if (!isOnRadar) return;
+
+        // If it's not in the same side as our viewing angle
+        locationXyzRelativeToCameraView.get(locationArray);
+        if (locationArray[2] >= -1f) return;
 
         locationXyzRelativeToCameraView.get(locationArray);
         float x = locationArray[0];
@@ -272,7 +281,9 @@ public class Marker implements Comparable<Marker> {
             lrY += height;
         }
 
-        if (AugmentedReality.portrait && (lrX >= -1 && ulX <= cam.getWidth() && ulY >= -1 && lrY <= cam.getHeight())) {
+        if (AugmentedReality.portrait && 
+            (lrX >= -1 && ulX <= cam.getWidth() && ulY >= -1 && lrY <= cam.getHeight())
+        ) {
             isInView = true;
         } else if (lrX >= -1 && ulX <= cam.getWidth() && lrY >= -1 && ulY <= cam.getHeight()) {
             isInView = true;
@@ -301,9 +312,11 @@ public class Marker implements Comparable<Marker> {
         // Update the markers distance based on the new location.
         updateDistance(location);
 
-        // An elevation of 0.0 probably means that the elevation of the
-        // POI is not known and should be set to the users GPS height
-        if (physicalLocation.getAltitude() == 0.0) physicalLocation.setAltitude(location.getAltitude());
+        // noAltitude means that the elevation of the POI is not known 
+        // and should be set to the users GPS altitude
+        if (noAltitude) {
+        	physicalLocation.setAltitude(location.getAltitude());
+        }
 
         // Compute the relative position vector from user position to POI
         // location
@@ -315,8 +328,7 @@ public class Marker implements Comparable<Marker> {
     private synchronized void updateDistance(Location location) {
         if (location == null) throw new NullPointerException();
 
-        Location.distanceBetween(physicalLocation.getLatitude(), physicalLocation.getLongitude(), location.getLatitude(), location.getLongitude(),
-                distanceArray);
+        Location.distanceBetween(physicalLocation.getLatitude(), physicalLocation.getLongitude(), location.getLatitude(), location.getLongitude(), distanceArray);
         distance = distanceArray[0];
     }
 
@@ -525,8 +537,7 @@ public class Marker implements Comparable<Marker> {
 
         getScreenPosition().get(locationArray);
         float currentAngle = 0;
-        if (AugmentedReality.portrait)
-            currentAngle = -90;
+        if (AugmentedReality.portrait) currentAngle = -90;
 
         if (positionContainer == null) positionContainer = new PaintablePosition(positionPoint, locationArray[0], locationArray[1], currentAngle, 1);
         else positionContainer.set(positionPoint, locationArray[0], locationArray[1], currentAngle, 1);
@@ -554,8 +565,7 @@ public class Marker implements Comparable<Marker> {
             y -= gpsSymbol.getHeight();
         }
         float currentAngle = 0;
-        if (AugmentedReality.portrait)
-            currentAngle = -90;
+        if (AugmentedReality.portrait) currentAngle = -90;
 
         if (touchPosition == null) touchPosition = new PaintablePosition(touchBox, x, y, currentAngle, 1);
         else touchPosition.set(touchBox, x, y, currentAngle, 1);
@@ -577,8 +587,7 @@ public class Marker implements Comparable<Marker> {
             y -= gpsSymbol.getHeight() / 2;
         }
         float currentAngle = 0;
-        if (AugmentedReality.portrait)
-            currentAngle = -90;
+        if (AugmentedReality.portrait) currentAngle = -90;
 
         if (symbolContainer == null) symbolContainer = new PaintablePosition(gpsSymbol, x, y, currentAngle, 1);
         else symbolContainer.set(gpsSymbol, x, y, currentAngle, 1);
