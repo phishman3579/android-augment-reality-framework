@@ -108,6 +108,7 @@ public class Marker implements Comparable<Marker> {
         this.locationXyzRelativeToPhysicalLocation.set(0, 0, 0);
         this.initialY = 0.0f;
         if (altitude==0.0d) this.noAltitude = true;
+        else this.noAltitude = false;
     }
 
     /**
