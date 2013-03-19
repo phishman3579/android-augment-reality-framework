@@ -37,7 +37,7 @@ public class BuzzDataSource extends NetworkDataSource {
      */
     @Override
     public String createRequestURL(double lat, double lon, double alt, float radius, String locale) {
-        return BASE_URL + "&lat=" + lat + "&lon=" + lon + "&radius=" + radius * 1000;
+        return BASE_URL + "&lat=" + lat + "&lon=" + lon + "&radius=" + (radius * 1000.0f);
     }
 
     /**

@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.jwetherell.augmented_reality.R;
 import com.jwetherell.augmented_reality.data.ARData;
+import com.jwetherell.augmented_reality.data.GooglePlacesDataSource;
 import com.jwetherell.augmented_reality.data.LocalDataSource;
 import com.jwetherell.augmented_reality.data.NetworkDataSource;
 import com.jwetherell.augmented_reality.data.TwitterDataSource;
@@ -38,7 +39,7 @@ import android.widget.Toast;
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Demo extends AugmentedReality {
-
+	
     private static final String TAG = "Demo";
     private static final String locale = Locale.getDefault().getLanguage();
     private static final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(1);
@@ -78,6 +79,8 @@ public class Demo extends AugmentedReality {
         sources.put("twitter", twitter);
         NetworkDataSource wikipedia = new WikipediaDataSource(this.getResources());
         sources.put("wiki", wikipedia);
+        NetworkDataSource googlePlaces = new GooglePlacesDataSource(this.getResources());
+        sources.put("googlePlaces", googlePlaces);
     }
 
     /**
