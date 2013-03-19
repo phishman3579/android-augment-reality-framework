@@ -25,13 +25,15 @@ import com.jwetherell.augmented_reality.ui.Marker;
 public class GooglePlacesDataSource extends NetworkDataSource {
 
 	private static final String URL = "https://maps.googleapis.com/maps/api/place/search/json?";
-	private static final String types = "airport|amusement_park|aquarium|art_gallery|bus_station|campground|car_rental|city_hall|embassy|establishment|hindu_temple|local_governemnt_office|mosque|museum|night_club|park|place_of_worship|police|post_office|stadium|spa|subway_station|synagogue|taxi_stand|train_station|travel_agency|University|zoo";
-    private static final String key = "AIzaSyC5mTsDhjayzCqXH87ggEYsfswR1cStfX8";
+	private static final String TYPES = "airport|amusement_park|aquarium|art_gallery|bus_station|campground|car_rental|city_hall|embassy|establishment|hindu_temple|local_governemnt_office|mosque|museum|night_club|park|place_of_worship|police|post_office|stadium|spa|subway_station|synagogue|taxi_stand|train_station|travel_agency|University|zoo";
 
+	private static String key = null;
 	private static Bitmap icon = null;
 
 	public GooglePlacesDataSource(Resources res) {
 		if (res == null) throw new NullPointerException();
+
+		key = res.getString(R.string.google_places_api_key);
 
 		createIcon(res);
 	}
@@ -45,7 +47,7 @@ public class GooglePlacesDataSource extends NetworkDataSource {
 	@Override
 	public String createRequestURL(double lat, double lon, double alt, float radius, String locale) {
 		try {
-			return URL + "location="+lat+","+lon+"&radius="+(radius*1000.0f)+"&types="+types+"&sensor=true&key="+key;
+			return URL + "location="+lat+","+lon+"&radius="+(radius*1000.0f)+"&types="+TYPES+"&sensor=true&key="+key;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
