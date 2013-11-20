@@ -8,7 +8,9 @@ A framework for creating augmented reality Apps on Android
 All the pieces needed to create an augmented reality App on Android.
 
 * Created by Justin Wetherell
+* google: http://code.google.com/p/android-augment-reality-framework
 * github: http://github.com/phishman3579/android-augment-reality-framework
+* linkedIn: http://www.linkedin.com/in/phishman3579
 * e-mail: phishman3579@gmail.com
 * Twitter: @phishman3579
 
@@ -37,3 +39,4 @@ In the source code I have also created an example that follows the strategy abov
 * LocalDataSource.java
 
 You can use them as a reference to create your own augmented reality App based on this framework.
+
