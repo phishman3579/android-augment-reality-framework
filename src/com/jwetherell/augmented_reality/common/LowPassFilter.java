@@ -58,7 +58,7 @@ public class LowPassFilter {
 
         float x1 = current[0], y1 = current[1], z1 = current[2];
         float x2 = previous[0], y2 = previous[1], z2 = previous[2];
-        float distance = FloatMath.sqrt((float)(Math.pow((double) (x2 - x1), 2d) + Math.pow((double) (y2 - y1), 2d) + Math.pow((double) (z2 - z1), 2d)));
+        float distance = FloatMath.sqrt((float)(Math.pow((x2 - x1), 2d) + Math.pow((y2 - y1), 2d) + Math.pow((z2 - z1), 2d)));
 
         if (distance < low) {
             return ALPHA_STEADY;
