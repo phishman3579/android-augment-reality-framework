@@ -49,8 +49,10 @@ public class Radar {
     private static PaintablePosition paintedContainer = null;
 
     public Radar() {
-        if (leftRadarLine == null) leftRadarLine = new ScreenPosition();
-        if (rightRadarLine == null) rightRadarLine = new ScreenPosition();
+        if (leftRadarLine == null)
+            leftRadarLine = new ScreenPosition();
+        if (rightRadarLine == null)
+            rightRadarLine = new ScreenPosition();
     }
 
     /**
@@ -62,7 +64,8 @@ public class Radar {
      *             if Canvas is NULL.
      */
     public void draw(Canvas canvas) {
-        if (canvas == null) throw new NullPointerException();
+        if (canvas == null)
+            throw new NullPointerException();
 
         // Update the pitch and bearing using the phone's rotation matrix
         Calculator.calcPitchBearing(ARData.getRotationMatrix());
@@ -87,28 +90,38 @@ public class Radar {
     }
 
     private void drawRadarCircle(Canvas canvas) {
-        if (canvas == null) throw new NullPointerException();
+        if (canvas == null)
+            throw new NullPointerException();
 
         if (circleContainer == null) {
-            PaintableCircle paintableCircle = new PaintableCircle(RADAR_COLOR, RADIUS, true);
-            circleContainer = new PaintablePosition(paintableCircle, PAD_X + RADIUS, PAD_Y + RADIUS, 0, 1);
+            PaintableCircle paintableCircle = new PaintableCircle(RADAR_COLOR,
+                    RADIUS, true);
+            circleContainer = new PaintablePosition(paintableCircle, PAD_X
+                    + RADIUS, PAD_Y + RADIUS, 0, 1);
         }
         circleContainer.paint(canvas);
     }
 
     private void drawRadarPoints(Canvas canvas) {
-        if (canvas == null) throw new NullPointerException();
+        if (canvas == null)
+            throw new NullPointerException();
 
-        if (radarPoints == null) radarPoints = new PaintableRadarPoints();
+        if (radarPoints == null)
+            radarPoints = new PaintableRadarPoints();
 
-        if (pointsContainer == null) pointsContainer = new PaintablePosition(radarPoints, PAD_X, PAD_Y, -ARData.getAzimuth(), 1);
-        else pointsContainer.set(radarPoints, PAD_X, PAD_Y, -ARData.getAzimuth(), 1);
+        if (pointsContainer == null)
+            pointsContainer = new PaintablePosition(radarPoints, PAD_X, PAD_Y,
+                    -ARData.getAzimuth(), 1);
+        else
+            pointsContainer.set(radarPoints, PAD_X, PAD_Y,
+                    -ARData.getAzimuth(), 1);
 
         pointsContainer.paint(canvas);
     }
 
     private void drawRadarLines(Canvas canvas) {
-        if (canvas == null) throw new NullPointerException();
+        if (canvas == null)
+            throw new NullPointerException();
 
         // Left line
         if (leftLineContainer == null) {
@@ -119,7 +132,8 @@ public class Radar {
             float leftX = leftRadarLine.getX() - (PAD_X + RADIUS);
             float leftY = leftRadarLine.getY() - (PAD_Y + RADIUS);
             PaintableLine leftLine = new PaintableLine(LINE_COLOR, leftX, leftY);
-            leftLineContainer = new PaintablePosition(leftLine, PAD_X + RADIUS, PAD_Y + RADIUS, 0, 1);
+            leftLineContainer = new PaintablePosition(leftLine, PAD_X + RADIUS,
+                    PAD_Y + RADIUS, 0, 1);
         }
         leftLineContainer.paint(canvas);
 
@@ -131,62 +145,82 @@ public class Radar {
 
             float rightX = rightRadarLine.getX() - (PAD_X + RADIUS);
             float rightY = rightRadarLine.getY() - (PAD_Y + RADIUS);
-            PaintableLine rightLine = new PaintableLine(LINE_COLOR, rightX, rightY);
-            rightLineContainer = new PaintablePosition(rightLine, PAD_X + RADIUS, PAD_Y + RADIUS, 0, 1);
+            PaintableLine rightLine = new PaintableLine(LINE_COLOR, rightX,
+                    rightY);
+            rightLineContainer = new PaintablePosition(rightLine, PAD_X
+                    + RADIUS, PAD_Y + RADIUS, 0, 1);
         }
         rightLineContainer.paint(canvas);
     }
 
     private void drawRadarText(Canvas canvas) {
-        if (canvas == null) throw new NullPointerException();
+        if (canvas == null)
+            throw new NullPointerException();
 
         // Direction text
         int range = (int) (ARData.getAzimuth() / (360f / 16f));
         DIR_TXT.setLength(0);
-        if (range == 15 || range == 0) DIR_TXT.append("N");
-        else if (range == 1 || range == 2) DIR_TXT.append("NE");
-        else if (range == 3 || range == 4) DIR_TXT.append("E");
-        else if (range == 5 || range == 6) DIR_TXT.append("SE");
-        else if (range == 7 || range == 8) DIR_TXT.append("S");
-        else if (range == 9 || range == 10) DIR_TXT.append("SW");
-        else if (range == 11 || range == 12) DIR_TXT.append("W");
-        else if (range == 13 || range == 14) DIR_TXT.append("NW");
+        if (range == 15 || range == 0)
+            DIR_TXT.append("N");
+        else if (range == 1 || range == 2)
+            DIR_TXT.append("NE");
+        else if (range == 3 || range == 4)
+            DIR_TXT.append("E");
+        else if (range == 5 || range == 6)
+            DIR_TXT.append("SE");
+        else if (range == 7 || range == 8)
+            DIR_TXT.append("S");
+        else if (range == 9 || range == 10)
+            DIR_TXT.append("SW");
+        else if (range == 11 || range == 12)
+            DIR_TXT.append("W");
+        else if (range == 13 || range == 14)
+            DIR_TXT.append("NW");
 
         int bearing = (int) ARData.getAzimuth();
         RADAR_TXT.setLength(0);
-        RADAR_TXT.append(bearing).append((char)176).append(" ").append(DIR_TXT);
-        radarText(canvas, RADAR_TXT.toString(), (PAD_X + RADIUS), (PAD_Y - 5), true);
+        RADAR_TXT.append(bearing).append((char) 176).append(" ")
+                .append(DIR_TXT);
+        radarText(canvas, RADAR_TXT.toString(), (PAD_X + RADIUS), (PAD_Y - 5),
+                true);
 
         // Zoom text
-        radarText(canvas, formatDist(ARData.getRadius() * 1000), (PAD_X + RADIUS), (PAD_Y + RADIUS * 2 - 10), false);
+        radarText(canvas, formatDist(ARData.getRadius() * 1000),
+                (PAD_X + RADIUS), (PAD_Y + RADIUS * 2 - 10), false);
     }
 
-    private void radarText(Canvas canvas, String txt, float x, float y, boolean bg) {
-        if (canvas == null || txt == null) throw new NullPointerException();
+    private void radarText(Canvas canvas, String txt, float x, float y,
+            boolean bg) {
+        if (canvas == null || txt == null)
+            throw new NullPointerException();
 
-        if (paintableText == null) paintableText = new PaintableText(txt, TEXT_COLOR, TEXT_SIZE, bg);
-        else paintableText.set(txt, TEXT_COLOR, TEXT_SIZE, bg);
+        if (paintableText == null)
+            paintableText = new PaintableText(txt, TEXT_COLOR, TEXT_SIZE, bg);
+        else
+            paintableText.set(txt, TEXT_COLOR, TEXT_SIZE, bg);
 
-        if (paintedContainer == null) paintedContainer = new PaintablePosition(paintableText, x, y, 0, 1);
-        else paintedContainer.set(paintableText, x, y, 0, 1);
+        if (paintedContainer == null)
+            paintedContainer = new PaintablePosition(paintableText, x, y, 0, 1);
+        else
+            paintedContainer.set(paintableText, x, y, 0, 1);
 
         paintedContainer.paint(canvas);
     }
 
     private static String formatDist(float meters) {
-    	DIST_TXT.setLength(0);
+        DIST_TXT.setLength(0);
         if (meters < 1000) {
-        	DIST_TXT.append((int) meters).append("m");
+            DIST_TXT.append((int) meters).append("m");
         } else if (meters < 10000) {
             DIST_TXT.append(formatDec(meters / 1000f, 1)).append("km");
         } else {
-        	DIST_TXT.append((int) (meters / 1000f)).append("km");
+            DIST_TXT.append((int) (meters / 1000f)).append("km");
         }
         return DIST_TXT.toString();
     }
 
     private static String formatDec(float val, int dec) {
-    	DEC_TXT.setLength(0);
+        DEC_TXT.setLength(0);
         int factor = (int) Math.pow(10, dec);
 
         int front = (int) (val);

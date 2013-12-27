@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.jwetherell.augmented_reality.common.LowPassFilter;
 import com.jwetherell.augmented_reality.common.Matrix;
+import com.jwetherell.augmented_reality.common.Orientation;
 import com.jwetherell.augmented_reality.data.ARData;
 
 import android.app.Activity;
@@ -219,6 +220,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
 	            grav[1] = evt.values[1];
 	            grav[2] = evt.values[2];
         	}
+        	Orientation.calcOrientation(grav);
         } else if (evt.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
         	if (AugmentedReality.useSmoothing) { 
 	            smooth = LowPassFilter.filter(2.0f, 4.0f, evt.values, mag);

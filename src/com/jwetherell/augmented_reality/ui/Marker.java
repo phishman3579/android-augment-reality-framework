@@ -82,7 +82,8 @@ public class Marker implements Comparable<Marker> {
     private PaintableBox touchBox = null;
     private volatile PaintablePosition touchPosition = null;
 
-    public Marker(String name, double latitude, double longitude, double altitude, int color) {
+    public Marker(String name, double latitude, double longitude,
+            double altitude, int color) {
         set(name, latitude, longitude, altitude, color);
     }
 
@@ -102,8 +103,10 @@ public class Marker implements Comparable<Marker> {
      * @param color
      *            Color of the Marker.
      */
-    public synchronized void set(String name, double latitude, double longitude, double altitude, int color) {
-        if (name == null) throw new NullPointerException();
+    public synchronized void set(String name, double latitude,
+            double longitude, double altitude, int color) {
+        if (name == null)
+            throw new NullPointerException();
 
         this.name = name;
         this.physicalLocation.set(latitude, longitude, altitude);
@@ -112,8 +115,10 @@ public class Marker implements Comparable<Marker> {
         this.isInView = false;
         this.locationXyzRelativeToPhysicalLocation.set(0, 0, 0);
         this.initialY = 0.0f;
-        if (altitude==0.0d) this.noAltitude = true;
-        else this.noAltitude = false;
+        if (altitude == 0.0d)
+            this.noAltitude = true;
+        else
+            this.noAltitude = false;
     }
 
     /**
@@ -193,12 +198,14 @@ public class Marker implements Comparable<Marker> {
     }
 
     public synchronized float getHeight() {
-        if (symbolContainer == null || textContainer == null) return 0f;
+        if (symbolContainer == null || textContainer == null)
+            return 0f;
         return symbolContainer.getHeight() + textContainer.getHeight();
     }
 
     public synchronized float getWidth() {
-        if (symbolContainer == null || textContainer == null) return 0f;
+        if (symbolContainer == null || textContainer == null)
+            return 0f;
         float symbolWidth = symbolContainer.getWidth();
         float textWidth = textContainer.getWidth();
         return (textWidth > symbolWidth) ? textWidth : symbolWidth;
@@ -215,9 +222,11 @@ public class Marker implements Comparable<Marker> {
      *            Adder to the Y position.
      */
     public synchronized void update(Canvas canvas, float addX, float addY) {
-        if (canvas == null) throw new NullPointerException();
+        if (canvas == null)
+            throw new NullPointerException();
 
-        if (cam == null) cam = new CameraModel(canvas.getWidth(), canvas.getHeight(), true);
+        if (cam == null)
+            cam = new CameraModel(canvas.getWidth(), canvas.getHeight(), true);
         cam.set(canvas.getWidth(), canvas.getHeight(), false);
         cam.setViewAngle(CameraModel.DEFAULT_VIEW_ANGLE);
         populateMatrices(cam, addX, addY);
@@ -225,8 +234,10 @@ public class Marker implements Comparable<Marker> {
         updateView();
     }
 
-    private synchronized void populateMatrices(CameraModel cam, float addX, float addY) {
-        if (cam == null) throw new NullPointerException();
+    private synchronized void populateMatrices(CameraModel cam, float addX,
+            float addY) {
+        if (cam == null)
+            throw new NullPointerException();
 
         // Find the location given the rotation matrix
         tmpLocationVector.set(locationVector);
@@ -244,20 +255,22 @@ public class Marker implements Comparable<Marker> {
         locationXyzRelativeToPhysicalLocation.get(locationArray);
         float x = locationArray[0] / scale;
         float y = locationArray[2] / scale; // z==y Switched on purpose
-        if ((x*x + y*y) < (Radar.RADIUS * Radar.RADIUS)) {
+        if ((x * x + y * y) < (Radar.RADIUS * Radar.RADIUS)) {
             isOnRadar = true;
         }
     }
 
     private synchronized void updateView() {
         isInView = false;
-        
+
         // If it's not on the radar, can't be in view3
-        if (!isOnRadar) return;
+        if (!isOnRadar)
+            return;
 
         // If it's not in the same side as our viewing angle
         locationXyzRelativeToCameraView.get(locationArray);
-        if (locationArray[2] >= -1f) return;
+        if (locationArray[2] >= -1f)
+            return;
 
         locationXyzRelativeToCameraView.get(locationArray);
         float x = locationArray[0];
@@ -287,11 +300,12 @@ public class Marker implements Comparable<Marker> {
             lrY += height;
         }
 
-        if (AugmentedReality.portrait && 
-            (lrX >= -1 && ulX <= cam.getWidth() && ulY >= -1 && lrY <= cam.getHeight())
-        ) {
+        if (AugmentedReality.portrait
+                && (lrX >= -1 && ulX <= cam.getWidth() && ulY >= -1 && lrY <= cam
+                        .getHeight())) {
             isInView = true;
-        } else if (lrX >= -1 && ulX <= cam.getWidth() && lrY >= -1 && ulY <= cam.getHeight()) {
+        } else if (lrX >= -1 && ulX <= cam.getWidth() && lrY >= -1
+                && ulY <= cam.getHeight()) {
             isInView = true;
         }
         /*
@@ -313,28 +327,33 @@ public class Marker implements Comparable<Marker> {
      *             if Location is NULL.
      */
     public synchronized void calcRelativePosition(Location location) {
-        if (location == null) throw new NullPointerException();
+        if (location == null)
+            throw new NullPointerException();
 
         // Update the markers distance based on the new location.
         updateDistance(location);
 
-        // noAltitude means that the elevation of the POI is not known 
+        // noAltitude means that the elevation of the POI is not known
         // and should be set to the users GPS altitude
         if (noAltitude) {
-        	physicalLocation.setAltitude(location.getAltitude());
+            physicalLocation.setAltitude(location.getAltitude());
         }
 
         // Compute the relative position vector from user position to POI
         // location
-        PhysicalLocation.convLocationToVector(location, physicalLocation, locationXyzRelativeToPhysicalLocation);
+        PhysicalLocation.convLocationToVector(location, physicalLocation,
+                locationXyzRelativeToPhysicalLocation);
         this.initialY = locationXyzRelativeToPhysicalLocation.getY();
         updateRadar();
     }
 
     private synchronized void updateDistance(Location location) {
-        if (location == null) throw new NullPointerException();
+        if (location == null)
+            throw new NullPointerException();
 
-        Location.distanceBetween(physicalLocation.getLatitude(), physicalLocation.getLongitude(), location.getLatitude(), location.getLongitude(), distanceArray);
+        Location.distanceBetween(physicalLocation.getLatitude(),
+                physicalLocation.getLongitude(), location.getLatitude(),
+                location.getLongitude(), distanceArray);
         distance = distanceArray[0];
     }
 
@@ -348,7 +367,8 @@ public class Marker implements Comparable<Marker> {
      * @return True if Marker is visible and x/y is on the marker.
      */
     public synchronized boolean handleClick(float x, float y) {
-        if (!isOnRadar || !isInView) return false;
+        if (!isOnRadar || !isInView)
+            return false;
         // Log.e("handleClick", "point (x="+x+" y="+y+")");
         boolean result = isPointOnMarker(x, y, this);
         return result;
@@ -376,7 +396,8 @@ public class Marker implements Comparable<Marker> {
      * @return True if the marker is on Marker.
      */
     private synchronized boolean isMarkerOnMarker(Marker marker, boolean reflect) {
-        if (marker == null) return false;
+        if (marker == null)
+            return false;
 
         marker.getScreenPosition().get(locationArray);
         float x = locationArray[0];
@@ -403,7 +424,8 @@ public class Marker implements Comparable<Marker> {
             middleY = y + (height / 2);
         }
         boolean middleOfMarker = isPointOnMarker(middleX, middleY, this);
-        if (middleOfMarker) return true;
+        if (middleOfMarker)
+            return true;
 
         float ulX = x;
         float ulY = y;
@@ -441,16 +463,20 @@ public class Marker implements Comparable<Marker> {
          * Log.w("isMarkerOnMarker", "lr (x="+(lrX)+" y="+(lrY)+")");
          */
         boolean upperLeftOfMarker = isPointOnMarker(ulX, ulY, this);
-        if (upperLeftOfMarker) return true;
+        if (upperLeftOfMarker)
+            return true;
 
         boolean upperRightOfMarker = isPointOnMarker(urX, urY, this);
-        if (upperRightOfMarker) return true;
+        if (upperRightOfMarker)
+            return true;
 
         boolean lowerLeftOfMarker = isPointOnMarker(llX, llY, this);
-        if (lowerLeftOfMarker) return true;
+        if (lowerLeftOfMarker)
+            return true;
 
         boolean lowerRightOfMarker = isPointOnMarker(lrX, lrY, this);
-        if (lowerRightOfMarker) return true;
+        if (lowerRightOfMarker)
+            return true;
 
         // If reflect is True then reverse the arguments and see if this Marker
         // is on the marker.
@@ -468,8 +494,10 @@ public class Marker implements Comparable<Marker> {
      *            Marker to determine if the point is on.
      * @return True if the point is on Marker.
      */
-    private synchronized boolean isPointOnMarker(float xPoint, float yPoint, Marker marker) {
-        if (marker == null) return false;
+    private synchronized boolean isPointOnMarker(float xPoint, float yPoint,
+            Marker marker) {
+        if (marker == null)
+            return false;
 
         marker.getScreenPosition().get(locationArray);
         float x = locationArray[0];
@@ -505,9 +533,13 @@ public class Marker implements Comparable<Marker> {
          * "lr (x="+(lrX)+" y="+(lrY)+")");
          */
         if (AugmentedReality.portrait) {
-            if (xPoint >= ulX && xPoint <= lrX && yPoint <= ulY && yPoint >= lrY) return true;
+            if (xPoint >= ulX && xPoint <= lrX && yPoint <= ulY
+                    && yPoint >= lrY)
+                return true;
         } else {
-            if (xPoint >= ulX && xPoint <= lrX && yPoint >= ulY && yPoint <= lrY) return true;
+            if (xPoint >= ulX && xPoint <= lrX && yPoint >= ulY
+                    && yPoint <= lrY)
+                return true;
         }
 
         return false;
@@ -522,42 +554,58 @@ public class Marker implements Comparable<Marker> {
      *             if the Canvas is NULL.
      */
     public synchronized void draw(Canvas canvas) {
-        if (canvas == null) throw new NullPointerException();
+        if (canvas == null)
+            throw new NullPointerException();
 
         // If not visible then do nothing
-        if (!isOnRadar || !isInView) return;
+        if (!isOnRadar || !isInView)
+            return;
 
         // Draw the Icon and Text
-        if (debugTouchZone) drawTouchZone(canvas);
+        if (debugTouchZone)
+            drawTouchZone(canvas);
         drawIcon(canvas);
         drawText(canvas);
 
         // Draw the exact position
-        if (debugGpsPosition) drawPosition(canvas);
+        if (debugGpsPosition)
+            drawPosition(canvas);
     }
 
     private synchronized void drawPosition(Canvas canvas) {
-        if (canvas == null) throw new NullPointerException();
+        if (canvas == null)
+            throw new NullPointerException();
 
-        if (positionPoint == null) positionPoint = new PaintablePoint(Color.MAGENTA, true);
+        if (positionPoint == null)
+            positionPoint = new PaintablePoint(Color.MAGENTA, true);
 
         getScreenPosition().get(locationArray);
         float currentAngle = 0;
-        if (AugmentedReality.portrait) currentAngle = -90;
+        if (AugmentedReality.portrait)
+            currentAngle = -90;
 
-        if (positionContainer == null) positionContainer = new PaintablePosition(positionPoint, locationArray[0], locationArray[1], currentAngle, 1);
-        else positionContainer.set(positionPoint, locationArray[0], locationArray[1], currentAngle, 1);
+        if (positionContainer == null)
+            positionContainer = new PaintablePosition(positionPoint,
+                    locationArray[0], locationArray[1], currentAngle, 1);
+        else
+            positionContainer.set(positionPoint, locationArray[0],
+                    locationArray[1], currentAngle, 1);
 
         positionContainer.paint(canvas);
     }
 
     private synchronized void drawTouchZone(Canvas canvas) {
-        if (canvas == null) throw new NullPointerException();
+        if (canvas == null)
+            throw new NullPointerException();
 
-        if (gpsSymbol == null) return;
+        if (gpsSymbol == null)
+            return;
 
-        if (touchBox == null) touchBox = new PaintableBox(getWidth(), getHeight(), Color.WHITE, Color.GREEN);
-        else touchBox.set(getWidth(), getHeight());
+        if (touchBox == null)
+            touchBox = new PaintableBox(getWidth(), getHeight(), Color.WHITE,
+                    Color.GREEN);
+        else
+            touchBox.set(getWidth(), getHeight());
 
         getScreenPosition().get(locationArray);
         float x = locationArray[0];
@@ -571,17 +619,23 @@ public class Marker implements Comparable<Marker> {
             y -= gpsSymbol.getHeight();
         }
         float currentAngle = 0;
-        if (AugmentedReality.portrait) currentAngle = -90;
+        if (AugmentedReality.portrait)
+            currentAngle = -90;
 
-        if (touchPosition == null) touchPosition = new PaintablePosition(touchBox, x, y, currentAngle, 1);
-        else touchPosition.set(touchBox, x, y, currentAngle, 1);
+        if (touchPosition == null)
+            touchPosition = new PaintablePosition(touchBox, x, y, currentAngle,
+                    1);
+        else
+            touchPosition.set(touchBox, x, y, currentAngle, 1);
         touchPosition.paint(canvas);
     }
 
     protected synchronized void drawIcon(Canvas canvas) {
-        if (canvas == null) throw new NullPointerException();
+        if (canvas == null)
+            throw new NullPointerException();
 
-        if (gpsSymbol == null) gpsSymbol = new PaintableGps(36, 8, true, getColor());
+        if (gpsSymbol == null)
+            gpsSymbol = new PaintableGps(36, 8, true, getColor());
 
         getScreenPosition().get(locationArray);
         float x = locationArray[0];
@@ -593,27 +647,37 @@ public class Marker implements Comparable<Marker> {
             y -= gpsSymbol.getHeight() / 2;
         }
         float currentAngle = 0;
-        if (AugmentedReality.portrait) currentAngle = -90;
+        if (AugmentedReality.portrait)
+            currentAngle = -90;
 
-        if (symbolContainer == null) symbolContainer = new PaintablePosition(gpsSymbol, x, y, currentAngle, 1);
-        else symbolContainer.set(gpsSymbol, x, y, currentAngle, 1);
+        if (symbolContainer == null)
+            symbolContainer = new PaintablePosition(gpsSymbol, x, y,
+                    currentAngle, 1);
+        else
+            symbolContainer.set(gpsSymbol, x, y, currentAngle, 1);
         symbolContainer.paint(canvas);
     }
 
     private synchronized void drawText(Canvas canvas) {
-        if (canvas == null) throw new NullPointerException();
+        if (canvas == null)
+            throw new NullPointerException();
 
         textStr.setLength(0);
         if (distance < 1000.0) {
-            textStr.append(name).append(" (").append(DECIMAL_FORMAT.format(distance)).append("m)");
+            textStr.append(name).append(" (")
+                    .append(DECIMAL_FORMAT.format(distance)).append("m)");
         } else {
             double d = distance / 1000.0;
-            textStr.append(name).append(" (").append(DECIMAL_FORMAT.format(d)).append("km)");
+            textStr.append(name).append(" (").append(DECIMAL_FORMAT.format(d))
+                    .append("km)");
         }
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
 
-        if (textBox == null) textBox = new PaintableBoxedText(textStr.toString(), Math.round(maxHeight / 2f) + 1, 300);
-        else textBox.set(textStr.toString(), Math.round(maxHeight / 2f) + 1, 300);
+        if (textBox == null)
+            textBox = new PaintableBoxedText(textStr.toString(),
+                    Math.round(maxHeight / 2f) + 1, 300);
+        else
+            textBox.set(textStr.toString(), Math.round(maxHeight / 2f) + 1, 300);
 
         getScreenPosition().get(locationArray);
         float x = locationArray[0];
@@ -629,8 +693,11 @@ public class Marker implements Comparable<Marker> {
         if (AugmentedReality.portrait)
             currentAngle = -90;
 
-        if (textContainer == null) textContainer = new PaintablePosition(textBox, x, y, currentAngle, 1);
-        else textContainer.set(textBox, x, y, currentAngle, 1);
+        if (textContainer == null)
+            textContainer = new PaintablePosition(textBox, x, y, currentAngle,
+                    1);
+        else
+            textContainer.set(textBox, x, y, currentAngle, 1);
         textContainer.paint(canvas);
     }
 
@@ -639,7 +706,8 @@ public class Marker implements Comparable<Marker> {
      */
     @Override
     public synchronized int compareTo(Marker another) {
-        if (another == null) throw new NullPointerException();
+        if (another == null)
+            throw new NullPointerException();
 
         return name.compareTo(another.getName());
     }
@@ -649,7 +717,8 @@ public class Marker implements Comparable<Marker> {
      */
     @Override
     public synchronized boolean equals(Object marker) {
-        if (marker == null || name == null) throw new NullPointerException();
+        if (marker == null || name == null)
+            throw new NullPointerException();
 
         return name.equals(((Marker) marker).getName());
     }
