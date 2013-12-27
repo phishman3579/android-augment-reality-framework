@@ -23,6 +23,9 @@ import android.location.Location;
  * visibility and draw it's text and visual representation accordingly. This
  * should be extended if you want to change the way a Marker is viewed.
  * 
+ * Note: This class assumes if two Markers have the same name, it is the same
+ * object.
+ * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
 public class Marker implements Comparable<Marker> {
@@ -647,5 +650,13 @@ public class Marker implements Comparable<Marker> {
         if (marker == null || name == null) throw new NullPointerException();
 
         return name.equals(((Marker) marker).getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized int hashCode() {
+        return name.hashCode();
     }
 }

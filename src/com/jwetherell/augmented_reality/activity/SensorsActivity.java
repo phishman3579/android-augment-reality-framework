@@ -213,15 +213,27 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         if (!computing.compareAndSet(false, true)) return;
 
         if (evt.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            smooth = LowPassFilter.filter(0.5f, 1.0f, evt.values, grav);
-            grav[0] = smooth[0];
-            grav[1] = smooth[1];
-            grav[2] = smooth[2];
+        	if (AugmentedReality.useSmoothing) { 
+	            smooth = LowPassFilter.filter(0.5f, 1.0f, evt.values, grav);
+	            grav[0] = smooth[0];
+	            grav[1] = smooth[1];
+	            grav[2] = smooth[2];
+        	} else {
+	            grav[0] = evt.values[0];
+	            grav[1] = evt.values[1];
+	            grav[2] = evt.values[2];
+        	}
         } else if (evt.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-            smooth = LowPassFilter.filter(2.0f, 4.0f, evt.values, mag);
-            mag[0] = smooth[0];
-            mag[1] = smooth[1];
-            mag[2] = smooth[2];
+        	if (AugmentedReality.useSmoothing) { 
+	            smooth = LowPassFilter.filter(2.0f, 4.0f, evt.values, mag);
+	            mag[0] = smooth[0];
+	            mag[1] = smooth[1];
+	            mag[2] = smooth[2];
+        	} else {
+	            mag[0] = evt.values[0];
+	            mag[1] = evt.values[1];
+	            mag[2] = evt.values[2];
+        	}
         }
 
         //// Find real world position relative to phone location ////

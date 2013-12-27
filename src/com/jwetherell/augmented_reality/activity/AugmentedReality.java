@@ -55,6 +55,7 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
 
     public static boolean portrait = false;
     public static boolean useCollisionDetection = false;
+    public static boolean useSmoothing = true;
     public static boolean showRadar = true;
     public static boolean showZoomBar = true;
 

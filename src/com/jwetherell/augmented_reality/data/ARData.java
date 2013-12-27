@@ -38,7 +38,7 @@ public abstract class ARData {
     }
 
     private static final Object radiusLock = new Object();
-    private static float radius = new Float(20);
+    private static float radius = Float.valueOf(20);
     private static String zoomLevel = new String();
     private static final Object zoomProgressLock = new Object();
     private static int zoomProgress = 0;
