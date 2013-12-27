@@ -14,14 +14,14 @@ public class PaintableText extends PaintableObject {
     private static final float WIDTH_PAD = 4;
     private static final float HEIGHT_PAD = 2;
 
-    private String text = null;
+    private CharSequence text = null;
     private int color = 0;
     private int size = 0;
     private float width = 0;
     private float height = 0;
     private boolean bg = false;
 
-    public PaintableText(String text, int color, int size, boolean paintBackground) {
+    public PaintableText(CharSequence text, int color, int size, boolean paintBackground) {
         set(text, color, size, paintBackground);
     }
 
@@ -30,7 +30,7 @@ public class PaintableText extends PaintableObject {
      * objects.
      * 
      * @param text
-     *            String representing this object.
+     *            CharSequence representing this object.
      * @param color
      *            Color of the object.
      * @param size
@@ -40,14 +40,14 @@ public class PaintableText extends PaintableObject {
      * @throws NullPointerException
      *             if String param is NULL.
      */
-    public void set(String text, int color, int size, boolean paintBackground) {
+    public void set(CharSequence text, int color, int size, boolean paintBackground) {
         if (text == null) throw new NullPointerException();
 
         this.text = text;
         this.bg = paintBackground;
         this.color = color;
         this.size = size;
-        this.width = getTextWidth(text) + WIDTH_PAD * 2;
+        this.width = getTextWidth(text,0,text.length()) + WIDTH_PAD * 2;
         this.height = getTextAsc() + getTextDesc() + HEIGHT_PAD * 2;
     }
 
@@ -68,7 +68,7 @@ public class PaintableText extends PaintableObject {
             setFill(false);
             paintRect(canvas, -(width / 2), -(height / 2), width, height);
         }
-        paintText(canvas, (WIDTH_PAD - width / 2), (HEIGHT_PAD + getTextAsc() - height / 2), text);
+        paintText(canvas, (WIDTH_PAD - width / 2), (HEIGHT_PAD + getTextAsc() - height / 2), text, 0, text.length());
     }
 
     /**

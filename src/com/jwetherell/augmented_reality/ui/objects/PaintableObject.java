@@ -73,14 +73,18 @@ public abstract class PaintableObject {
      * Get the width of the text String.
      * 
      * @param txt
-     *            String to get the width of.
+     *            CharSequence to get the width of.
+     * @param start
+     *            Start of the text.
+     * @param end
+     *            End of the text.
      * @return float width of the text String.
      * @throws NullPointerException
      *             if the String param is NULL.
      */
-    public float getTextWidth(String txt) {
+    public float getTextWidth(CharSequence txt, int start, int end) {
         if (txt == null) throw new NullPointerException();
-        return paint.measureText(txt);
+        return paint.measureText(txt, start, end);
     }
 
     /**
@@ -248,14 +252,18 @@ public abstract class PaintableObject {
      * @param y
      *            Y coordinate of the text.
      * @param text
-     *            String to paint on the Canvas.
+     *            CharSequence to paint on the Canvas.
+     * @param start
+     *            Start of the text.
+     * @param end
+     *            End of the text.
      * @throws NullPointerException
      *             if Canvas or String param is NULL.
      */
-    public void paintText(Canvas canvas, float x, float y, String text) {
+    public void paintText(Canvas canvas, float x, float y, CharSequence text, int start, int end) {
         if (canvas == null || text == null) throw new NullPointerException();
 
-        canvas.drawText(text, x, y, paint);
+        canvas.drawText(text, start, end, x, y, paint);
     }
 
     /**

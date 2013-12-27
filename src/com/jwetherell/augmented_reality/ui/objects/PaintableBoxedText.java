@@ -2,6 +2,7 @@ package com.jwetherell.augmented_reality.ui.objects;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 
@@ -15,24 +16,22 @@ public class PaintableBoxedText extends PaintableObject {
 
     private float width = 0, height = 0;
     private float areaWidth = 0, areaHeight = 0;
-    private ArrayList<String> lineList = null;
-    private String[] lines = null;
-    private float[] lineWidths = null;
+    private ArrayList<CharSequence> lineList = null;
     private float lineHeight = 0;
     private float maxLineWidth = 0;
     private float pad = 0;
 
-    private String txt = null;
+    private CharSequence txt = null;
     private float fontSize = 12;
     private int borderColor = Color.rgb(255, 255, 255);
     private int backgroundColor = Color.argb(160, 0, 0, 0);
     private int textColor = Color.rgb(255, 255, 255);
 
-    public PaintableBoxedText(String txtInit, float fontSizeInit, float maxWidth) {
+    public PaintableBoxedText(CharSequence txtInit, float fontSizeInit, float maxWidth) {
         this(txtInit, fontSizeInit, maxWidth, Color.rgb(255, 255, 255), Color.argb(128, 0, 0, 0), Color.rgb(255, 255, 255));
     }
 
-    public PaintableBoxedText(String txtInit, float fontSizeInit, float maxWidth, int borderColor, int bgColor, int textColor) {
+    public PaintableBoxedText(CharSequence txtInit, float fontSizeInit, float maxWidth, int borderColor, int bgColor, int textColor) {
         set(txtInit, fontSizeInit, maxWidth, borderColor, bgColor, textColor);
     }
 
@@ -41,7 +40,7 @@ public class PaintableBoxedText extends PaintableObject {
      * objects.
      * 
      * @param txtInit
-     *            String to paint.
+     *            CharSequence to paint.
      * @param fontSizeInit
      *            Font size to use.
      * @param maxWidth
@@ -55,7 +54,7 @@ public class PaintableBoxedText extends PaintableObject {
      * @throws NullPointerException
      *             if String param is NULL.
      */
-    public void set(String txtInit, float fontSizeInit, float maxWidth, int borderColor, int bgColor, int textColor) {
+    public void set(CharSequence txtInit, float fontSizeInit, float maxWidth, int borderColor, int bgColor, int textColor) {
         if (txtInit == null) throw new NullPointerException();
 
         this.borderColor = borderColor;
@@ -72,7 +71,7 @@ public class PaintableBoxedText extends PaintableObject {
      * color, background color, and text color.
      * 
      * @param txtInit
-     *            String to paint.
+     *            CharSequence to paint.
      * @param fontSizeInit
      *            Font size to use.
      * @param maxWidth
@@ -80,7 +79,7 @@ public class PaintableBoxedText extends PaintableObject {
      * @throws NullPointerException
      *             if String param is NULL.
      */
-    public void set(String txtInit, float fontSizeInit, float maxWidth) {
+    public void set(CharSequence txtInit, float fontSizeInit, float maxWidth) {
         if (txtInit == null) throw new NullPointerException();
 
         try {
@@ -91,7 +90,7 @@ public class PaintableBoxedText extends PaintableObject {
         }
     }
 
-    private void prepTxt(String txtInit, float fontSizeInit, float maxWidth) {
+    private void prepTxt(CharSequence txtInit, float fontSizeInit, float maxWidth) {
         if (txtInit == null) throw new NullPointerException();
 
         setFontSize(fontSizeInit);
@@ -101,19 +100,19 @@ public class PaintableBoxedText extends PaintableObject {
         areaWidth = maxWidth - pad;
         lineHeight = getTextAsc() + getTextDesc();
 
-        if (lineList == null) lineList = new ArrayList<String>();
+        if (lineList == null) lineList = new ArrayList<CharSequence>();
         else lineList.clear();
 
         BreakIterator boundary = BreakIterator.getWordInstance();
-        boundary.setText(txt);
+        boundary.setText(txt.toString());
 
         int start = boundary.first();
         int end = boundary.next();
         int prevEnd = start;
         while (end != BreakIterator.DONE) {
-            String line = txt.substring(start, end);
-            String prevLine = txt.substring(start, prevEnd);
-            float lineWidth = getTextWidth(line);
+            CharSequence line = txt.subSequence(start, end);
+            CharSequence prevLine = txt.subSequence(start, prevEnd);
+            float lineWidth = getTextWidth(line, 0, line.length());
 
             if (lineWidth > areaWidth) {
                 // If the first word is longer than lineWidth
@@ -126,20 +125,16 @@ public class PaintableBoxedText extends PaintableObject {
             prevEnd = end;
             end = boundary.next();
         }
-        String line = txt.substring(start, prevEnd);
+        CharSequence line = txt.subSequence(start, prevEnd);
         lineList.add(line);
 
-        if (lines == null || lines.length != lineList.size()) lines = new String[lineList.size()];
-        if (lineWidths == null || lineWidths.length != lineList.size()) lineWidths = new float[lineList.size()];
-        lineList.toArray(lines);
-
         maxLineWidth = 0;
-        for (int i = 0; i < lines.length; i++) {
-            lineWidths[i] = getTextWidth(lines[i]);
-            if (maxLineWidth < lineWidths[i]) maxLineWidth = lineWidths[i];
+        for (CharSequence seq : lineList) {
+        	float lineWidth = getTextWidth(seq, 0 ,seq.length());
+            if (maxLineWidth < lineWidth) maxLineWidth = lineWidth;
         }
         areaWidth = maxLineWidth;
-        areaHeight = lineHeight * lines.length;
+        areaHeight = lineHeight * lineList.size();
 
         width = areaWidth + pad * 2;
         height = areaHeight + pad * 2;
@@ -162,12 +157,13 @@ public class PaintableBoxedText extends PaintableObject {
         setColor(borderColor);
         paintRoundedRect(canvas, 0, 0, width, height);
 
-        for (int i = 0; i < lines.length; i++) {
-            String line = lines[i];
+        int i=0;
+        for (CharSequence line : lineList) {
             setFill(true);
             setStrokeWidth(0);
             setColor(textColor);
-            paintText(canvas, pad, pad + lineHeight * i + getTextAsc(), line);
+            paintText(canvas, pad, pad + lineHeight * i + getTextAsc(), line, 0, line.length());
+            i++;
         }
     }
 
