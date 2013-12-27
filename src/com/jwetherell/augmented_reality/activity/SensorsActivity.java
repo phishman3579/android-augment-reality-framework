@@ -102,8 +102,8 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
             if (sensors.size() > 0)
                 sensorMag = sensors.get(0);
 
-            sensorMgr.registerListener(this, sensorGrav, SensorManager.SENSOR_DELAY_NORMAL);
-            sensorMgr.registerListener(this, sensorMag, SensorManager.SENSOR_DELAY_NORMAL);
+            sensorMgr.registerListener(this, sensorGrav, SensorManager.SENSOR_DELAY_GAME);
+            sensorMgr.registerListener(this, sensorMag, SensorManager.SENSOR_DELAY_GAME);
 
             locationMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);

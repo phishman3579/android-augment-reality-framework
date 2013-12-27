@@ -19,10 +19,10 @@ public class LowPassFilter {
      * basically means more smoothing See:
      * http://en.wikipedia.org/wiki/Low-pass_filter#Discrete-time_realization
      */
-    private static final float ALPHA_DEFAULT = 0.333f;
+    private static final float ALPHA_DEFAULT = 0.666f;
     private static final float ALPHA_STEADY = 0.001f;
-    private static final float ALPHA_START_MOVING = 0.3f;
-    private static final float ALPHA_MOVING = 0.6f;
+    private static final float ALPHA_START_MOVING = 0.1f;
+    private static final float ALPHA_MOVING = 0.9f;
 
     private LowPassFilter() {
     }
