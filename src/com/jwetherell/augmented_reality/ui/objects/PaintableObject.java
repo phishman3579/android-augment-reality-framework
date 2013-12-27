@@ -16,6 +16,7 @@ import android.graphics.RectF;
 public abstract class PaintableObject {
 
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private RectF rect = new RectF();
 
     public PaintableObject() {
         if (paint == null) {
@@ -173,7 +174,7 @@ public abstract class PaintableObject {
     public void paintRoundedRect(Canvas canvas, float x, float y, float width, float height) {
         if (canvas == null) throw new NullPointerException();
 
-        RectF rect = new RectF(x, y, x + width, y + height);
+        rect.set(x, y, x + width, y + height);
         canvas.drawRoundRect(rect, 15F, 15F, paint);
     }
 

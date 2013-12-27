@@ -41,6 +41,8 @@ public class Marker implements Comparable<Marker> {
     private final float[] distanceArray = new float[1];
     private final float[] locationArray = new float[3];
 
+    private final StringBuilder textStr = new StringBuilder();
+
     private float initialY = 0.0f;
 
     private volatile static CameraModel cam = null;
@@ -601,17 +603,17 @@ public class Marker implements Comparable<Marker> {
     private synchronized void drawText(Canvas canvas) {
         if (canvas == null) throw new NullPointerException();
 
-        String textStr = null;
+        textStr.setLength(0);
         if (distance < 1000.0) {
-            textStr = name + " (" + DECIMAL_FORMAT.format(distance) + "m)";
+            textStr.append(name).append(" (").append(DECIMAL_FORMAT.format(distance)).append("m)");
         } else {
             double d = distance / 1000.0;
-            textStr = name + " (" + DECIMAL_FORMAT.format(d) + "km)";
+            textStr.append(name).append(" (").append(DECIMAL_FORMAT.format(d)).append("km)");
         }
         float maxHeight = Math.round(canvas.getHeight() / 10f) + 1;
 
-        if (textBox == null) textBox = new PaintableBoxedText(textStr, Math.round(maxHeight / 2f) + 1, 300);
-        else textBox.set(textStr, Math.round(maxHeight / 2f) + 1, 300);
+        if (textBox == null) textBox = new PaintableBoxedText(textStr.toString(), Math.round(maxHeight / 2f) + 1, 300);
+        else textBox.set(textStr.toString(), Math.round(maxHeight / 2f) + 1, 300);
 
         getScreenPosition().get(locationArray);
         float x = locationArray[0];

@@ -232,7 +232,7 @@ public abstract class ARData {
             }
 
             Log.v(TAG, "Populating the cache.");
-            List<Marker> copy = new ArrayList<Marker>();
+            List<Marker> copy = new ArrayList<Marker>(markerList.size());
             copy.addAll(markerList.values());
             Collections.sort(copy, comparator);
             // The cache should be sorted from closest to farthest marker.

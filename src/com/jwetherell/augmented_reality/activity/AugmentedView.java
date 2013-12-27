@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.View;
 
 import com.jwetherell.augmented_reality.data.ARData;
@@ -22,8 +23,8 @@ import com.jwetherell.augmented_reality.ui.Radar;
  */
 public class AugmentedView extends View {
 
+    private static final String TAG = "AugmentedView";
     private static final AtomicBoolean drawing = new AtomicBoolean(false);
-
     private static final Radar radar = new Radar();
     private static final float[] locationArray = new float[3];
     private static final List<Marker> cache = new ArrayList<Marker>();
@@ -32,6 +33,11 @@ public class AugmentedView extends View {
 
     public AugmentedView(Context context) {
         super(context);
+        Log.v(TAG, "portrait              = "+AugmentedReality.portrait);
+        Log.v(TAG, "useCollisionDetection = "+AugmentedReality.useCollisionDetection);
+        Log.v(TAG, "useSmoothing          = "+AugmentedReality.useSmoothing);
+        Log.v(TAG, "showRadar             = "+AugmentedReality.showRadar);
+        Log.v(TAG, "showZoomBar           = "+AugmentedReality.showZoomBar);
     }
 
     /**
@@ -42,6 +48,8 @@ public class AugmentedView extends View {
         if (canvas == null) return;
 
         if (drawing.compareAndSet(false, true)) {
+        	//Log.v(TAG, "DIRTY flag found, re-populating the cache.");
+
             // Get all the markers
             List<Marker> collection = ARData.getMarkers();
 

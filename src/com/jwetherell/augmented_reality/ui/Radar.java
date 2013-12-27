@@ -31,6 +31,11 @@ public class Radar {
     private static final int TEXT_COLOR = Color.rgb(255, 255, 255);
     private static final int TEXT_SIZE = 12;
 
+    private static final StringBuilder DIR_TXT = new StringBuilder();
+    private static final StringBuilder RADAR_TXT = new StringBuilder();
+    private static final StringBuilder DIST_TXT = new StringBuilder();
+    private static final StringBuilder DEC_TXT = new StringBuilder();
+
     private static ScreenPosition leftRadarLine = null;
     private static ScreenPosition rightRadarLine = null;
     private static PaintablePosition leftLineContainer = null;
@@ -137,17 +142,20 @@ public class Radar {
 
         // Direction text
         int range = (int) (ARData.getAzimuth() / (360f / 16f));
-        String dirTxt = "";
-        if (range == 15 || range == 0) dirTxt = "N";
-        else if (range == 1 || range == 2) dirTxt = "NE";
-        else if (range == 3 || range == 4) dirTxt = "E";
-        else if (range == 5 || range == 6) dirTxt = "SE";
-        else if (range == 7 || range == 8) dirTxt = "S";
-        else if (range == 9 || range == 10) dirTxt = "SW";
-        else if (range == 11 || range == 12) dirTxt = "W";
-        else if (range == 13 || range == 14) dirTxt = "NW";
+        DIR_TXT.setLength(0);
+        if (range == 15 || range == 0) DIR_TXT.append("N");
+        else if (range == 1 || range == 2) DIR_TXT.append("NE");
+        else if (range == 3 || range == 4) DIR_TXT.append("E");
+        else if (range == 5 || range == 6) DIR_TXT.append("SE");
+        else if (range == 7 || range == 8) DIR_TXT.append("S");
+        else if (range == 9 || range == 10) DIR_TXT.append("SW");
+        else if (range == 11 || range == 12) DIR_TXT.append("W");
+        else if (range == 13 || range == 14) DIR_TXT.append("NW");
+
         int bearing = (int) ARData.getAzimuth();
-        radarText(canvas, "" + bearing + ((char) 176) + " " + dirTxt, (PAD_X + RADIUS), (PAD_Y - 5), true);
+        RADAR_TXT.setLength(0);
+        RADAR_TXT.append(bearing).append((char)176).append(" ").append(DIR_TXT);
+        radarText(canvas, RADAR_TXT.toString(), (PAD_X + RADIUS), (PAD_Y - 5), true);
 
         // Zoom text
         radarText(canvas, formatDist(ARData.getRadius() * 1000), (PAD_X + RADIUS), (PAD_Y + RADIUS * 2 - 10), false);
@@ -166,21 +174,25 @@ public class Radar {
     }
 
     private static String formatDist(float meters) {
+    	DIST_TXT.setLength(0);
         if (meters < 1000) {
-            return ((int) meters) + "m";
+        	DIST_TXT.append((int) meters).append("m");
         } else if (meters < 10000) {
-            return formatDec(meters / 1000f, 1) + "km";
+            DIST_TXT.append(formatDec(meters / 1000f, 1)).append("km");
         } else {
-            return ((int) (meters / 1000f)) + "km";
+        	DIST_TXT.append((int) (meters / 1000f)).append("km");
         }
+        return DIST_TXT.toString();
     }
 
     private static String formatDec(float val, int dec) {
+    	DEC_TXT.setLength(0);
         int factor = (int) Math.pow(10, dec);
 
         int front = (int) (val);
         int back = (int) Math.abs(val * (factor)) % factor;
 
-        return front + "." + back;
+        DEC_TXT.append(front).append(".").append(back);
+        return DEC_TXT.toString();
     }
 }

@@ -34,15 +34,11 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
     private static final int MIN_TIME = 30 * 1000;
     private static final int MIN_DISTANCE = 10;
 
-    private static final float temp[] = new float[9]; // Temporary rotation
-                                                      // matrix in Android
-                                                      // format
-    private static final float rotation[] = new float[9]; // Final rotation
-                                                          // matrix in Android
-                                                          // format
-    private static final float grav[] = new float[3]; // Gravity (a.k.a
-                                                      // accelerometer data)
+    private static final float temp[] = new float[9]; // Temporary rotation matrix in Android format
+    private static final float rotation[] = new float[9]; // Final rotation matrix in Android format
+    private static final float grav[] = new float[3]; // Gravity (a.k.a accelerometer data)
     private static final float mag[] = new float[3]; // Magnetic
+
     /*
      * Using Matrix operations instead. This was way too inaccurate, private
      * static final float apr[] = new float[3]; //Azimuth, pitch, roll
