@@ -321,7 +321,7 @@ public abstract class ARData {
      * 
      * @return orientation ORIENTATION representing the orientation.
      */
-    public static ORIENTATION getOrientation() {
+    public static ORIENTATION getDeviceOrientation() {
         synchronized (orientationLock) {
             return ARData.orientation;
         }
@@ -333,7 +333,7 @@ public abstract class ARData {
      * @param angle
      *            int representing the orientation angle.
      */
-    public static void setDeviceAngle(int angle) {
+    public static void setOrientationAngle(int angle) {
         synchronized (orientationAngleLock) {
             ARData.orientationAngle = angle;
         }

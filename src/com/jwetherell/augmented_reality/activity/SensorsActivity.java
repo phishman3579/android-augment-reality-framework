@@ -223,7 +223,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         	}
         	Orientation.calcOrientation(grav);
         	ARData.setDeviceOrientation(Orientation.getDeviceOrientation());
-        	ARData.setDeviceAngle(Orientation.getDeviceAngle());
+        	ARData.setOrientationAngle(Orientation.getDeviceAngle());
         } else if (evt.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
         	if (AugmentedReality.useSmoothing) { 
 	            smooth = LowPassFilter.filter(2.0f, 4.0f, evt.values, mag);

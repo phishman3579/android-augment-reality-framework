@@ -72,15 +72,15 @@ public class Radar {
         if (AugmentedReality.ui_portrait) 
             ui_ud_pad = 50;
 
-        if (ARData.getOrientation()==ORIENTATION.PORTRAIT) {
+        if (ARData.getDeviceOrientation()==ORIENTATION.PORTRAIT) {
             canvas.save();
             canvas.translate(0, canvas.getHeight());
             canvas.rotate(-90);
-        } else if (ARData.getOrientation()==ORIENTATION.PORTRAIT_UPSIDE_DOWN) {
+        } else if (ARData.getDeviceOrientation()==ORIENTATION.PORTRAIT_UPSIDE_DOWN) {
             canvas.save();
             canvas.translate(canvas.getWidth() - ui_ud_pad, 0);
             canvas.rotate(90);
-        } else if (ARData.getOrientation()==ORIENTATION.LANDSCAPE_UPSIDE_DOWN) {
+        } else if (ARData.getDeviceOrientation()==ORIENTATION.LANDSCAPE_UPSIDE_DOWN) {
             canvas.save();
             canvas.translate(canvas.getWidth() - ui_ud_pad, canvas.getHeight());
             canvas.rotate(180);
@@ -97,7 +97,7 @@ public class Radar {
         drawRadarText(canvas);
         canvas.restore();
 
-        if (ARData.getOrientation()!=ORIENTATION.LANDSCAPE)
+        if (ARData.getDeviceOrientation()!=ORIENTATION.LANDSCAPE)
             canvas.restore();
     }
 

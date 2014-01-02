@@ -98,7 +98,7 @@ public class Navigation {
         tempMatrix.set(rotationMatrix);
         tempMatrix.transpose();
 
-        ORIENTATION orient = ARData.getOrientation();
+        ORIENTATION orient = ARData.getDeviceOrientation();
         if (orient==ORIENTATION.PORTRAIT) {
             looking.set(0, 1, 0);
         } else if (orient==ORIENTATION.PORTRAIT_UPSIDE_DOWN) {
