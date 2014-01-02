@@ -18,7 +18,8 @@
  */
 package com.jwetherell.augmented_reality.common;
 
-import com.jwetherell.augmented_reality.activity.AugmentedReality;
+import com.jwetherell.augmented_reality.common.Orientation.ORIENTATION;
+import com.jwetherell.augmented_reality.data.ARData;
 
 /**
  * A static class used to calculate azimuth, pitch, and roll given a rotation
@@ -29,7 +30,7 @@ import com.jwetherell.augmented_reality.activity.AugmentedReality;
  * @author Daniele Gobbetti <info@mixare.org>
  * @author Justin Wetherell <phishman3579@gmail.com>
  */
-public class Calculator {
+public class Navigation {
 
     private static final Vector looking = new Vector();
     private static final float[] lookingArray = new float[3];
@@ -39,7 +40,7 @@ public class Calculator {
     private static volatile float pitch = 0;
     private static volatile float roll = 0;
 
-    private Calculator() { }
+    private Navigation() { }
 
     /**
      * Get angle in degrees between two points.
@@ -63,7 +64,7 @@ public class Calculator {
      * @return float representing the azimuth the phone's camera is pointing
      */
     public static synchronized float getAzimuth() {
-        return Calculator.azimuth;
+        return azimuth;
     }
 
     /**
@@ -73,7 +74,7 @@ public class Calculator {
      * @return float representing the pitch of the phone's camera.
      */
     public static synchronized float getPitch() {
-        return Calculator.pitch;
+        return pitch;
     }
 
     /**
@@ -83,7 +84,7 @@ public class Calculator {
      * @return float representing the roll of the phone's camera.
      */
     public static synchronized float getRoll() {
-        return Calculator.roll;
+        return roll;
     }
 
     /**
@@ -96,18 +97,27 @@ public class Calculator {
 
         tempMatrix.set(rotationMatrix);
         tempMatrix.transpose();
-        if (AugmentedReality.portrait) {
+
+        ORIENTATION orient = ARData.getOrientation();
+        if (orient==ORIENTATION.PORTRAIT) {
             looking.set(0, 1, 0);
-        } else {
+        } else if (orient==ORIENTATION.PORTRAIT_UPSIDE_DOWN) {
+                looking.set(0, -1, 0);
+        } else if (orient==ORIENTATION.LANDSCAPE) {
             looking.set(1, 0, 0);
+        } else if (orient==ORIENTATION.LANDSCAPE_UPSIDE_DOWN) {
+            looking.set(-1, 1, 0);
         }
         looking.prod(tempMatrix);
         looking.get(lookingArray);
-        Calculator.azimuth = ((getAngle(0, 0, lookingArray[0], lookingArray[2]) + 360) % 360);
-        Calculator.roll = -(90 - Math.abs(getAngle(0, 0, lookingArray[1], lookingArray[2])));
+
+        azimuth = ((getAngle(0, 0, lookingArray[0], lookingArray[2]) + 360) % 360);
+
+        roll = -(90 - Math.abs(getAngle(0, 0, lookingArray[1], lookingArray[2])));
+
         looking.set(0, 0, 1);
         looking.prod(tempMatrix);
         looking.get(lookingArray);
-        Calculator.pitch = -(90 - Math.abs(getAngle(0, 0, lookingArray[1], lookingArray[2])));
+        pitch = -(90 - Math.abs(getAngle(0, 0, lookingArray[1], lookingArray[2])));
     }
 }

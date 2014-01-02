@@ -2,9 +2,10 @@ package com.jwetherell.augmented_reality.common;
 
 import java.text.CharacterIterator;
 
-
 /**
  * This class is a make shift mutable String.
+ * 
+ * WARNING: This class only works with standard ASCII characters.
  * 
  * @author Justin Wetherell <phishman3579@gmail.com>
  */

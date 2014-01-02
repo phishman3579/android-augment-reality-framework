@@ -10,8 +10,6 @@ import android.graphics.Canvas;
  */
 public class PaintableGps extends PaintableObject {
 
-    private static final int FRAME_SIZE = 15;
-
     private float radius = 0;
     private float strokeWidth = 0;
     private boolean fill = false;
@@ -48,10 +46,15 @@ public class PaintableGps extends PaintableObject {
     public void paint(Canvas canvas) {
         if (canvas == null) throw new NullPointerException();
 
+        canvas.save();
+        canvas.translate(-radius, -radius);
+
         setStrokeWidth(strokeWidth);
         setFill(fill);
         setColor(color);
-        paintCircle(canvas, 0, 0, radius);
+        paintCircle(canvas, x, y, radius);
+
+        canvas.restore();
     }
 
     /**
@@ -59,7 +62,7 @@ public class PaintableGps extends PaintableObject {
      */
     @Override
     public float getWidth() {
-        return (radius * 2) + FRAME_SIZE;
+        return (radius * 2);
     }
 
     /**
@@ -67,6 +70,6 @@ public class PaintableGps extends PaintableObject {
      */
     @Override
     public float getHeight() {
-        return (radius * 2) + FRAME_SIZE;
+        return (radius * 2);
     }
 }

@@ -29,7 +29,7 @@ public class VerticalTextView extends TextView {
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (AugmentedReality.portrait) {
+        if (AugmentedReality.ui_portrait) {
             super.onMeasure(heightMeasureSpec, widthMeasureSpec);
             setMeasuredDimension(getMeasuredHeight(), getMeasuredWidth());
         } else {
@@ -43,7 +43,7 @@ public class VerticalTextView extends TextView {
      */
     @Override
     protected void onDraw(Canvas canvas) {
-        if (AugmentedReality.portrait) {
+        if (AugmentedReality.ui_portrait) {
             TextPaint textPaint = getPaint();
             textPaint.setColor(getCurrentTextColor());
             textPaint.drawableState = getDrawableState();

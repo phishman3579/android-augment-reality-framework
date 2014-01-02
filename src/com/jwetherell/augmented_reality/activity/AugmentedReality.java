@@ -53,7 +53,7 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
     public static final float TWENTY_PERCENT = 2f * TEN_PERCENT;
     public static final float EIGHTY_PERCENTY = 4f * TWENTY_PERCENT;
 
-    public static boolean portrait = false;
+    public static boolean ui_portrait = false;
     public static boolean useCollisionDetection = false;
     public static boolean useSmoothing = true;
     public static boolean showRadar = true;
@@ -201,8 +201,7 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
         return super.onTouchEvent(me);
     };
 
-    @SuppressWarnings("unused") 
     protected void markerTouched(Marker marker) {
-        Log.w(TAG, "markerTouched() not implemented.");
+        Log.w(TAG, "markerTouched() not implemented. marker="+marker.getName());
     }
 }

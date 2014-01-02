@@ -26,6 +26,7 @@ public class IconMarker extends Marker {
     public void drawIcon(Canvas canvas) {
         if (canvas == null || bitmap == null) throw new NullPointerException();
 
+        // gpsSymbol is defined in Marker
         if (gpsSymbol == null) gpsSymbol = new PaintableIcon(bitmap, 96, 96);
         super.drawIcon(canvas);
     }

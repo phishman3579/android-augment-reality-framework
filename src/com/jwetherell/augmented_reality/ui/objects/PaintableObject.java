@@ -3,9 +3,8 @@ package com.jwetherell.augmented_reality.ui.objects;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Rect;
 import android.graphics.RectF;
 
 /**
@@ -18,6 +17,12 @@ public abstract class PaintableObject {
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private RectF rect = new RectF();
 
+    protected float x = 0;
+    protected float y = 0;
+
+    public Matrix matrix = new Matrix();
+    public Matrix inverted = new Matrix();
+
     public PaintableObject() {
         if (paint == null) {
             paint = new Paint();
@@ -26,6 +31,17 @@ public abstract class PaintableObject {
             paint.setColor(Color.BLUE);
             paint.setStyle(Paint.Style.STROKE);
         }
+    }
+
+    /**
+     * Set the x,y coordinates for this object
+     * 
+     * @param x float value
+     * @param y float value
+     */
+    public void setCoordinates(float x, float y) {
+        this.x = x;
+        this.y = y;
     }
 
     /**
@@ -189,26 +205,6 @@ public abstract class PaintableObject {
      *            Canvas to paint on.
      * @param bitmap
      *            Bitmap to paint.
-     * @param src
-     *            Source rectangle.
-     * @param dst
-     *            Destination rectangle.
-     * @throws NullPointerException
-     *             if Canvas or Bitmap is NULL.
-     */
-    public void paintBitmap(Canvas canvas, Bitmap bitmap, Rect src, Rect dst) {
-        if (canvas == null || bitmap == null) throw new NullPointerException();
-
-        canvas.drawBitmap(bitmap, src, dst, paint);
-    }
-
-    /**
-     * Paint a bitmap on the given Canvas.
-     * 
-     * @param canvas
-     *            Canvas to paint on.
-     * @param bitmap
-     *            Bitmap to paint.
      * @param left
      *            Left location to draw the bitmap.
      * @param top
@@ -239,7 +235,10 @@ public abstract class PaintableObject {
     public void paintCircle(Canvas canvas, float x, float y, float radius) {
         if (canvas == null) throw new NullPointerException();
 
+        canvas.save();
+        canvas.translate(radius,radius);
         canvas.drawCircle(x, y, radius, paint);
+        canvas.restore();
     }
 
     /**
@@ -288,45 +287,12 @@ public abstract class PaintableObject {
         if (canvas == null || obj == null) throw new NullPointerException();
 
         canvas.save();
-        canvas.translate((x + obj.getWidth() / 2), (y + obj.getHeight() / 2));
+        canvas.translate(x,y);
         canvas.rotate(rotation);
         canvas.scale(scale, scale);
-        canvas.translate(-(obj.getWidth() / 2), -(obj.getHeight() / 2));
+        canvas.getMatrix(matrix);
+        matrix.invert(inverted);
         obj.paint(canvas);
-        canvas.restore();
-    }
-
-    /**
-     * Paint path on the given Canvas.
-     * 
-     * @param canvas
-     *            Canvas to paint on.
-     * @param path
-     *            Path to paint on the Canvas.
-     * @param x
-     *            X coordinate of the path.
-     * @param y
-     *            Y coordinate of the path.
-     * @param width
-     *            Width of the path.
-     * @param height
-     *            Height of the path.
-     * @param rotation
-     *            Rotation of the path.
-     * @param scale
-     *            Scale of the path.
-     * @throws NullPointerException
-     *             if Canvas or Path is NULL.
-     */
-    public void paintPath(Canvas canvas, Path path, float x, float y, float width, float height, float rotation, float scale) {
-        if (canvas == null || path == null) throw new NullPointerException();
-
-        canvas.save();
-        canvas.translate(x + width / 2, y + height / 2);
-        canvas.rotate(rotation);
-        canvas.scale(scale, scale);
-        canvas.translate(-(width / 2), -(height / 2));
-        canvas.drawPath(path, paint);
         canvas.restore();
     }
 }

@@ -41,9 +41,14 @@ public class PaintablePoint extends PaintableObject {
     public void paint(Canvas canvas) {
         if (canvas == null) throw new NullPointerException();
 
+        canvas.save();
+        canvas.translate(-width/2, -height/2);
+
         setFill(fill);
         setColor(color);
-        paintRect(canvas, -width / 2, -height / 2, width, height);
+        paintRect(canvas, x, y, width, height);
+
+        canvas.restore();
     }
 
     /**

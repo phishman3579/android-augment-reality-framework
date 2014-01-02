@@ -3,11 +3,6 @@ package com.jwetherell.augmented_reality.activity;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.jwetherell.augmented_reality.common.LowPassFilter;
-import com.jwetherell.augmented_reality.common.Matrix;
-import com.jwetherell.augmented_reality.common.Orientation;
-import com.jwetherell.augmented_reality.data.ARData;
-
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.GeomagneticField;
@@ -21,6 +16,12 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.FloatMath;
 import android.util.Log;
+
+import com.jwetherell.augmented_reality.common.LowPassFilter;
+import com.jwetherell.augmented_reality.common.Matrix;
+import com.jwetherell.augmented_reality.common.Navigation;
+import com.jwetherell.augmented_reality.common.Orientation;
+import com.jwetherell.augmented_reality.data.ARData;
 
 /**
  * This class extends Activity and processes sensor data and location data.
@@ -103,8 +104,8 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
             if (sensors.size() > 0)
                 sensorMag = sensors.get(0);
 
-            sensorMgr.registerListener(this, sensorGrav, SensorManager.SENSOR_DELAY_GAME);
-            sensorMgr.registerListener(this, sensorMag, SensorManager.SENSOR_DELAY_GAME);
+            sensorMgr.registerListener(this, sensorGrav, SensorManager.SENSOR_DELAY_UI);
+            sensorMgr.registerListener(this, sensorMag, SensorManager.SENSOR_DELAY_UI);
 
             locationMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
@@ -221,6 +222,8 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
 	            grav[2] = evt.values[2];
         	}
         	Orientation.calcOrientation(grav);
+        	ARData.setOrientation(Orientation.getDeviceOrientation());
+        	ARData.setOrientationAngle(Orientation.getDeviceAngle());
         } else if (evt.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
         	if (AugmentedReality.useSmoothing) { 
 	            smooth = LowPassFilter.filter(2.0f, 4.0f, evt.values, mag);
@@ -238,9 +241,6 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         // Get rotation matrix given the gravity and geomagnetic matrices
         SensorManager.getRotationMatrix(temp, null, grav, mag);
 
-        // Translate the rotation matrices from Y and -Z (landscape)
-        //SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, rotation);
-        //SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_X, SensorManager.AXIS_MINUS_Z, rotation);
         SensorManager.remapCoordinateSystem(temp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_Z, rotation);
 
         /*
@@ -255,7 +255,9 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
          */
 
         // Convert from float[9] to Matrix
-        worldCoord.set(rotation[0], rotation[1], rotation[2], rotation[3], rotation[4], rotation[5], rotation[6], rotation[7], rotation[8]);
+        worldCoord.set(rotation[0], rotation[1], rotation[2], 
+                       rotation[3], rotation[4], rotation[5], 
+                       rotation[6], rotation[7], rotation[8]);
 
         //// Find position relative to magnetic north ////
         // Identity matrix
@@ -284,6 +286,10 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
 
         // Set the rotation matrix (used to translate all object from lat/lon to x/y/z)
         ARData.setRotationMatrix(magneticCompensatedCoord);
+
+        // Update the pitch and bearing using the phone's rotation matrix
+        Navigation.calcPitchBearing(magneticCompensatedCoord);
+        ARData.setAzimuth(Navigation.getAzimuth());
 
         computing.set(false);
     }

@@ -17,8 +17,8 @@ public class PaintableBoxedText extends PaintableObject {
     private float width = 0, height = 0;
     private float areaWidth = 0, areaHeight = 0;
     private ArrayList<CharSequence> lineList = null;
-    private float lineHeight = 0;
-    private float maxLineWidth = 0;
+    private float linesHeight = 0;
+    private float maxLinesWidth = 0;
     private float pad = 0;
 
     private CharSequence txt = null;
@@ -83,14 +83,14 @@ public class PaintableBoxedText extends PaintableObject {
         if (txtInit == null) throw new NullPointerException();
 
         try {
-            prepTxt(txtInit, fontSizeInit, maxWidth);
+            calcBoxDimensions(txtInit, fontSizeInit, maxWidth);
         } catch (Exception ex) {
             ex.printStackTrace();
-            prepTxt("TEXT PARSE ERROR", 12, 200);
+            calcBoxDimensions("TEXT PARSE ERROR", 12, 200);
         }
     }
 
-    private void prepTxt(CharSequence txtInit, float fontSizeInit, float maxWidth) {
+    private void calcBoxDimensions(CharSequence txtInit, float fontSizeInit, float maxWidth) {
         if (txtInit == null) throw new NullPointerException();
 
         setFontSize(fontSizeInit);
@@ -98,7 +98,7 @@ public class PaintableBoxedText extends PaintableObject {
         txt = txtInit;
         fontSize = fontSizeInit;
         areaWidth = maxWidth - pad;
-        lineHeight = getTextAsc() + getTextDesc();
+        linesHeight = getTextAsc() + getTextDesc();
 
         if (lineList == null) lineList = new ArrayList<CharSequence>();
         else lineList.clear();
@@ -128,13 +128,13 @@ public class PaintableBoxedText extends PaintableObject {
         CharSequence line = txt.subSequence(start, prevEnd);
         lineList.add(line);
 
-        maxLineWidth = 0;
+        maxLinesWidth = 0;
         for (CharSequence seq : lineList) {
         	float lineWidth = getTextWidth(seq, 0 ,seq.length());
-            if (maxLineWidth < lineWidth) maxLineWidth = lineWidth;
+            if (maxLinesWidth < lineWidth) maxLinesWidth = lineWidth;
         }
-        areaWidth = maxLineWidth;
-        areaHeight = lineHeight * lineList.size();
+        areaWidth = maxLinesWidth;
+        areaHeight = linesHeight * lineList.size();
 
         width = areaWidth + pad * 2;
         height = areaHeight + pad * 2;
@@ -147,24 +147,31 @@ public class PaintableBoxedText extends PaintableObject {
     public void paint(Canvas canvas) {
         if (canvas == null) throw new NullPointerException();
 
+        canvas.save();
+        canvas.translate(-width/2, -height/2);
+
         setFontSize(fontSize);
 
         setFill(true);
         setColor(backgroundColor);
-        paintRoundedRect(canvas, 0, 0, width, height);
+        paintRoundedRect(canvas, x, y, width, height);
 
         setFill(false);
         setColor(borderColor);
-        paintRoundedRect(canvas, 0, 0, width, height);
+        paintRoundedRect(canvas, x, y, width, height);
 
+        float lineX = x+pad;
+        float lineY = y+pad+getTextAsc();
         int i=0;
         for (CharSequence line : lineList) {
             setFill(true);
             setStrokeWidth(0);
             setColor(textColor);
-            paintText(canvas, pad, pad + lineHeight * i + getTextAsc(), line, 0, line.length());
+            paintText(canvas, lineX, lineY+(linesHeight*i), line, 0, line.length());
             i++;
         }
+
+        canvas.restore();
     }
 
     /**

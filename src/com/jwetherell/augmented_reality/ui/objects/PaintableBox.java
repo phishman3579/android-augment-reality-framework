@@ -62,13 +62,18 @@ public class PaintableBox extends PaintableObject {
     public void paint(Canvas canvas) {
         if (canvas == null) throw new NullPointerException();
 
+        canvas.save();
+        canvas.translate(-width/2, -height/2);
+
         setFill(true);
         setColor(backgroundColor);
-        paintRect(canvas, 0, 0, width, height);
+        paintRect(canvas, x, y, width, height);
 
         setFill(false);
         setColor(borderColor);
-        paintRect(canvas, 0, 0, width, height);
+        paintRect(canvas, x, y, width, height);
+
+        canvas.restore();
     }
 
     /**

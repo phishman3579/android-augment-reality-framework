@@ -38,7 +38,7 @@ public class PaintableRadarPoints extends PaintableObject {
                 else paintablePoint.set(pm.getColor(), true);
 
                 if (pointContainer == null) pointContainer = new PaintablePosition(paintablePoint, (x + Radar.RADIUS - 1), (y + Radar.RADIUS - 1), 0, 1);
-                else pointContainer.set(paintablePoint, (x + Radar.RADIUS - 1), (y + Radar.RADIUS - 1), 0, 1);
+                else pointContainer.set(paintablePoint, (x+Radar.RADIUS-1), (y+Radar.RADIUS-1), 0, 1);
 
                 pointContainer.paint(canvas);
             }

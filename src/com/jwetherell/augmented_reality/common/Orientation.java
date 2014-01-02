@@ -1,5 +1,6 @@
 package com.jwetherell.augmented_reality.common;
 
+
 /**
  * This class detects the orientation of the device given the values from the
  * accelerometer.
@@ -8,26 +9,17 @@ package com.jwetherell.augmented_reality.common;
  */
 public class Orientation {
 
-    private static final Object orientationLock = new Object();
-    private static ORIENTATION current = ORIENTATION.UNKNOWN;
-    private static int orientation = -1;
+    private static ORIENTATION currentOrientation = ORIENTATION.UNKNOWN;
+    private static int orientationAngle = -1;
 
     private Orientation() { }
 
-    public static ORIENTATION getCurrentOrientation() {
-        ORIENTATION temp = ORIENTATION.LANDSCAPE;
-        synchronized (orientationLock) {
-            temp = current;
-        }
-        return temp;
+    public static ORIENTATION getDeviceOrientation() {
+        return currentOrientation;
     }
 
-    public static int getCurrent() {
-        int temp = 0;
-        synchronized (orientationLock) {
-            temp = orientation;
-        }
-        return temp;
+    public static int getDeviceAngle() {
+        return orientationAngle;
     }
 
     public static enum ORIENTATION {
@@ -61,24 +53,15 @@ public class Orientation {
         // figure out actual orientation
         if (tempOrientation <= 45 || tempOrientation > 315) { // round to 0
             tempOrientRounded = ORIENTATION.PORTRAIT;// portrait
-        } else if (tempOrientation > 45 && tempOrientation <= 135) { // round to
-                                                                     // 90
-            tempOrientRounded = ORIENTATION.LANDSCAPE; // landscape left
-        } else if (tempOrientation > 135 && tempOrientation <= 225) { // round
-                                                                      // to
-                                                                      // 180
-            tempOrientRounded = ORIENTATION.PORTRAIT_UPSIDE_DOWN; // portrait
-                                                                  // upside
-                                                                  // down
-        } else if (tempOrientation > 225 && tempOrientation <= 315) { // round
-                                                                      // to
-                                                                      // 270
-            tempOrientRounded = ORIENTATION.LANDSCAPE_UPSIDE_DOWN;// landscape
-                                                                  // right
+        } else if (tempOrientation > 45 && tempOrientation <= 135) { // round to 90
+            tempOrientRounded = ORIENTATION.LANDSCAPE_UPSIDE_DOWN; // landscape left
+        } else if (tempOrientation > 135 && tempOrientation <= 225) { // round to 180
+            tempOrientRounded = ORIENTATION.PORTRAIT_UPSIDE_DOWN; // portrait upside down
+        } else if (tempOrientation > 225 && tempOrientation <= 315) { // round to 270
+            tempOrientRounded = ORIENTATION.LANDSCAPE;// landscape right
         }
-        synchronized (orientationLock) {
-            orientation = tempOrientation;
-            current = tempOrientRounded;
-        }
+
+        orientationAngle = tempOrientation;
+        currentOrientation = tempOrientRounded;
     }
 }

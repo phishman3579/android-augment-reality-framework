@@ -10,11 +10,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.jwetherell.augmented_reality.common.Matrix;
-import com.jwetherell.augmented_reality.ui.Marker;
-
 import android.location.Location;
 import android.util.Log;
+
+import com.jwetherell.augmented_reality.common.Matrix;
+import com.jwetherell.augmented_reality.common.Orientation.ORIENTATION;
+import com.jwetherell.augmented_reality.ui.Marker;
 
 /**
  * Abstract class which should be used to set global data.
@@ -48,6 +49,10 @@ public abstract class ARData {
     private static float azimuth = 0;
     private static final Object rollLock = new Object();
     private static float roll = 0;
+    private static final Object orientationLock = new Object();
+    private static ORIENTATION orientation = ORIENTATION.UNKNOWN;
+    private static final Object orientationAngleLock = new Object();
+    private static int orientationAngle = 0;
 
     /**
      * Set the zoom level.
@@ -296,6 +301,52 @@ public abstract class ARData {
     public static float getRoll() {
         synchronized (rollLock) {
             return ARData.roll;
+        }
+    }
+
+    /**
+     * Set the current orientation.
+     * 
+     * @param orientation
+     *            ORIENTATION representing the orientation.
+     */
+    public static void setOrientation(ORIENTATION orientation) {
+        synchronized (orientationLock) {
+            ARData.orientation = orientation;
+        }
+    }
+
+    /**
+     * Get the current orientation.
+     * 
+     * @return orientation ORIENTATION representing the orientation.
+     */
+    public static ORIENTATION getOrientation() {
+        synchronized (orientationLock) {
+            return ARData.orientation;
+        }
+    }
+
+    /**
+     * Set the current orientation angle.
+     * 
+     * @param angle
+     *            int representing the orientation angle.
+     */
+    public static void setOrientationAngle(int angle) {
+        synchronized (orientationAngleLock) {
+            ARData.orientationAngle = angle;
+        }
+    }
+
+    /**
+     * Get the current orientation angle.
+     * 
+     * @return angle int representing the orientation angle.
+     */
+    public static int getOrientationAngle() {
+        synchronized (orientationAngleLock) {
+            return ARData.orientationAngle;
         }
     }
 }

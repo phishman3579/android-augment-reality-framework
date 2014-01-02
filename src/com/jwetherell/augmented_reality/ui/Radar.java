@@ -5,7 +5,7 @@ import android.graphics.Color;
 
 import com.jwetherell.augmented_reality.activity.AugmentedReality;
 import com.jwetherell.augmented_reality.camera.CameraModel;
-import com.jwetherell.augmented_reality.common.Calculator;
+import com.jwetherell.augmented_reality.common.Orientation.ORIENTATION;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.ScreenPosition;
 import com.jwetherell.augmented_reality.ui.objects.PaintableCircle;
@@ -26,7 +26,7 @@ public class Radar {
 
     private static final int LINE_COLOR = Color.argb(150, 0, 0, 220);
     private static final float PAD_X = 10;
-    private static final float PAD_Y = 20;
+    private static final float PAD_Y = 10;
     private static final int RADAR_COLOR = Color.argb(100, 0, 0, 200);
     private static final int TEXT_COLOR = Color.rgb(255, 255, 255);
     private static final int TEXT_SIZE = 12;
@@ -67,26 +67,38 @@ public class Radar {
         if (canvas == null)
             throw new NullPointerException();
 
-        // Update the pitch and bearing using the phone's rotation matrix
-        Calculator.calcPitchBearing(ARData.getRotationMatrix());
-        ARData.setAzimuth(Calculator.getAzimuth());
+        // Adjust upside down to compensate for zoom-bar
+        int ui_ud_pad = 75;
+        if (AugmentedReality.ui_portrait) 
+            ui_ud_pad = 50;
 
-        if (AugmentedReality.portrait) {
+        if (ARData.getOrientation()==ORIENTATION.PORTRAIT) {
             canvas.save();
-            canvas.translate(5, canvas.getHeight() - 5);
+            canvas.translate(0, canvas.getHeight());
             canvas.rotate(-90);
+        } else if (ARData.getOrientation()==ORIENTATION.PORTRAIT_UPSIDE_DOWN) {
+            canvas.save();
+            canvas.translate(canvas.getWidth() - ui_ud_pad, 0);
+            canvas.rotate(90);
+        } else if (ARData.getOrientation()==ORIENTATION.LANDSCAPE_UPSIDE_DOWN) {
+            canvas.save();
+            canvas.translate(canvas.getWidth() - ui_ud_pad, canvas.getHeight());
+            canvas.rotate(180);
+        } else {
+            // If landscape, do nothing
         }
 
-        // Update the radar graphics and text based upon the new pitch and
-        // bearing
+        // Update the radar graphics and text based upon the new pitch and bearing
+        canvas.save();
+        canvas.translate(0, 5);
         drawRadarCircle(canvas);
         drawRadarPoints(canvas);
         drawRadarLines(canvas);
         drawRadarText(canvas);
+        canvas.restore();
 
-        if (AugmentedReality.portrait) {
+        if (ARData.getOrientation()!=ORIENTATION.LANDSCAPE)
             canvas.restore();
-        }
     }
 
     private void drawRadarCircle(Canvas canvas) {
@@ -94,11 +106,10 @@ public class Radar {
             throw new NullPointerException();
 
         if (circleContainer == null) {
-            PaintableCircle paintableCircle = new PaintableCircle(RADAR_COLOR,
-                    RADIUS, true);
-            circleContainer = new PaintablePosition(paintableCircle, PAD_X
-                    + RADIUS, PAD_Y + RADIUS, 0, 1);
+            PaintableCircle paintableCircle = new PaintableCircle(RADAR_COLOR, RADIUS, true);
+            circleContainer = new PaintablePosition(paintableCircle, PAD_X + RADIUS, PAD_Y + RADIUS, 0, 1);
         }
+
         circleContainer.paint(canvas);
     }
 
@@ -110,13 +121,18 @@ public class Radar {
             radarPoints = new PaintableRadarPoints();
 
         if (pointsContainer == null)
-            pointsContainer = new PaintablePosition(radarPoints, PAD_X, PAD_Y,
-                    -ARData.getAzimuth(), 1);
+            pointsContainer = new PaintablePosition(radarPoints, 0, 0, 0, 1);
         else
-            pointsContainer.set(radarPoints, PAD_X, PAD_Y,
-                    -ARData.getAzimuth(), 1);
+            pointsContainer.set(radarPoints, 0, 0, 0, 1);
 
+        // Rotate the points to match the azimuth
+        canvas.save();
+        canvas.translate((PAD_X + radarPoints.getWidth() / 2), (PAD_X + radarPoints.getHeight() / 2));
+        canvas.rotate(-ARData.getAzimuth());
+        canvas.scale(1, 1);
+        canvas.translate(-(radarPoints.getWidth() / 2), -(radarPoints.getHeight() / 2));
         pointsContainer.paint(canvas);
+        canvas.restore();
     }
 
     private void drawRadarLines(Canvas canvas) {
@@ -132,8 +148,7 @@ public class Radar {
             float leftX = leftRadarLine.getX() - (PAD_X + RADIUS);
             float leftY = leftRadarLine.getY() - (PAD_Y + RADIUS);
             PaintableLine leftLine = new PaintableLine(LINE_COLOR, leftX, leftY);
-            leftLineContainer = new PaintablePosition(leftLine, PAD_X + RADIUS,
-                    PAD_Y + RADIUS, 0, 1);
+            leftLineContainer = new PaintablePosition(leftLine, PAD_X + RADIUS, PAD_Y + RADIUS, 0, 1);
         }
         leftLineContainer.paint(canvas);
 
@@ -145,10 +160,8 @@ public class Radar {
 
             float rightX = rightRadarLine.getX() - (PAD_X + RADIUS);
             float rightY = rightRadarLine.getY() - (PAD_Y + RADIUS);
-            PaintableLine rightLine = new PaintableLine(LINE_COLOR, rightX,
-                    rightY);
-            rightLineContainer = new PaintablePosition(rightLine, PAD_X
-                    + RADIUS, PAD_Y + RADIUS, 0, 1);
+            PaintableLine rightLine = new PaintableLine(LINE_COLOR, rightX, rightY);
+            rightLineContainer = new PaintablePosition(rightLine, PAD_X + RADIUS, PAD_Y + RADIUS, 0, 1);
         }
         rightLineContainer.paint(canvas);
     }
@@ -177,20 +190,17 @@ public class Radar {
         else if (range == 13 || range == 14)
             DIR_TXT.append("NW");
 
-        int bearing = (int) ARData.getAzimuth();
+        int azimuth = (int) ARData.getAzimuth();
         RADAR_TXT.setLength(0);
-        RADAR_TXT.append(bearing).append((char) 176).append(" ")
-                .append(DIR_TXT);
-        radarText(canvas, RADAR_TXT.toString(), (PAD_X + RADIUS), (PAD_Y - 5),
-                true);
+        RADAR_TXT.append(azimuth).append((char) 176).append(" ").append(DIR_TXT);
+        // Azimuth text
+        radarText(canvas, RADAR_TXT.toString(), (PAD_X+RADIUS), (PAD_Y-5), true);
 
         // Zoom text
-        radarText(canvas, formatDist(ARData.getRadius() * 1000),
-                (PAD_X + RADIUS), (PAD_Y + RADIUS * 2 - 10), false);
+        radarText(canvas, formatDist(ARData.getRadius() * 1000), (PAD_X+RADIUS), (PAD_Y+(RADIUS*2)-10), false);
     }
 
-    private void radarText(Canvas canvas, String txt, float x, float y,
-            boolean bg) {
+    private void radarText(Canvas canvas, String txt, float x, float y, boolean bg) {
         if (canvas == null || txt == null)
             throw new NullPointerException();
 
@@ -209,13 +219,12 @@ public class Radar {
 
     private static String formatDist(float meters) {
         DIST_TXT.setLength(0);
-        if (meters < 1000) {
+        if (meters < 1000)
             DIST_TXT.append((int) meters).append("m");
-        } else if (meters < 10000) {
+        else if (meters < 10000)
             DIST_TXT.append(formatDec(meters / 1000f, 1)).append("km");
-        } else {
+        else
             DIST_TXT.append((int) (meters / 1000f)).append("km");
-        }
         return DIST_TXT.toString();
     }
 

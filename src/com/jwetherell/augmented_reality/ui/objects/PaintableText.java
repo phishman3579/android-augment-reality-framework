@@ -61,14 +61,19 @@ public class PaintableText extends PaintableObject {
         setColor(color);
         setFontSize(size);
         if (bg) {
+            canvas.save();
+            canvas.translate(-width/2, -height/2);
+
             setColor(Color.rgb(0, 0, 0));
             setFill(true);
-            paintRect(canvas, -(width / 2), -(height / 2), width, height);
+            paintRect(canvas, x, y, width, height);
             setColor(Color.rgb(255, 255, 255));
             setFill(false);
-            paintRect(canvas, -(width / 2), -(height / 2), width, height);
+            paintRect(canvas, x, y, width, height);
+
+            canvas.restore();
         }
-        paintText(canvas, (WIDTH_PAD - width / 2), (HEIGHT_PAD + getTextAsc() - height / 2), text, 0, text.length());
+        paintText(canvas, (WIDTH_PAD-(width/2)), (HEIGHT_PAD+getTextAsc()-(height/2)), text, 0, text.length());
     }
 
     /**

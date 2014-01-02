@@ -42,9 +42,14 @@ public class PaintableCircle extends PaintableObject {
     public void paint(Canvas canvas) {
         if (canvas == null) throw new NullPointerException();
 
+        canvas.save();
+        canvas.translate(-radius, -radius);
+
         setFill(fill);
         setColor(color);
-        paintCircle(canvas, 0, 0, radius);
+        paintCircle(canvas, x, y, radius);
+
+        canvas.restore();
     }
 
     /**
