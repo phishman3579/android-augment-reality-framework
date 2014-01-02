@@ -39,12 +39,11 @@ public class Matrix {
     private static final float[] rightArray = new float[3];
     private static final float[] upArray = new float[3];
 
-    private volatile float a1 = 0f, a2 = 0f, a3 = 0f;
-    private volatile float b1 = 0f, b2 = 0f, b3 = 0f;
-    private volatile float c1 = 0f, c2 = 0f, c3 = 0f;
+    private float a1 = 0f, a2 = 0f, a3 = 0f;
+    private float b1 = 0f, b2 = 0f, b3 = 0f;
+    private float c1 = 0f, c2 = 0f, c3 = 0f;
 
-    public Matrix() {
-    }
+    public Matrix() { }
 
     public Matrix(Matrix m) {
         if (m == null) throw new NullPointerException();
@@ -158,6 +157,7 @@ public class Matrix {
     public void set(Matrix m) {
         if (m == null) throw new NullPointerException();
 
+        // synchronized on set()
         set(m.a1, m.a2, m.a3, m.b1, m.b2, m.b3, m.c1, m.c2, m.c3);
     }
 
@@ -173,65 +173,34 @@ public class Matrix {
     public void set(float[] array) {
         if (array == null || array.length != 9) throw new IllegalArgumentException("get() array must be non-NULL and size of 9");
 
+        // synchronized on set()
         set(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8]);
     }
 
-    /**
-     * Set the Matrix values.
-     * 
-     * @param a1
-     *            float representing the top row left value.
-     * @param a2
-     *            float representing the top row middle value.
-     * @param a3
-     *            float representing the top row right value.
-     * @param b1
-     *            float representing the middle row left value.
-     * @param b2
-     *            float representing the middle row left value.
-     * @param b3
-     *            float representing the middle row left value.
-     * @param c1
-     *            float representing the bottom row left value.
-     * @param c2
-     *            float representing the bottom row left value.
-     * @param c3
-     *            float representing the bottom row left value.
-     */
-    public synchronized void set(float a1, float a2, float a3, float b1, float b2, float b3, float c1, float c2,
-            float c3) {
-        this.a1 = a1;
-        this.a2 = a2;
-        this.a3 = a3;
-
-        this.b1 = b1;
-        this.b2 = b2;
-        this.b3 = b3;
-
-        this.c1 = c1;
-        this.c2 = c2;
-        this.c3 = c3;
-    }
-
     public void toIdentity() {
+        // synchronized on set()
         set(1, 0, 0, 
             0, 1, 0, 
             0, 0, 1);
     }
 
     public void toXRot(float angleX) {
+        // synchronized on set()
         set(1f, 0f, 0f, 0f, (float) Math.cos(angleX), (float) -Math.sin(angleX), 0f, (float) Math.sin(angleX), (float) Math.cos(angleX));
     }
 
     public void toYRot(float angleY) {
+        // synchronized on set()
         set((float) Math.cos(angleY), 0f, (float) Math.sin(angleY), 0f, 1f, 0f, (float) -Math.sin(angleY), 0f, (float) Math.cos(angleY));
     }
 
     public void toZRot(float angleZ) {
+        // synchronized on set()
         set((float) Math.cos(angleZ), (float) -Math.sin(angleZ), 0f, (float) Math.sin(angleZ), (float) Math.cos(angleZ), 0f, 0f, 0f, 1f);
     }
 
     public void toScale(float scale) {
+        // synchronized on set()
         set(scale, 0,     0, 
             0,     scale, 0, 
             0,     0,     scale);
@@ -257,9 +226,54 @@ public class Matrix {
         up.norm();
         up.get(upArray);
 
+        // synchronized on set()
         set(rightArray[0], rightArray[1], rightArray[2], 
             upArray[0],    upArray[1],    upArray[2], 
             dirArray[0],   dirArray[1],   dirArray[2]);
+    }
+
+    /**
+     * Set the Matrix values.
+     * 
+     * @param a1
+     *            float representing the top row left value.
+     * @param a2
+     *            float representing the top row middle value.
+     * @param a3
+     *            float representing the top row right value.
+     * @param b1
+     *            float representing the middle row left value.
+     * @param b2
+     *            float representing the middle row left value.
+     * @param b3
+     *            float representing the middle row left value.
+     * @param c1
+     *            float representing the bottom row left value.
+     * @param c2
+     *            float representing the bottom row left value.
+     * @param c3
+     *            float representing the bottom row left value.
+     */
+    public synchronized void set(float a1, float a2, float a3, float b1, float b2, float b3, float c1, float c2, float c3) {
+        this.a1 = a1;
+        this.a2 = a2;
+        this.a3 = a3;
+
+        this.b1 = b1;
+        this.b2 = b2;
+        this.b3 = b3;
+
+        this.c1 = c1;
+        this.c2 = c2;
+        this.c3 = c3;
+    }
+
+    public void invert() {
+        float det = this.det();
+        // synchronized on adj()
+        adj();
+        // synchronized on mult()
+        mult(1 / det);
     }
 
     public synchronized void adj() {
@@ -288,10 +302,22 @@ public class Matrix {
         this.c3 = det2x2(a11, a12, a21, a22);
     }
 
-    public void invert() {
-        float det = this.det();
-        adj();
-        mult(1 / det);
+    private float det2x2(float a, float b, float c, float d) {
+        return (a * d) - (b * c);
+    }
+
+    public synchronized void mult(float c) {
+        this.a1 = this.a1 * c;
+        this.a2 = this.a2 * c;
+        this.a3 = this.a3 * c;
+
+        this.b1 = this.b1 * c;
+        this.b2 = this.b2 * c;
+        this.b3 = this.b3 * c;
+
+        this.c1 = this.c1 * c;
+        this.c2 = this.c2 * c;
+        this.c3 = this.c3 * c;
     }
 
     public synchronized void transpose() {
@@ -319,27 +345,9 @@ public class Matrix {
         this.c3 = a33;
     }
 
-    private float det2x2(float a, float b, float c, float d) {
-        return (a * d) - (b * c);
-    }
-
     public synchronized float det() {
         return (this.a1 * this.b2 * this.c3) - (this.a1 * this.b3 * this.c2) - (this.a2 * this.b1 * this.c3) + (this.a2 * this.b3 * this.c1)
                 + (this.a3 * this.b1 * this.c2) - (this.a3 * this.b2 * this.c1);
-    }
-
-    public synchronized void mult(float c) {
-        this.a1 = this.a1 * c;
-        this.a2 = this.a2 * c;
-        this.a3 = this.a3 * c;
-
-        this.b1 = this.b1 * c;
-        this.b2 = this.b2 * c;
-        this.b3 = this.b3 * c;
-
-        this.c1 = this.c1 * c;
-        this.c2 = this.c2 * c;
-        this.c3 = this.c3 * c;
     }
 
     public synchronized void add(Matrix n) {
@@ -406,7 +414,7 @@ public class Matrix {
      * {@inheritDoc}
      */
     @Override
-    public synchronized String toString() {
+    public String toString() {
         return "[ (" + this.a1 + "," + this.a2 + "," + this.a3 + ")" + " (" + this.b1 + "," + this.b2 + "," + this.b3 + ")" + " (" + this.c1 + "," + this.c2
                 + "," + this.c3 + ") ]";
     }

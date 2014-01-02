@@ -44,15 +44,15 @@ public class Marker implements Comparable<Marker> {
 
     private float initialY = 0.0f;
 
-    private volatile static CameraModel cam = null;
+    private static CameraModel cam = null;
 
     // Container for the circle or icon symbol
     protected PaintableObject gpsSymbol = null;
-    private volatile PaintablePosition symbolContainer = null;
+    private PaintablePosition symbolContainer = null;
 
     // Container for text
     private PaintableBoxedText textBox = null;
-    private volatile PaintablePosition textContainer = null;
+    private PaintablePosition textContainer = null;
 
     // Unique identifier of Marker
     private String name = null;
@@ -61,9 +61,9 @@ public class Marker implements Comparable<Marker> {
     // Distance from camera to PhysicalLocation in meters
     private double distance = 0.0;
     // Is within the radar
-    private volatile boolean isOnRadar = false;
+    private boolean isOnRadar = false;
     // Is in the camera's view
-    private volatile boolean isInView = false;
+    private boolean isInView = false;
     // Physical location's X, Y, Z relative to the camera's location
     private final Vector locationXyzRelativeToPhysicalLocation = new Vector();
     // Marker's default color
@@ -72,14 +72,14 @@ public class Marker implements Comparable<Marker> {
     private boolean noAltitude = false;
 
     // Used to show exact GPS position
-    private static boolean debugGpsPosition = true;
+    private static boolean debugGpsPosition = false;
     private PaintablePoint positionPoint = null;
-    private volatile PaintablePosition positionContainer = null;
+    private PaintablePosition positionContainer = null;
 
     // Used to debug the touching mechanism
-    private static boolean debugTouchZone = true;
+    private static boolean debugTouchZone = false;
     private PaintableBox touchBox = null;
-    private volatile PaintablePosition touchPosition = null;
+    private PaintablePosition touchPosition = null;
 
     public Marker(String name, double latitude, double longitude, double altitude, int color) {
         set(name, latitude, longitude, altitude, color);
@@ -532,12 +532,13 @@ public class Marker implements Comparable<Marker> {
             positionContainer.set(positionPoint, x, y, currentAngle, 1);
 
         positionContainer.paint(canvas);
-
+/*
         float[] pts = new float[]{0,0};
         positionContainer.inverted.mapPoints(pts);
         x = pts[0];
         y = pts[1];
         int i=0;
+*/
     }
 
     private synchronized void drawTouchZone(Canvas canvas) {

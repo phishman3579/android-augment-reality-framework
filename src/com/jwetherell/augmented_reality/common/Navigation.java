@@ -36,9 +36,9 @@ public class Navigation {
     private static final float[] lookingArray = new float[3];
     private static final Matrix tempMatrix = new Matrix();
 
-    private static volatile float azimuth = 0;
-    private static volatile float pitch = 0;
-    private static volatile float roll = 0;
+    private static float azimuth = 0;
+    private static float pitch = 0;
+    private static float roll = 0;
 
     private Navigation() { }
 

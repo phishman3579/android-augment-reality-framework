@@ -122,7 +122,7 @@ public class PhysicalLocation {
      * @throws NullPointerException
      *             if Location, PhysicalLocation, or Vector is NULL.
      */
-    public static synchronized void convLocationToVector(Location org, PhysicalLocation gp, Vector v) {
+    public static void convLocationToVector(Location org, PhysicalLocation gp, Vector v) {
         if (org == null || gp == null || v == null) throw new NullPointerException("Location, PhysicalLocation, and Vector cannot be NULL.");
 
         Location.distanceBetween(org.getLatitude(), org.getLongitude(), gp.getLatitude(), org.getLongitude(), z);

@@ -3,7 +3,6 @@ package com.jwetherell.augmented_reality.ui.objects;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
@@ -19,10 +18,10 @@ public abstract class PaintableObject {
 
     protected float x = 0;
     protected float y = 0;
-
+/*
     public Matrix matrix = new Matrix();
     public Matrix inverted = new Matrix();
-
+*/
     public PaintableObject() {
         if (paint == null) {
             paint = new Paint();
@@ -290,8 +289,10 @@ public abstract class PaintableObject {
         canvas.translate(x,y);
         canvas.rotate(rotation);
         canvas.scale(scale, scale);
+/*
         canvas.getMatrix(matrix);
         matrix.invert(inverted);
+*/
         obj.paint(canvas);
         canvas.restore();
     }
