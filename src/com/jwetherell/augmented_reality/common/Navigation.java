@@ -34,6 +34,7 @@ public class Navigation {
     private static final Vector looking = new Vector();
     private static final float[] lookingArray = new float[3];
     private static final Matrix tempMatrix = new Matrix();
+    private static final float unitPerDegree = 1f/90f;
 
     private static float azimuth = 0;
     private static float pitch = 0;
@@ -97,7 +98,6 @@ public class Navigation {
         tempMatrix.set(rotationMatrix);
         tempMatrix.transpose();
 
-        float unitPerDegree = 1f/90f;
         float x = 0;
         float y = 0;
         int angle = ARData.getOrientationAngle();
