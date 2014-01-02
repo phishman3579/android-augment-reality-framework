@@ -102,7 +102,7 @@ public class Navigation {
         if (orient==ORIENTATION.PORTRAIT) {
             looking.set(0, 1, 0);
         } else if (orient==ORIENTATION.PORTRAIT_UPSIDE_DOWN) {
-                looking.set(0, -1, 0);
+            looking.set(0, -1, 0);
         } else if (orient==ORIENTATION.LANDSCAPE) {
             looking.set(1, 0, 0);
         } else if (orient==ORIENTATION.LANDSCAPE_UPSIDE_DOWN) {
