@@ -37,7 +37,7 @@ public class Orientation {
         if (magnitude * 4 >= Z * Z) {
             float OneEightyOverPi = 57.29577957855f;
             float angle = (float) Math.atan2(-Y, X) * OneEightyOverPi;
-            tempOrientation = 90 - (int) Math.round(angle);
+            tempOrientation = 90 - Math.round(angle);
             // normalize to 0 - 359 range
             while (tempOrientation >= 360) {
                 tempOrientation -= 360;
