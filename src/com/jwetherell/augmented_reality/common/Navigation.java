@@ -18,7 +18,6 @@
  */
 package com.jwetherell.augmented_reality.common;
 
-import com.jwetherell.augmented_reality.common.Orientation.ORIENTATION;
 import com.jwetherell.augmented_reality.data.ARData;
 
 /**
@@ -98,16 +97,28 @@ public class Navigation {
         tempMatrix.set(rotationMatrix);
         tempMatrix.transpose();
 
-        ORIENTATION orient = ARData.getDeviceOrientation();
-        if (orient==ORIENTATION.PORTRAIT) {
-            looking.set(0, 1, 0);
-        } else if (orient==ORIENTATION.PORTRAIT_UPSIDE_DOWN) {
-            looking.set(0, -1, 0);
-        } else if (orient==ORIENTATION.LANDSCAPE) {
-            looking.set(1, 0, 0);
-        } else if (orient==ORIENTATION.LANDSCAPE_UPSIDE_DOWN) {
-            looking.set(-1, 1, 0);
+        float unitPerDegree = 1f/90f;
+        float x = 0;
+        float y = 0;
+        int angle = ARData.getOrientationAngle();
+        if (angle>=0 && angle<90) {
+            x = (angle*unitPerDegree)-1;
+            y = 1-(angle*unitPerDegree);
+        } else if (angle>=90 && angle<180) {
+            angle -= 90;
+            x = (angle*unitPerDegree)-1;
+            y = (angle*unitPerDegree)-1;
+        } else if (angle>=180 && angle<270) {
+            angle -= 180;
+            x = 1-(angle*unitPerDegree);
+            y = (angle*unitPerDegree)-1;
+        } else {
+            // >= 270 && < 360
+            angle -= 270;
+            x = 1-(angle*unitPerDegree);
+            y = 1-(angle*unitPerDegree);
         }
+        looking.set(x, y, 0);
         looking.prod(tempMatrix);
         looking.get(lookingArray);
 
