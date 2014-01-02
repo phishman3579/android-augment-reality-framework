@@ -63,7 +63,7 @@ public class Navigation {
      * 
      * @return float representing the azimuth the phone's camera is pointing
      */
-    public static synchronized float getAzimuth() {
+    public static float getAzimuth() {
         return azimuth;
     }
 
@@ -73,7 +73,7 @@ public class Navigation {
      * 
      * @return float representing the pitch of the phone's camera.
      */
-    public static synchronized float getPitch() {
+    public static float getPitch() {
         return pitch;
     }
 
@@ -83,7 +83,7 @@ public class Navigation {
      * 
      * @return float representing the roll of the phone's camera.
      */
-    public static synchronized float getRoll() {
+    public static float getRoll() {
         return roll;
     }
 
@@ -92,7 +92,7 @@ public class Navigation {
      * 
      * @param rotationMatrix Rotation matrix used in calculations.
      */
-    public static synchronized void calcPitchBearing(Matrix rotationMatrix) {
+    public static void calcPitchBearing(Matrix rotationMatrix) {
         if (rotationMatrix == null) return;
 
         tempMatrix.set(rotationMatrix);
