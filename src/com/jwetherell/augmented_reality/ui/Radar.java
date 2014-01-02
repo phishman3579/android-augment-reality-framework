@@ -68,9 +68,9 @@ public class Radar {
             throw new NullPointerException();
 
         // Adjust upside down to compensate for zoom-bar
-        int ui_ud_pad = 75;
+        int ui_ud_pad = 80;
         if (AugmentedReality.ui_portrait) 
-            ui_ud_pad = 50;
+            ui_ud_pad = 55;
 
         if (ARData.getDeviceOrientation()==ORIENTATION.PORTRAIT) {
             canvas.save();
