@@ -30,7 +30,6 @@ public class AugmentedView extends View {
     private static final float[] locationArray = new float[3];
     private static final List<Marker> cache = new ArrayList<Marker>();
     private static final Set<Marker> updated = new HashSet<Marker>();
-    private static final int COLLISION_ADJUSTMENT = 100;
 
     public AugmentedView(Context context) {
         super(context);
@@ -85,19 +84,33 @@ public class AugmentedView extends View {
         updated.clear();
 
         // Update the AR markers for collisions
-        for (Marker marker1 : collection) {
-            if (updated.contains(marker1) || !marker1.isInView())
+        for (int i=0; i<collection.size(); i++) {
+            Marker marker1 = collection.get(i);
+            if (!marker1.isInView()) {
+                updated.add(marker1);
+                continue;
+            }
+            if (updated.contains(marker1))
                 continue;
 
             int collisions = 1;
-            for (Marker marker2 : collection) {
-                if (updated.contains(marker2) || !marker2.isInView() || marker1.equals(marker2))
+            for (int j=i+1; j<collection.size(); j++) {
+                Marker marker2 = collection.get(j);
+                if (!marker2.isInView()) {
+                    updated.add(marker2);
                     continue;
+                }
+                if (updated.contains(marker2) || marker1.equals(marker2))
+                    continue;
+
+                float width = marker1.getWidth();
+                float height = marker1.getHeight();
+                float max = Math.max(width, height);
 
                 if (marker1.isMarkerOnMarker(marker2)) {
                     marker2.getLocation().get(locationArray);
                     float y = locationArray[1];
-                    float h = collisions * COLLISION_ADJUSTMENT;
+                    float h = collisions*max;
                     locationArray[1] = y + h;
                     marker2.getLocation().set(locationArray);
                     marker2.update(canvas, 0, 0);
