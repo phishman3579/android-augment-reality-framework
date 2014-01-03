@@ -43,8 +43,7 @@ public class Marker implements Comparable<Marker> {
 
     private final StringBuilder textStr = new StringBuilder();
 
-    private final float[] points = new float[]{0,0};
-    private final Matrix matrix = new Matrix();
+    private final Box box = new Box();
 
     private float initialY = 0.0f;
 
@@ -260,28 +259,21 @@ public class Marker implements Comparable<Marker> {
         if (!isOnRadar)
             return;
 
-        // If it's not in the same side as our viewing angle
-        locationXyzRelativeToCameraView.get(locationArray);
-        if (locationArray[2] >= -1f)
-            return;
-
         locationXyzRelativeToCameraView.get(locationArray);
         float x = locationArray[0];
         float y = locationArray[1];
+        float z = locationArray[2];
 
-        float width = getWidth()+10;
-        float height = getHeight()+10;
-        x -= width / 2;
-        y -= height / 2;
+        // If it's not in the same side as our viewing angle (behind us)
+        if (z >= -1f)
+            return;
 
-        float ulX = x;
-        float ulY = y;
-
-        float lrX = x;
-        float lrY = y;
-        lrX += width;
-        lrY += height;
-
+        // TODO: Revisit for a better approach, I assume it's a "square" axis aligned square.
+        float max = Math.max(getWidth(), getHeight());
+        float ulX = x - max / 2;
+        float ulY = y - max / 2;
+        float lrX = x + max / 2;
+        float lrY = y + max / 2;
         if (lrX >= -1 && ulX <= cam.getWidth() && lrY >= -1 && ulY <= cam.getHeight())
             isInView = true;
     }
@@ -356,6 +348,31 @@ public class Marker implements Comparable<Marker> {
         return isMarkerOnMarker(marker, true);
     }
 
+    private boolean isPaintableOnMarker(PaintableObject paintable) {
+        if (paintable == null)
+            return false;
+
+        box.set(paintable);
+
+        boolean upperLeftOfMarker = isPointOnMarker(box.ulX, box.ulY);
+        if (upperLeftOfMarker)
+            return true;
+
+        boolean upperRightOfMarker = isPointOnMarker(box.urX, box.urY);
+        if (upperRightOfMarker)
+            return true;
+
+        boolean lowerLeftOfMarker = isPointOnMarker(box.llX, box.llY);
+        if (lowerLeftOfMarker)
+            return true;
+
+        boolean lowerRightOfMarker = isPointOnMarker(box.lrX, box.lrY);
+        if (lowerRightOfMarker)
+            return true;
+
+        return false;
+    }
+
     /**
      * Determines if the marker is on this Marker.
      * 
@@ -374,49 +391,16 @@ public class Marker implements Comparable<Marker> {
         float x = locationArray[0];
         float y = locationArray[1];
 
-        float width = marker.getWidth();
-        float height = marker.getHeight();
-        x -= width / 2;
-        y -= height / 2;
-
-        float middleX = 0;
-        float middleY = 0;
-        middleX = x + (width / 2);
-        middleY = y + (height / 2);
-        boolean middleOfMarker = isPointOnMarker(middleX, middleY);
+        boolean middleOfMarker = isPointOnMarker(x, y);
         if (middleOfMarker)
             return true;
 
-        float ulX = x;
-        float ulY = y;
-
-        float urX = x;
-        float urY = y;
-        urX += width;
-
-        float llX = x;
-        float llY = y;
-        llY += height;
-
-        float lrX = x;
-        float lrY = y;
-        lrX += width;
-        lrY += height;
-
-        boolean upperLeftOfMarker = isPointOnMarker(ulX, ulY);
-        if (upperLeftOfMarker)
+        boolean onGps = isPaintableOnMarker(marker.gpsSymbol);
+        if (onGps)
             return true;
 
-        boolean upperRightOfMarker = isPointOnMarker(urX, urY);
-        if (upperRightOfMarker)
-            return true;
-
-        boolean lowerLeftOfMarker = isPointOnMarker(llX, llY);
-        if (lowerLeftOfMarker)
-            return true;
-
-        boolean lowerRightOfMarker = isPointOnMarker(lrX, lrY);
-        if (lowerRightOfMarker)
+        boolean onText = isPaintableOnMarker(marker.textBox);
+        if (onText)
             return true;
 
         // If reflect is True then reverse the arguments and see if this Marker
@@ -463,47 +447,21 @@ public class Marker implements Comparable<Marker> {
         if (paintable == null) 
             return false;
 
-        float x = paintable.getX();
-        float y = paintable.getY();
-        if ((paintable instanceof PaintableGps) || (paintable instanceof PaintableCircle)) {
-            // drawing circles is slightly different then anything else, need to handle differently
-            x = -paintable.getWidth()/2;
-            y = -paintable.getHeight();
-        }
-        matrix.set(paintable.matrix);
-
-        // UL
-        points[0] = x;
-        points[1] = y;
-        matrix.mapPoints(points);
-        float ulX = points[0];
-        float ulY = points[1];
-
-        // UR
-        points[0] = x+paintable.getWidth();
-        points[1] = y;
-        matrix.mapPoints(points);
-        float urX = points[0];
-        float urY = points[1];
-
-        // LL
-        points[0] = x;
-        points[1] = y+paintable.getHeight();
-        matrix.mapPoints(points);
-        float llX = points[0];
-        float llY = points[1];
-
-        // LR
-        points[0] = x+paintable.getWidth();
-        points[1] = y+paintable.getHeight();
-        matrix.mapPoints(points);
-        float lrX = points[0];
-        float lrY = points[1];
+        // Calculates out the ul, ur, ll, lr coordinates
+        box.set(paintable);
  
         // Is the point between the top and bottom lines
-        boolean betweenTB = between(ulX, ulY, urX, urY, llX, llY, lrX, lrY, xPoint, yPoint);
+        boolean betweenTB = between(box.ulX, box.ulY, 
+                                     box.urX, box.urY, 
+                                     box.llX, box.llY, 
+                                     box.lrX, box.lrY, 
+                                     xPoint, yPoint);
         // Is the point between the left and right lines
-        boolean betweenLR = between(ulX, ulY, llX, llY, urX, urY, lrX, lrY, xPoint, yPoint);
+        boolean betweenLR = between(box.ulX, box.ulY, 
+                                     box.llX, box.llY, 
+                                     box.urX, box.urY, 
+                                     box.lrX, box.lrY, 
+                                     xPoint, yPoint);
         if (betweenTB && betweenLR) return true;
         return false;
     }
@@ -659,5 +617,66 @@ public class Marker implements Comparable<Marker> {
     @Override
     public int hashCode() {
         return name.hashCode();
+    }
+
+    private static final class Box {
+
+        private final float[] points = new float[]{0,0};
+        private final Matrix matrix = new Matrix();
+
+        // UL
+        private float ulX = 0;
+        private float ulY = 0;
+        // UR
+        private float urX = 0;
+        private float urY = 0;
+        // LL
+        private float llX = 0;
+        private float llY = 0;
+        // LR
+        private float lrX = 0;
+        private float lrY = 0;
+
+        private void set(PaintableObject paintable) {
+            if (paintable == null)
+                return;
+
+            float x = paintable.getX();
+            float y = paintable.getY();
+            if ((paintable instanceof PaintableGps) || (paintable instanceof PaintableCircle)) {
+                // drawing circles is slightly different then anything else, need to handle differently
+                x = -paintable.getWidth()/2;
+                y = -paintable.getHeight();
+            }
+            matrix.set(paintable.matrix);
+
+            // UL
+            points[0] = x;
+            points[1] = y;
+            matrix.mapPoints(points);
+            ulX = points[0];
+            ulY = points[1];
+
+            // UR
+            points[0] = x+paintable.getWidth();
+            points[1] = y;
+            matrix.mapPoints(points);
+            urX = points[0];
+            urY = points[1];
+
+            // LL
+            points[0] = x;
+            points[1] = y+paintable.getHeight();
+            matrix.mapPoints(points);
+            llX = points[0];
+            llY = points[1];
+
+            // LR
+            points[0] = x+paintable.getWidth();
+            points[1] = y+paintable.getHeight();
+            matrix.mapPoints(points);
+            lrX = points[0];
+            lrY = points[1];
+        }
     }
 }
