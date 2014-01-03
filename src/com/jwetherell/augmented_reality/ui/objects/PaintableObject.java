@@ -21,7 +21,6 @@ public abstract class PaintableObject {
     protected float y = 0;
 
     public Matrix matrix = new Matrix();
-    public Matrix inverted = new Matrix();
 
     public PaintableObject() {
         if (paint == null) {
@@ -169,7 +168,6 @@ public abstract class PaintableObject {
         if (canvas == null) throw new NullPointerException();
 
         canvas.getMatrix(matrix);
-        matrix.invert(inverted);
 
         canvas.drawLine(x1, y1, x2, y2, paint);
     }
@@ -194,7 +192,6 @@ public abstract class PaintableObject {
         if (canvas == null) throw new NullPointerException();
 
         canvas.getMatrix(matrix);
-        matrix.invert(inverted);
 
         canvas.drawRect(x, y, x + width, y + height, paint);
     }
@@ -219,7 +216,6 @@ public abstract class PaintableObject {
         if (canvas == null) throw new NullPointerException();
 
         canvas.getMatrix(matrix);
-        matrix.invert(inverted);
 
         rect.set(x, y, x + width, y + height);
         canvas.drawRoundRect(rect, 15F, 15F, paint);
@@ -243,7 +239,6 @@ public abstract class PaintableObject {
         if (canvas == null || bitmap == null) throw new NullPointerException();
 
         canvas.getMatrix(matrix);
-        matrix.invert(inverted);
 
         canvas.drawBitmap(bitmap, left, top, paint);
     }
@@ -269,7 +264,6 @@ public abstract class PaintableObject {
         canvas.translate(radius,radius);
 
         canvas.getMatrix(matrix);
-        matrix.invert(inverted);
 
         canvas.drawCircle(x, y, radius, paint);
         canvas.restore();
@@ -297,7 +291,6 @@ public abstract class PaintableObject {
         if (canvas == null || text == null) throw new NullPointerException();
 
         canvas.getMatrix(matrix);
-        matrix.invert(inverted);
 
         canvas.drawText(text, start, end, x, y, paint);
     }
@@ -329,7 +322,6 @@ public abstract class PaintableObject {
         canvas.scale(scale, scale);
         obj.paint(canvas);
         matrix.set(obj.matrix);
-        inverted.set(obj.inverted);
         canvas.restore();
     }
 }

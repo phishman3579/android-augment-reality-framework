@@ -12,8 +12,8 @@ import com.jwetherell.augmented_reality.camera.CameraModel;
 import com.jwetherell.augmented_reality.common.Vector;
 import com.jwetherell.augmented_reality.data.ARData;
 import com.jwetherell.augmented_reality.data.PhysicalLocation;
-import com.jwetherell.augmented_reality.ui.objects.PaintableBox;
 import com.jwetherell.augmented_reality.ui.objects.PaintableBoxedText;
+import com.jwetherell.augmented_reality.ui.objects.PaintableCircle;
 import com.jwetherell.augmented_reality.ui.objects.PaintableGps;
 import com.jwetherell.augmented_reality.ui.objects.PaintableObject;
 import com.jwetherell.augmented_reality.ui.objects.PaintablePoint;
@@ -79,11 +79,6 @@ public class Marker implements Comparable<Marker> {
     private static boolean debugGpsPosition = false;
     private PaintablePoint positionPoint = null;
     private PaintablePosition positionContainer = null;
-
-    // Used to debug the touching mechanism
-    private static boolean debugTouchZone = false;
-    private PaintableBox touchBox = null;
-    private PaintablePosition touchPosition = null;
 
     public Marker(String name, double latitude, double longitude, double altitude, int color) {
         set(name, latitude, longitude, altitude, color);
@@ -346,7 +341,7 @@ public class Marker implements Comparable<Marker> {
             return false;
 
         boolean result = isPointOnMarker(x, y);
-        Log.e("handleClick", "point (x="+x+" y="+y+") isPointOnMarker="+result);
+        Log.i("handleClick", "point (x="+x+" y="+y+") isPointOnMarker="+result);
         return result;
     }
 
@@ -470,6 +465,11 @@ public class Marker implements Comparable<Marker> {
 
         float x = paintable.getX();
         float y = paintable.getY();
+        if ((paintable instanceof PaintableGps) || (paintable instanceof PaintableCircle)) {
+            // drawing circles is slightly different then anything else, need to handle differently
+            x = -paintable.getWidth()/2;
+            y = -paintable.getHeight();
+        }
         matrix.set(paintable.matrix);
 
         // UL
@@ -504,7 +504,6 @@ public class Marker implements Comparable<Marker> {
         boolean betweenTB = between(ulX, ulY, urX, urY, llX, llY, lrX, lrY, xPoint, yPoint);
         // Is the point between the left and right lines
         boolean betweenLR = between(ulX, ulY, llX, llY, urX, urY, lrX, lrY, xPoint, yPoint);
-        Log.v("TAG", "betweenTB="+betweenTB+" betweenLR="+betweenLR);
         if (betweenTB && betweenLR) return true;
         return false;
     }
@@ -519,8 +518,14 @@ public class Marker implements Comparable<Marker> {
      * @return True if the point is on this Marker.
      */
     private synchronized boolean isPointOnMarker(float xPoint, float yPoint) {
-        if (isPointOnPaintable(xPoint, yPoint, gpsSymbol)) return true;
-        if (isPointOnPaintable(xPoint, yPoint, textBox)) return true;
+        if (isPointOnPaintable(xPoint, yPoint, gpsSymbol)) {
+            Log.v("TAG", "onGPS");
+            return true;
+        }
+        if (isPointOnPaintable(xPoint, yPoint, textBox)) {
+            Log.v("TAG", "onText");
+            return true;
+        }
         return false;
     }
 
@@ -540,9 +545,6 @@ public class Marker implements Comparable<Marker> {
         if (!isOnRadar || !isInView)
             return;
 
-        if (debugTouchZone)
-            drawTouchZone(canvas);
-
         // Draw the Icon and Text
         drawIcon(canvas);
 
@@ -551,46 +553,6 @@ public class Marker implements Comparable<Marker> {
         // Draw the exact position
         if (debugGpsPosition)
             drawPosition(canvas);
-    }
-
-    private synchronized void drawTouchZone(Canvas canvas) {
-        if (canvas == null)
-            throw new NullPointerException();
-
-        if (gpsSymbol == null && textBox==null)
-            return;
-
-        if (touchBox == null)
-            touchBox = new PaintableBox(getWidth(), getHeight(), Color.WHITE, Color.GREEN);
-        else
-            touchBox.set(getWidth(), getHeight());
-
-        getScreenPosition().get(locationArray);
-        float x = locationArray[0];
-        float y = locationArray[1];
-
-        // Adjust the center point of the touch box
-        float gpsHeight = (gpsSymbol!=null)?gpsSymbol.getHeight():Float.MAX_VALUE;
-        float textHeight = (textBox!=null)?textBox.getHeight():Float.MAX_VALUE;
-        float touchHeight = touchBox.getHeight();
-        boolean textBoxIsSmaller = false;
-        float minHeight = gpsHeight;
-        if (gpsHeight>textHeight) {
-            minHeight = textHeight;
-            textBoxIsSmaller = true;
-        }
-        float adjY = (touchHeight/2) - minHeight;
-        if (textBoxIsSmaller) adjY *= -1;
-        touchBox.setCoordinates(0, adjY);
-
-        float currentAngle = ARData.getDeviceOrientationAngle()+90;
-        currentAngle = 360 - currentAngle;
-        if (touchPosition == null)
-            touchPosition = new PaintablePosition(touchBox, x, y, currentAngle, 1);
-        else
-            touchPosition.set(touchBox, x, y, currentAngle, 1);
-
-        touchPosition.paint(canvas);
     }
 
     protected synchronized void drawIcon(Canvas canvas) {
