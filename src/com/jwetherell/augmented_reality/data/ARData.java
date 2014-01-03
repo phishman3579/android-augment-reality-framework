@@ -40,10 +40,13 @@ public abstract class ARData {
 
     private static final Object radiusLock = new Object();
     private static float radius = Float.valueOf(20);
+    private static final Object zoomLevelLock = new Object();
     private static String zoomLevel = new String();
     private static final Object zoomProgressLock = new Object();
     private static int zoomProgress = 0;
+    private static final Object currentLocationLock = new Object();
     private static Location currentLocation = hardFix;
+    private static final Object rotationMatrixLock = new Object();
     private static Matrix rotationMatrix = new Matrix();
     private static final Object azimuthLock = new Object();
     private static float azimuth = 0;
@@ -63,7 +66,7 @@ public abstract class ARData {
     public static void setZoomLevel(String zoomLevel) {
         if (zoomLevel == null) throw new NullPointerException();
 
-        synchronized (ARData.zoomLevel) {
+        synchronized (ARData.zoomLevelLock) {
             ARData.zoomLevel = zoomLevel;
         }
     }
@@ -74,7 +77,7 @@ public abstract class ARData {
      * @return String representing the zoom level.
      */
     public static String getZoomLevel() {
-        synchronized (ARData.zoomLevel) {
+        synchronized (ARData.zoomLevelLock) {
             return ARData.zoomLevel;
         }
     }
@@ -143,7 +146,7 @@ public abstract class ARData {
         if (currentLocation == null) throw new NullPointerException();
 
         Log.d(TAG, "current location. location=" + currentLocation.toString());
-        synchronized (currentLocation) {
+        synchronized (ARData.currentLocationLock) {
             ARData.currentLocation = currentLocation;
         }
         onLocationChanged(currentLocation);
@@ -167,7 +170,7 @@ public abstract class ARData {
      * @return Location representing the current location.
      */
     public static Location getCurrentLocation() {
-        synchronized (ARData.currentLocation) {
+        synchronized (ARData.currentLocationLock) {
             return ARData.currentLocation;
         }
     }
@@ -179,7 +182,7 @@ public abstract class ARData {
      *            Matrix to use for rotation.
      */
     public static void setRotationMatrix(Matrix rotationMatrix) {
-        synchronized (ARData.rotationMatrix) {
+        synchronized (ARData.rotationMatrixLock) {
             ARData.rotationMatrix = rotationMatrix;
         }
     }
@@ -190,8 +193,8 @@ public abstract class ARData {
      * @return Matrix representing the rotation matrix.
      */
     public static Matrix getRotationMatrix() {
-        synchronized (ARData.rotationMatrix) {
-            return rotationMatrix;
+        synchronized (ARData.rotationMatrixLock) {
+            return ARData.rotationMatrix;
         }
     }
 
@@ -209,7 +212,7 @@ public abstract class ARData {
         Log.d(TAG, "New markers, updating markers. new markers=" + markers.toString());
         for (Marker marker : markers) {
             if (!markerList.containsKey(marker.getName())) {
-                marker.calcRelativePosition(ARData.getCurrentLocation());
+                marker.calcRelativePosition(getCurrentLocation());
                 markerList.put(marker.getName(), marker);
             }
         }
@@ -265,7 +268,7 @@ public abstract class ARData {
      *            float representing the azimuth.
      */
     public static void setAzimuth(float azimuth) {
-        synchronized (azimuthLock) {
+        synchronized (ARData.azimuthLock) {
             ARData.azimuth = azimuth;
         }
     }
@@ -276,7 +279,7 @@ public abstract class ARData {
      * @return azimuth float representing the azimuth.
      */
     public static float getAzimuth() {
-        synchronized (azimuthLock) {
+        synchronized (ARData.azimuthLock) {
             return ARData.azimuth;
         }
     }
@@ -288,7 +291,7 @@ public abstract class ARData {
      *            float representing the roll.
      */
     public static void setRoll(float roll) {
-        synchronized (rollLock) {
+        synchronized (ARData.rollLock) {
             ARData.roll = roll;
         }
     }
@@ -299,7 +302,7 @@ public abstract class ARData {
      * @return roll float representing the roll.
      */
     public static float getRoll() {
-        synchronized (rollLock) {
+        synchronized (ARData.rollLock) {
             return ARData.roll;
         }
     }
@@ -311,7 +314,7 @@ public abstract class ARData {
      *            ORIENTATION representing the orientation.
      */
     public static void setDeviceOrientation(ORIENTATION orientation) {
-        synchronized (orientationLock) {
+        synchronized (ARData.orientationLock) {
             ARData.orientation = orientation;
         }
     }
@@ -322,7 +325,7 @@ public abstract class ARData {
      * @return orientation ORIENTATION representing the orientation.
      */
     public static ORIENTATION getDeviceOrientation() {
-        synchronized (orientationLock) {
+        synchronized (ARData.orientationLock) {
             return ARData.orientation;
         }
     }
@@ -334,7 +337,7 @@ public abstract class ARData {
      *            int representing the orientation angle.
      */
     public static void setDeviceOrientationAngle(int angle) {
-        synchronized (orientationAngleLock) {
+        synchronized (ARData.orientationAngleLock) {
             ARData.orientationAngle = angle;
         }
     }
@@ -345,7 +348,7 @@ public abstract class ARData {
      * @return angle int representing the orientation angle.
      */
     public static int getDeviceOrientationAngle() {
-        synchronized (orientationAngleLock) {
+        synchronized (ARData.orientationAngleLock) {
             return ARData.orientationAngle;
         }
     }

@@ -51,75 +51,75 @@ public class Matrix {
         set(m.a1, m.a2, m.a3, m.b1, m.b2, m.b3, m.c1, m.c2, m.c3);
     }
 
-    public synchronized float getA1() {
+    public float getA1() {
         return a1;
     }
 
-    public synchronized void setA1(float a1) {
+    public void setA1(float a1) {
         this.a1 = a1;
     }
 
-    public synchronized float getA2() {
+    public float getA2() {
         return a2;
     }
 
-    public synchronized void setA2(float a2) {
+    public void setA2(float a2) {
         this.a2 = a2;
     }
 
-    public synchronized float getA3() {
+    public float getA3() {
         return a3;
     }
 
-    public synchronized void setA3(float a3) {
+    public void setA3(float a3) {
         this.a3 = a3;
     }
 
-    public synchronized float getB1() {
+    public float getB1() {
         return b1;
     }
 
-    public synchronized void setB1(float b1) {
+    public void setB1(float b1) {
         this.b1 = b1;
     }
 
-    public synchronized float getB2() {
+    public float getB2() {
         return b2;
     }
 
-    public synchronized void setB2(float b2) {
+    public void setB2(float b2) {
         this.b2 = b2;
     }
 
-    public synchronized float getB3() {
+    public float getB3() {
         return b3;
     }
 
-    public synchronized void setB3(float b3) {
+    public void setB3(float b3) {
         this.b3 = b3;
     }
 
-    public synchronized float getC1() {
+    public float getC1() {
         return c1;
     }
 
-    public synchronized void setC1(float c1) {
+    public void setC1(float c1) {
         this.c1 = c1;
     }
 
-    public synchronized float getC2() {
+    public float getC2() {
         return c2;
     }
 
-    public synchronized void setC2(float c2) {
+    public void setC2(float c2) {
         this.c2 = c2;
     }
 
-    public synchronized float getC3() {
+    public float getC3() {
         return c3;
     }
 
-    public synchronized void setC3(float c3) {
+    public void setC3(float c3) {
         this.c3 = c3;
     }
 
@@ -132,7 +132,7 @@ public class Matrix {
      * @param array
      *            float[] array of size containing the matrix data.
      */
-    public synchronized void get(float[] array) {
+    public void get(float[] array) {
         if (array == null || array.length != 9) throw new IllegalArgumentException("get() array must be non-NULL and size of 9");
 
         array[0] = this.a1;
@@ -157,7 +157,7 @@ public class Matrix {
     public void set(Matrix m) {
         if (m == null) throw new NullPointerException();
 
-        // synchronized on set()
+        // on set()
         set(m.a1, m.a2, m.a3, m.b1, m.b2, m.b3, m.c1, m.c2, m.c3);
     }
 
@@ -173,34 +173,34 @@ public class Matrix {
     public void set(float[] array) {
         if (array == null || array.length != 9) throw new IllegalArgumentException("get() array must be non-NULL and size of 9");
 
-        // synchronized on set()
+        // on set()
         set(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8]);
     }
 
     public void toIdentity() {
-        // synchronized on set()
+        // on set()
         set(1, 0, 0, 
             0, 1, 0, 
             0, 0, 1);
     }
 
     public void toXRot(float angleX) {
-        // synchronized on set()
+        // on set()
         set(1f, 0f, 0f, 0f, (float) Math.cos(angleX), (float) -Math.sin(angleX), 0f, (float) Math.sin(angleX), (float) Math.cos(angleX));
     }
 
     public void toYRot(float angleY) {
-        // synchronized on set()
+        // on set()
         set((float) Math.cos(angleY), 0f, (float) Math.sin(angleY), 0f, 1f, 0f, (float) -Math.sin(angleY), 0f, (float) Math.cos(angleY));
     }
 
     public void toZRot(float angleZ) {
-        // synchronized on set()
+        // on set()
         set((float) Math.cos(angleZ), (float) -Math.sin(angleZ), 0f, (float) Math.sin(angleZ), (float) Math.cos(angleZ), 0f, 0f, 0f, 1f);
     }
 
     public void toScale(float scale) {
-        // synchronized on set()
+        // on set()
         set(scale, 0,     0, 
             0,     scale, 0, 
             0,     0,     scale);
@@ -226,7 +226,7 @@ public class Matrix {
         up.norm();
         up.get(upArray);
 
-        // synchronized on set()
+        // on set()
         set(rightArray[0], rightArray[1], rightArray[2], 
             upArray[0],    upArray[1],    upArray[2], 
             dirArray[0],   dirArray[1],   dirArray[2]);
@@ -254,7 +254,7 @@ public class Matrix {
      * @param c3
      *            float representing the bottom row left value.
      */
-    public synchronized void set(float a1, float a2, float a3, float b1, float b2, float b3, float c1, float c2, float c3) {
+    public void set(float a1, float a2, float a3, float b1, float b2, float b3, float c1, float c2, float c3) {
         this.a1 = a1;
         this.a2 = a2;
         this.a3 = a3;
@@ -270,13 +270,13 @@ public class Matrix {
 
     public void invert() {
         float det = this.det();
-        // synchronized on adj()
+        // on adj()
         adj();
-        // synchronized on mult()
+        // on mult()
         mult(1 / det);
     }
 
-    public synchronized void adj() {
+    public void adj() {
         float a11 = this.a1;
         float a12 = this.a2;
         float a13 = this.a3;
@@ -306,7 +306,7 @@ public class Matrix {
         return (a * d) - (b * c);
     }
 
-    public synchronized void mult(float c) {
+    public void mult(float c) {
         this.a1 = this.a1 * c;
         this.a2 = this.a2 * c;
         this.a3 = this.a3 * c;
@@ -320,7 +320,7 @@ public class Matrix {
         this.c3 = this.c3 * c;
     }
 
-    public synchronized void transpose() {
+    public void transpose() {
         float a11 = this.a1;
         float a12 = this.a2;
         float a13 = this.a3;
@@ -345,12 +345,12 @@ public class Matrix {
         this.c3 = a33;
     }
 
-    public synchronized float det() {
+    public float det() {
         return (this.a1 * this.b2 * this.c3) - (this.a1 * this.b3 * this.c2) - (this.a2 * this.b1 * this.c3) + (this.a2 * this.b3 * this.c1)
                 + (this.a3 * this.b1 * this.c2) - (this.a3 * this.b2 * this.c1);
     }
 
-    public synchronized void add(Matrix n) {
+    public void add(Matrix n) {
         if (n == null) throw new NullPointerException();
 
         this.a1 += n.a1;
@@ -366,7 +366,7 @@ public class Matrix {
         this.c3 += n.c3;
     }
 
-    public synchronized void prod(Matrix n) {
+    public void prod(Matrix n) {
         if (n == null) throw new NullPointerException();
 
         tmp.set(this);
@@ -383,7 +383,7 @@ public class Matrix {
         this.c3 = (tmp.c1 * n.a3) + (tmp.c2 * n.b3) + (tmp.c3 * n.c3);
     }
 
-    public synchronized boolean equals(Matrix n) {
+    public boolean equals(Matrix n) {
         if (n == null) return false;
 
         if (this.a1 != n.a1)

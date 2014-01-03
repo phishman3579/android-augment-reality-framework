@@ -99,7 +99,7 @@ public class Marker implements Comparable<Marker> {
      * @param color
      *            Color of the Marker.
      */
-    public synchronized void set(String name, double latitude, double longitude, double altitude, int color) {
+    public void set(String name, double latitude, double longitude, double altitude, int color) {
         if (name == null)
             throw new NullPointerException();
 
@@ -121,7 +121,7 @@ public class Marker implements Comparable<Marker> {
      * 
      * @return String representing the new of the Marker.
      */
-    public synchronized String getName() {
+    public String getName() {
         return this.name;
     }
 
@@ -130,7 +130,7 @@ public class Marker implements Comparable<Marker> {
      * 
      * @return int representing the Color of this Marker.
      */
-    public synchronized int getColor() {
+    public int getColor() {
         return this.color;
     }
 
@@ -140,7 +140,7 @@ public class Marker implements Comparable<Marker> {
      * @return double representing the distance of this Marker from the current
      *         GPS position.
      */
-    public synchronized double getDistance() {
+    public double getDistance() {
         return this.distance;
     }
 
@@ -150,7 +150,7 @@ public class Marker implements Comparable<Marker> {
      * 
      * @return float representing the initial Y coordinate of this Marker.
      */
-    public synchronized float getInitialY() {
+    public float getInitialY() {
         return this.initialY;
     }
 
@@ -160,7 +160,7 @@ public class Marker implements Comparable<Marker> {
      * 
      * @return True if Marker is inside the range.
      */
-    public synchronized boolean isOnRadar() {
+    public boolean isOnRadar() {
         return this.isOnRadar;
     }
 
@@ -169,7 +169,7 @@ public class Marker implements Comparable<Marker> {
      * 
      * @return True if Marker is inside the camera's view.
      */
-    public synchronized boolean isInView() {
+    public boolean isInView() {
         return this.isInView;
     }
 
@@ -178,7 +178,7 @@ public class Marker implements Comparable<Marker> {
      * 
      * @return Vector representing the position of the Marker.
      */
-    public synchronized Vector getScreenPosition() {
+    public Vector getScreenPosition() {
         screenPositionVector.set(locationXyzRelativeToCameraView);
         return screenPositionVector;
     }
@@ -188,17 +188,17 @@ public class Marker implements Comparable<Marker> {
      * 
      * @return Vector representing the location of the Marker.
      */
-    public synchronized Vector getLocation() {
+    public Vector getLocation() {
         return this.locationXyzRelativeToPhysicalLocation;
     }
 
-    public synchronized float getHeight() {
+    public float getHeight() {
         if (symbolContainer == null || textContainer == null)
             return 0f;
         return symbolContainer.getHeight() + textContainer.getHeight();
     }
 
-    public synchronized float getWidth() {
+    public float getWidth() {
         if (symbolContainer == null || textContainer == null)
             return 0f;
         float symbolWidth = symbolContainer.getWidth();
@@ -216,7 +216,7 @@ public class Marker implements Comparable<Marker> {
      * @param addY
      *            Adder to the Y position.
      */
-    public synchronized void update(Canvas canvas, float addX, float addY) {
+    public void update(Canvas canvas, float addX, float addY) {
         if (canvas == null)
             throw new NullPointerException();
 
@@ -229,7 +229,7 @@ public class Marker implements Comparable<Marker> {
         updateView();
     }
 
-    private synchronized void populateMatrices(CameraModel cam, float addX, float addY) {
+    private void populateMatrices(CameraModel cam, float addX, float addY) {
         if (cam == null)
             throw new NullPointerException();
 
@@ -241,7 +241,7 @@ public class Marker implements Comparable<Marker> {
         locationXyzRelativeToCameraView.set(tmpVector);
     }
 
-    private synchronized void updateRadar() {
+    private void updateRadar() {
         isOnRadar = false;
 
         float range = ARData.getRadius() * 1000;
@@ -253,7 +253,7 @@ public class Marker implements Comparable<Marker> {
             isOnRadar = true;
     }
 
-    private synchronized void updateView() {
+    private void updateView() {
         isInView = false;
 
         // If it's not on the radar, can't be in view
@@ -294,7 +294,7 @@ public class Marker implements Comparable<Marker> {
      * @throws NullPointerException
      *             if Location is NULL.
      */
-    public synchronized void calcRelativePosition(Location location) {
+    public void calcRelativePosition(Location location) {
         if (location == null)
             throw new NullPointerException();
 
@@ -315,7 +315,7 @@ public class Marker implements Comparable<Marker> {
         updateRadar();
     }
 
-    private synchronized void updateDistance(Location location) {
+    private void updateDistance(Location location) {
         if (location == null)
             throw new NullPointerException();
 
@@ -336,7 +336,7 @@ public class Marker implements Comparable<Marker> {
      *            float y value.
      * @return True if Marker is visible and x/y is on the marker.
      */
-    public synchronized boolean handleClick(float x, float y) {
+    public boolean handleClick(float x, float y) {
         if (!isOnRadar || !isInView)
             return false;
 
@@ -352,7 +352,7 @@ public class Marker implements Comparable<Marker> {
      *            Marker to test for overlap.
      * @return True if the marker is on Marker.
      */
-    public synchronized boolean isMarkerOnMarker(Marker marker) {
+    public boolean isMarkerOnMarker(Marker marker) {
         return isMarkerOnMarker(marker, true);
     }
 
@@ -366,7 +366,7 @@ public class Marker implements Comparable<Marker> {
      *            opposite arguments.
      * @return True if the marker is on Marker.
      */
-    private synchronized boolean isMarkerOnMarker(Marker marker, boolean reflect) {
+    private boolean isMarkerOnMarker(Marker marker, boolean reflect) {
         if (marker == null)
             return false;
 
@@ -517,7 +517,7 @@ public class Marker implements Comparable<Marker> {
      *            Y point.
      * @return True if the point is on this Marker.
      */
-    private synchronized boolean isPointOnMarker(float xPoint, float yPoint) {
+    private boolean isPointOnMarker(float xPoint, float yPoint) {
         if (isPointOnPaintable(xPoint, yPoint, gpsSymbol))
             return true;
         if (isPointOnPaintable(xPoint, yPoint, textBox))
@@ -533,7 +533,7 @@ public class Marker implements Comparable<Marker> {
      * @throws NullPointerException
      *             if the Canvas is NULL.
      */
-    public synchronized void draw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         if (canvas == null)
             throw new NullPointerException();
 
@@ -551,7 +551,7 @@ public class Marker implements Comparable<Marker> {
             drawPosition(canvas);
     }
 
-    protected synchronized void drawIcon(Canvas canvas) {
+    protected void drawIcon(Canvas canvas) {
         if (canvas == null)
             throw new NullPointerException();
 
@@ -575,7 +575,7 @@ public class Marker implements Comparable<Marker> {
         symbolContainer.paint(canvas);
     }
 
-    private synchronized void drawText(Canvas canvas) {
+    private void drawText(Canvas canvas) {
         if (canvas == null)
             throw new NullPointerException();
 
@@ -610,7 +610,7 @@ public class Marker implements Comparable<Marker> {
         textContainer.paint(canvas);
     }
 
-    private synchronized void drawPosition(Canvas canvas) {
+    private void drawPosition(Canvas canvas) {
         if (canvas == null)
             throw new NullPointerException();
 
@@ -635,7 +635,7 @@ public class Marker implements Comparable<Marker> {
      * {@inheritDoc}
      */
     @Override
-    public synchronized int compareTo(Marker another) {
+    public int compareTo(Marker another) {
         if (another == null)
             throw new NullPointerException();
 
@@ -646,7 +646,7 @@ public class Marker implements Comparable<Marker> {
      * {@inheritDoc}
      */
     @Override
-    public synchronized boolean equals(Object marker) {
+    public boolean equals(Object marker) {
         if (marker == null || name == null)
             throw new NullPointerException();
 
@@ -657,7 +657,7 @@ public class Marker implements Comparable<Marker> {
      * {@inheritDoc}
      */
     @Override
-    public synchronized int hashCode() {
+    public int hashCode() {
         return name.hashCode();
     }
 }

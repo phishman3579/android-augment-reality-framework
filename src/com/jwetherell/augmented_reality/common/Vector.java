@@ -57,27 +57,27 @@ public class Vector {
         set(x, y, z);
     }
 
-    public synchronized float getX() {
+    public float getX() {
         return x;
     }
 
-    public synchronized void setX(float x) {
+    public void setX(float x) {
         this.x = x;
     }
 
-    public synchronized float getY() {
+    public float getY() {
         return y;
     }
 
-    public synchronized void setY(float y) {
+    public void setY(float y) {
         this.y = y;
     }
 
-    public synchronized float getZ() {
+    public float getZ() {
         return z;
     }
 
-    public synchronized void setZ(float z) {
+    public void setZ(float z) {
         this.z = z;
     }
 
@@ -89,7 +89,7 @@ public class Vector {
      * @param array
      *            float array representing this vector.
      */
-    public synchronized void get(float[] array) {
+    public void get(float[] array) {
         if (array == null || array.length != 3) throw new IllegalArgumentException("get() array must be non-NULL and size of 3");
 
         array[0] = this.x;
@@ -106,7 +106,7 @@ public class Vector {
     public void set(Vector v) {
         if (v == null) return;
 
-        // synchronized on set()
+        // on set()
         set(v.x, v.y, v.z);
     }
 
@@ -121,7 +121,7 @@ public class Vector {
     public void set(float[] array) {
         if (array == null || array.length != 3) throw new IllegalArgumentException("get() array must be non-NULL and size of 3");
 
-        // synchronized on set()
+        // on set()
         set(array[0], array[1], array[2]);
     }
 
@@ -135,7 +135,7 @@ public class Vector {
      * @param z
      *            float z value.
      */
-    public synchronized void set(float x, float y, float z) {
+    public void set(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -145,75 +145,75 @@ public class Vector {
      * {@inheritDoc}
      */
     @Override
-    public synchronized boolean equals(Object obj) {
+    public boolean equals(Object obj) {
         if (obj == null) return false;
 
         Vector v = (Vector) obj;
         return (v.x == this.x && v.y == this.y && v.z == this.z);
     }
 
-    public synchronized boolean equals(float x, float y, float z) {
+    public boolean equals(float x, float y, float z) {
         return (this.x == x && this.y == y && this.z == z);
     }
 
     public void add(Vector v) {
         if (v == null) return;
 
-        // synchronized on add()
+        // on add()
         add(v.x, v.y, v.z);
     }
 
     public void sub(float x, float y, float z) {
 
-        // synchronized on add()
+        // on add()
         add(-x, -y, -z);
     }
 
     public void sub(Vector v) {
         if (v == null) return;
 
-        // synchronized on add()
+        // on add()
         add(-v.x, -v.y, -v.z);
     }
 
-    public synchronized void add(float x, float y, float z) {
+    public void add(float x, float y, float z) {
         this.x += x;
         this.y += y;
         this.z += z;
     }
 
-    public synchronized void mult(float s) {
+    public void mult(float s) {
         this.x *= s;
         this.y *= s;
         this.z *= s;
     }
 
-    public synchronized float length() {
+    public float length() {
         return (float) Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     }
 
-    public synchronized float length2D() {
+    public float length2D() {
         return (float) Math.sqrt(this.x * this.x + this.z * this.z);
     }
 
     public void norm() {
-        // synchronized on divide()
+        // on divide()
         divide(length());
     }
 
-    public synchronized void divide(float s) {
+    public void divide(float s) {
         this.x /= s;
         this.y /= s;
         this.z /= s;
     }
 
-    public synchronized float dot(Vector v) {
+    public float dot(Vector v) {
         if (v == null) return 0f;
 
         return this.x * v.x + this.y * v.y + this.z * v.z;
     }
 
-    public synchronized void cross(Vector u, Vector v) {
+    public void cross(Vector u, Vector v) {
         if (v == null || u == null) return;
 
         float x = u.y * v.z - u.z * v.y;
@@ -224,7 +224,7 @@ public class Vector {
         this.z = z;
     }
 
-    public synchronized void prod(Matrix m) {
+    public void prod(Matrix m) {
         if (m == null) return;
 
         m.get(matrixArray);
