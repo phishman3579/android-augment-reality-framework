@@ -100,7 +100,7 @@ public class AugmentedView extends View {
                     updated.add(marker2);
                     continue;
                 }
-                if (updated.contains(marker2) || marker1.equals(marker2))
+                if (updated.contains(marker2))
                     continue;
 
                 float width = marker1.getWidth();
@@ -110,7 +110,7 @@ public class AugmentedView extends View {
                 if (marker1.isMarkerOnMarker(marker2)) {
                     marker2.getLocation().get(locationArray);
                     float y = locationArray[1];
-                    float h = collisions*max;
+                    float h = collisions * max;
                     locationArray[1] = y + h;
                     marker2.getLocation().set(locationArray);
                     marker2.update(canvas, 0, 0);

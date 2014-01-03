@@ -248,7 +248,7 @@ public class Marker implements Comparable<Marker> {
         locationXyzRelativeToPhysicalLocation.get(locationArray);
         float x = locationArray[0] / scale;
         float y = locationArray[2] / scale; // z==y Switched on purpose
-        if ((x * x + y * y) < (Radar.RADIUS * Radar.RADIUS))
+        if ((x*x + y*y) < (Radar.RADIUS * Radar.RADIUS))
             isOnRadar = true;
     }
 
@@ -269,7 +269,7 @@ public class Marker implements Comparable<Marker> {
             return;
 
         // TODO: Revisit for a better approach, I assume it's a "square" axis aligned square.
-        float max = Math.max(getWidth(), getHeight());
+        float max = Math.max(getWidth(), getHeight()) + 25; // overscan a bit
         float ulX = x - max / 2;
         float ulY = y - max / 2;
         float lrX = x + max / 2;
@@ -303,7 +303,7 @@ public class Marker implements Comparable<Marker> {
         PhysicalLocation.convLocationToVector(location, 
                                               physicalLocation, 
                                               locationXyzRelativeToPhysicalLocation);
-        this.initialY = locationXyzRelativeToPhysicalLocation.getY();
+        initialY = locationXyzRelativeToPhysicalLocation.getY();
         updateRadar();
     }
 
@@ -348,31 +348,6 @@ public class Marker implements Comparable<Marker> {
         return isMarkerOnMarker(marker, true);
     }
 
-    private boolean isPaintableOnMarker(PaintableObject paintable) {
-        if (paintable == null)
-            return false;
-
-        box.set(paintable);
-
-        boolean upperLeftOfMarker = isPointOnMarker(box.ulX, box.ulY);
-        if (upperLeftOfMarker)
-            return true;
-
-        boolean upperRightOfMarker = isPointOnMarker(box.urX, box.urY);
-        if (upperRightOfMarker)
-            return true;
-
-        boolean lowerLeftOfMarker = isPointOnMarker(box.llX, box.llY);
-        if (lowerLeftOfMarker)
-            return true;
-
-        boolean lowerRightOfMarker = isPointOnMarker(box.lrX, box.lrY);
-        if (lowerRightOfMarker)
-            return true;
-
-        return false;
-    }
-
     /**
      * Determines if the marker is on this Marker.
      * 
@@ -408,61 +383,41 @@ public class Marker implements Comparable<Marker> {
         return (reflect) ? marker.isMarkerOnMarker(this, false) : false;
     }
 
-    /*
-     * Determines what side of a line a point lies.
-     */
-    private static final byte side(float Ax, float Ay, 
-                                      float Bx, float By, 
-                                      float x, float y) {
-        float result = (Bx-Ax)*(y-Ay) - (By-Ay)*(x-Ax);
-        if (result<0) {
-            // below or right
-            return -1;
-        }
-        if (result>0) {
-            // above or left
-            return 1;
-        }
-        // on the line
-        return 0;
-    }
-
-    /*
-     * Determines if point is between two lines
-     */
-    private static final boolean between(float Ax, float Ay, 
-                                            float Bx, float By, 
-                                            float Cx, float Cy, 
-                                            float Dx, float Dy, 
-                                            float x, float y) {
-        byte first = side(Ax, Ay, Bx, By, x, y);
-        byte second = side(Cx, Cy, Dx, Dy, x, y);
-        if (first==(second*-1)) return true;
-        if (first==0 && second>0) return true;
-        if (second==0 && first<0) return true;
-        return false;
-    }
-
-    private boolean isPointOnPaintable(float xPoint, float yPoint, PaintableObject paintable) {
-        if (paintable == null) 
+    private boolean isPaintableOnMarker(PaintableObject paintable) {
+        if (paintable == null)
             return false;
 
-        // Calculates out the ul, ur, ll, lr coordinates
         box.set(paintable);
- 
-        // Is the point between the top and bottom lines
-        boolean betweenTB = between(box.ulX, box.ulY, 
-                                     box.urX, box.urY, 
-                                     box.llX, box.llY, 
-                                     box.lrX, box.lrY, 
-                                     xPoint, yPoint);
-        // Is the point between the left and right lines
-        boolean betweenLR = between(box.ulX, box.ulY, 
-                                     box.llX, box.llY, 
-                                     box.urX, box.urY, 
-                                     box.lrX, box.lrY, 
-                                     xPoint, yPoint);
-        if (betweenTB && betweenLR) return true;
+
+        // UL
+        float ulX = box.ulX;
+        float ulY = box.ulY;
+        // UR
+        float urX = box.urX;
+        float urY = box.urY;
+        // LL
+        float llX = box.llX;
+        float llY = box.llY;
+        // LR
+        float lrX = box.lrX;
+        float lrY = box.lrY;
+
+        boolean upperLeftOfMarker = isPointOnMarker(ulX, ulY);
+        if (upperLeftOfMarker)
+            return true;
+
+        boolean upperRightOfMarker = isPointOnMarker(urX, urY);
+        if (upperRightOfMarker)
+            return true;
+
+        boolean lowerLeftOfMarker = isPointOnMarker(llX, llY);
+        if (lowerLeftOfMarker)
+            return true;
+
+        boolean lowerRightOfMarker = isPointOnMarker(lrX, lrY);
+        if (lowerRightOfMarker)
+            return true;
+
         return false;
     }
 
@@ -476,9 +431,11 @@ public class Marker implements Comparable<Marker> {
      * @return True if the point is on this Marker.
      */
     private boolean isPointOnMarker(float xPoint, float yPoint) {
-        if (isPointOnPaintable(xPoint, yPoint, gpsSymbol))
+        box.set(gpsSymbol);
+        if (box.isPointInBox(xPoint, yPoint))
             return true;
-        if (isPointOnPaintable(xPoint, yPoint, textBox))
+        box.set(textBox);
+        if (box.isPointInBox(xPoint, yPoint))
             return true;
         return false;
     }
@@ -677,6 +634,67 @@ public class Marker implements Comparable<Marker> {
             matrix.mapPoints(points);
             lrX = points[0];
             lrY = points[1];
+        }
+
+        /*
+         * Determines what side of a line a point lies.
+         */
+        private static final byte side(float Ax, float Ay, 
+                                          float Bx, float By, 
+                                          float x, float y) {
+            float result = (Bx-Ax)*(y-Ay) - (By-Ay)*(x-Ax);
+            if (result<0) {
+                // below or right
+                return -1;
+            }
+            if (result>0) {
+                // above or left
+                return 1;
+            }
+            // on the line
+            return 0;
+        }
+
+        /*
+         * Determines if point is between two lines
+         */
+        private static final boolean between(float aX, float aY, 
+                                                float bX, float bY, 
+                                                float cX, float cY, 
+                                                float dX, float dY, 
+                                                float x, float y) {
+            byte first = side(aX, aY, bX, bY, x, y);
+            byte second = side(cX, cY, dX, dY, x, y);
+            if (first==(second*-1)) return true;
+            return false;
+        }
+
+        private boolean isPointInBox(float xPoint, float yPoint) {
+            // Is the point between the top and bottom lines
+            boolean betweenTB = between(ulX, ulY, 
+                                         urX, urY, 
+                                         llX, llY, 
+                                         lrX, lrY, 
+                                         xPoint, yPoint);
+            // Is the point between the left and right lines
+            boolean betweenLR = between(ulX, ulY, 
+                                         llX, llY, 
+                                         urX, urY, 
+                                         lrX, lrY, 
+                                         xPoint, yPoint);
+            if (betweenTB && betweenLR) return true;
+            return false;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return "ul=("+ulX+", "+ulY+") "+
+                    "ur=("+urX+", "+urY+")\n"+
+                    "ll=("+llX+", "+llY+") "+
+                    "lr=("+lrX+", "+lrY+")";
         }
     }
 }

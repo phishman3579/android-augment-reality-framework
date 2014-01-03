@@ -105,6 +105,8 @@ public class CameraSurface extends SurfaceView implements SurfaceHolder.Callback
      */
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
+        if (camera==null) 
+            return;
         try {
             Camera.Parameters parameters = camera.getParameters();
             try {
