@@ -81,7 +81,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         // [ 1, 0, 0 ]
         // [ 0, cos, -sin ]
         // [ 0, sin, cos ]
-        xAxisRotation.set(1f, 0f,                    0f, 
+        xAxisRotation.set(1f, 0f,                       0f, 
                           0f, FloatMath.cos(neg90rads), -FloatMath.sin(neg90rads), 
                           0f, FloatMath.sin(neg90rads), FloatMath.cos(neg90rads));
 
@@ -90,7 +90,7 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
         // [ 0,    1,   0   ]
         // [ -sin, 0,   cos ]
         yAxisRotation.set(FloatMath.cos(neg90rads),  0f, FloatMath.sin(neg90rads),
-                          0f,                     1f, 0f,
+                          0f,                        1f, 0f,
                           -FloatMath.sin(neg90rads), 0f, FloatMath.cos(neg90rads));
 
         try {
@@ -104,8 +104,8 @@ public class SensorsActivity extends Activity implements SensorEventListener, Lo
             if (sensors.size() > 0)
                 sensorMag = sensors.get(0);
 
-            sensorMgr.registerListener(this, sensorGrav, SensorManager.SENSOR_DELAY_UI);
-            sensorMgr.registerListener(this, sensorMag, SensorManager.SENSOR_DELAY_UI);
+            sensorMgr.registerListener(this, sensorGrav, SensorManager.SENSOR_DELAY_GAME);
+            sensorMgr.registerListener(this, sensorMag, SensorManager.SENSOR_DELAY_GAME);
 
             locationMgr = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             locationMgr.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
