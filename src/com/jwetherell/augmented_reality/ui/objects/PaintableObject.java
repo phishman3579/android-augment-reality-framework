@@ -327,8 +327,9 @@ public abstract class PaintableObject {
         canvas.translate(x,y);
         canvas.rotate(rotation);
         canvas.scale(scale, scale);
-        // obj.paint will populate the matrices
         obj.paint(canvas);
+        matrix.set(obj.matrix);
+        inverted.set(obj.inverted);
         canvas.restore();
     }
 }

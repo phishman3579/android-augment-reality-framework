@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.location.Location;
 import android.util.Log;
 
@@ -42,6 +43,9 @@ public class Marker implements Comparable<Marker> {
 
     private final StringBuilder textStr = new StringBuilder();
 
+    private final float[] points = new float[]{0,0};
+    private final Matrix matrix = new Matrix();
+
     private float initialY = 0.0f;
 
     private static CameraModel cam = null;
@@ -51,7 +55,7 @@ public class Marker implements Comparable<Marker> {
     private PaintablePosition symbolContainer = null;
 
     // Container for text
-    private PaintableBoxedText textBox = null;
+    protected PaintableBoxedText textBox = null;
     private PaintablePosition textContainer = null;
 
     // Unique identifier of Marker
@@ -77,7 +81,7 @@ public class Marker implements Comparable<Marker> {
     private PaintablePosition positionContainer = null;
 
     // Used to debug the touching mechanism
-    private static boolean debugTouchZone = true;
+    private static boolean debugTouchZone = false;
     private PaintableBox touchBox = null;
     private PaintablePosition touchPosition = null;
 
@@ -257,7 +261,7 @@ public class Marker implements Comparable<Marker> {
     private synchronized void updateView() {
         isInView = false;
 
-        // If it's not on the radar, can't be in view3
+        // If it's not on the radar, can't be in view
         if (!isOnRadar)
             return;
 
@@ -269,14 +273,6 @@ public class Marker implements Comparable<Marker> {
         locationXyzRelativeToCameraView.get(locationArray);
         float x = locationArray[0];
         float y = locationArray[1];
-
-        // Adjust the center point because symbol my not be same size as text, making it off center
-        if (touchBox!=null)  {
-            float adjX = touchBox.getX();
-            float adjY = touchBox.getY();
-            x += adjX;
-            y += adjY;
-        }
 
         float width = getWidth()+10;
         float height = getHeight()+10;
@@ -293,15 +289,6 @@ public class Marker implements Comparable<Marker> {
 
         if (lrX >= -1 && ulX <= cam.getWidth() && lrY >= -1 && ulY <= cam.getHeight())
             isInView = true;
-
-        /*
-         * Log.w("updateView", "name "+this.name); Log.w("updateView",
-         * "ul (x="+(ulX)+" y="+(ulY)+")"); Log.w("updateView",
-         * "lr (x="+(lrX)+" y="+(lrY)+")"); Log.w("updateView",
-         * "cam (w="+(cam.getWidth())+" h="+(cam.getHeight())+")"); if
-         * (!isInView) Log.w("updateView", "isInView "+isInView); else
-         * Log.e("updateView", "isInView "+isInView);
-         */
     }
 
     /**
@@ -358,7 +345,7 @@ public class Marker implements Comparable<Marker> {
         if (!isOnRadar || !isInView)
             return false;
 
-        boolean result = isPointOnMarker(x, y, this);
+        boolean result = isPointOnMarker(x, y);
         Log.e("handleClick", "point (x="+x+" y="+y+") isPointOnMarker="+result);
         return result;
     }
@@ -401,7 +388,7 @@ public class Marker implements Comparable<Marker> {
         float middleY = 0;
         middleX = x + (width / 2);
         middleY = y + (height / 2);
-        boolean middleOfMarker = isPointOnMarker(middleX, middleY, this);
+        boolean middleOfMarker = isPointOnMarker(middleX, middleY);
         if (middleOfMarker)
             return true;
 
@@ -421,27 +408,19 @@ public class Marker implements Comparable<Marker> {
         lrX += width;
         lrY += height;
 
-        /*
-         * Log.w("isMarkerOnMarker", "name "+this.name);
-         * Log.w("isMarkerOnMarker", "ul (x="+(ulX)+" y="+(ulY)+")");
-         * Log.w("isMarkerOnMarker", "ur (x="+(urX)+" y="+(urY)+")");
-         * Log.w("isMarkerOnMarker", "ll (x="+(llX)+" y="+(llY)+")");
-         * Log.w("isMarkerOnMarker", "lr (x="+(lrX)+" y="+(lrY)+")");
-         */
- 
-        boolean upperLeftOfMarker = isPointOnMarker(ulX, ulY, this);
+        boolean upperLeftOfMarker = isPointOnMarker(ulX, ulY);
         if (upperLeftOfMarker)
             return true;
 
-        boolean upperRightOfMarker = isPointOnMarker(urX, urY, this);
+        boolean upperRightOfMarker = isPointOnMarker(urX, urY);
         if (upperRightOfMarker)
             return true;
 
-        boolean lowerLeftOfMarker = isPointOnMarker(llX, llY, this);
+        boolean lowerLeftOfMarker = isPointOnMarker(llX, llY);
         if (lowerLeftOfMarker)
             return true;
 
-        boolean lowerRightOfMarker = isPointOnMarker(lrX, lrY, this);
+        boolean lowerRightOfMarker = isPointOnMarker(lrX, lrY);
         if (lowerRightOfMarker)
             return true;
 
@@ -453,8 +432,10 @@ public class Marker implements Comparable<Marker> {
     /*
      * Determines what side of a line a point lies.
      */
-    private static final byte side(float Ax, float Ay, float Bx, float By, float X, float Y) {
-        float result = (Bx-Ax)*(Y-Ay) - (By-Ay)*(X-Ax);
+    private static final byte side(float Ax, float Ay, 
+                                      float Bx, float By, 
+                                      float x, float y) {
+        float result = (Bx-Ax)*(y-Ay) - (By-Ay)*(x-Ax);
         if (result<0) {
             // below or right
             return -1;
@@ -463,7 +444,7 @@ public class Marker implements Comparable<Marker> {
             // above or left
             return 1;
         }
-        // on
+        // on the line
         return 0;
     }
 
@@ -471,19 +452,62 @@ public class Marker implements Comparable<Marker> {
      * Determines if point is between two lines
      */
     private static final boolean between(float Ax, float Ay, 
-                                         float Bx, float By, 
-                                         float Cx, float Cy, 
-                                         float Dx, float Dy, 
-                                         float X, float Y) {
-        byte first = side(Ax, Ay, Bx, By, X, Y);
-        byte second = side(Cx, Cy, Dx, Dy, X, Y);
+                                            float Bx, float By, 
+                                            float Cx, float Cy, 
+                                            float Dx, float Dy, 
+                                            float x, float y) {
+        byte first = side(Ax, Ay, Bx, By, x, y);
+        byte second = side(Cx, Cy, Dx, Dy, x, y);
         if (first==(second*-1)) return true;
         if (first==0 && second>0) return true;
         if (second==0 && first<0) return true;
         return false;
     }
 
-    private float[] temp = new float[]{0,0};
+    private boolean isPointOnPaintable(float xPoint, float yPoint, PaintableObject paintable) {
+        if (paintable == null) 
+            return false;
+
+        float x = paintable.getX();
+        float y = paintable.getY();
+        matrix.set(paintable.matrix);
+
+        // UL
+        points[0] = x;
+        points[1] = y;
+        matrix.mapPoints(points);
+        float ulX = points[0];
+        float ulY = points[1];
+
+        // UR
+        points[0] = x+paintable.getWidth();
+        points[1] = y;
+        matrix.mapPoints(points);
+        float urX = points[0];
+        float urY = points[1];
+
+        // LL
+        points[0] = x;
+        points[1] = y+paintable.getHeight();
+        matrix.mapPoints(points);
+        float llX = points[0];
+        float llY = points[1];
+
+        // LR
+        points[0] = x+paintable.getWidth();
+        points[1] = y+paintable.getHeight();
+        matrix.mapPoints(points);
+        float lrX = points[0];
+        float lrY = points[1];
+ 
+        // Is the point between the top and bottom lines
+        boolean betweenTB = between(ulX, ulY, urX, urY, llX, llY, lrX, lrY, xPoint, yPoint);
+        // Is the point between the left and right lines
+        boolean betweenLR = between(ulX, ulY, llX, llY, urX, urY, lrX, lrY, xPoint, yPoint);
+        Log.v("TAG", "betweenTB="+betweenTB+" betweenLR="+betweenLR);
+        if (betweenTB && betweenLR) return true;
+        return false;
+    }
 
     /**
      * Determines if the point is on this Marker.
@@ -492,55 +516,11 @@ public class Marker implements Comparable<Marker> {
      *            X point.
      * @param yPoint
      *            Y point.
-     * @param marker
-     *            Marker to determine if the point is on.
-     * @return True if the point is on Marker.
+     * @return True if the point is on this Marker.
      */
-    private synchronized boolean isPointOnMarker(float xPoint, float yPoint, Marker marker) {
-        if (marker == null)
-            return false;
-
-        if (touchBox == null)
-            return false;
-
-        // UL
-        temp[0] = 0;
-        temp[1] = 0;
-        touchBox.matrix.mapPoints(temp);
-        Log.v("TAG", "UL x="+temp[0]+" y="+temp[1]);
-        float ulX = temp[0];
-        float ulY = temp[1];
-
-        // UR
-        temp[0] = touchBox.getWidth();
-        temp[1] = 0;
-        touchBox.matrix.mapPoints(temp);
-        Log.v("TAG", "UR x="+temp[0]+" y="+temp[1]);
-        float urX = temp[0];
-        float urY = temp[1];
-
-        // LL
-        temp[0] = 0;
-        temp[1] = touchBox.getHeight();
-        touchBox.matrix.mapPoints(temp);
-        Log.v("TAG", "LL x="+temp[0]+" y="+temp[1]);
-        float llX = temp[0];
-        float llY = temp[1];
-
-        // LR
-        temp[0] = touchBox.getWidth();
-        temp[1] = touchBox.getHeight();
-        touchBox.matrix.mapPoints(temp);
-        Log.v("TAG", "LR x="+temp[0]+" y="+temp[1]);
-        float lrX = temp[0];
-        float lrY = temp[1];
- 
-        // Is the point between the top and bottom lines
-        boolean betweenTB = between(ulX, ulY, urX, urY, llX, llY, lrX, lrY, xPoint, yPoint);
-        // Is the point between the left and right lines
-        boolean betweenLR = between(ulX, ulY, llX, llY, urX, urY, lrX, lrY, xPoint, yPoint);
-        Log.v("TAG", "betweenTB="+betweenTB+" betweenLR="+betweenLR);
-        if (betweenTB && betweenLR) return true;
+    private synchronized boolean isPointOnMarker(float xPoint, float yPoint) {
+        if (isPointOnPaintable(xPoint, yPoint, gpsSymbol)) return true;
+        if (isPointOnPaintable(xPoint, yPoint, textBox)) return true;
         return false;
     }
 
@@ -577,7 +557,7 @@ public class Marker implements Comparable<Marker> {
         if (canvas == null)
             throw new NullPointerException();
 
-        if (gpsSymbol == null)
+        if (gpsSymbol == null && textBox==null)
             return;
 
         if (touchBox == null)
