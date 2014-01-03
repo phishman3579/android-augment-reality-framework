@@ -1,9 +1,10 @@
 package com.jwetherell.augmented_reality.activity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.TreeSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.content.Context;
@@ -28,7 +29,7 @@ public class AugmentedView extends View {
     private static final Radar radar = new Radar();
     private static final float[] locationArray = new float[3];
     private static final List<Marker> cache = new ArrayList<Marker>();
-    private static final TreeSet<Marker> updated = new TreeSet<Marker>();
+    private static final Set<Marker> updated = new HashSet<Marker>();
     private static final int COLLISION_ADJUSTMENT = 100;
 
     public AugmentedView(Context context) {
@@ -62,7 +63,8 @@ public class AugmentedView extends View {
             }
             collection = cache;
 
-            if (AugmentedReality.useCollisionDetection) adjustForCollisions(canvas, collection);
+            if (AugmentedReality.useCollisionDetection) 
+                adjustForCollisions(canvas, collection);
 
             // Draw AR markers in reverse order since the last drawn should be
             // the closest
@@ -73,7 +75,8 @@ public class AugmentedView extends View {
             }
 
             // Radar circle and radar markers
-            if (AugmentedReality.showRadar) radar.draw(canvas);
+            if (AugmentedReality.showRadar) 
+                radar.draw(canvas);
             drawing.set(false);
         }
     }
@@ -88,7 +91,7 @@ public class AugmentedView extends View {
 
             int collisions = 1;
             for (Marker marker2 : collection) {
-                if (marker1.equals(marker2) || updated.contains(marker2) || !marker2.isInView())
+                if (updated.contains(marker2) || !marker2.isInView() || marker1.equals(marker2))
                     continue;
 
                 if (marker1.isMarkerOnMarker(marker2)) {

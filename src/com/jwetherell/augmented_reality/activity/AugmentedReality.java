@@ -201,7 +201,7 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
         }
 
         return super.onTouchEvent(me);
-    };
+    }
 
     protected void markerTouched(Marker marker) {
         Log.w(TAG, "markerTouched() not implemented. marker="+marker.getName());

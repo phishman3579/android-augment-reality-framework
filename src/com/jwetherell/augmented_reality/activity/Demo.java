@@ -10,16 +10,6 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.jwetherell.augmented_reality.R;
-import com.jwetherell.augmented_reality.data.ARData;
-import com.jwetherell.augmented_reality.data.GooglePlacesDataSource;
-import com.jwetherell.augmented_reality.data.LocalDataSource;
-import com.jwetherell.augmented_reality.data.NetworkDataSource;
-import com.jwetherell.augmented_reality.data.TwitterDataSource;
-import com.jwetherell.augmented_reality.data.WikipediaDataSource;
-import com.jwetherell.augmented_reality.ui.Marker;
-import com.jwetherell.augmented_reality.widget.VerticalTextView;
-
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -31,6 +21,15 @@ import android.view.MenuItem;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.jwetherell.augmented_reality.R;
+import com.jwetherell.augmented_reality.data.ARData;
+import com.jwetherell.augmented_reality.data.GooglePlacesDataSource;
+import com.jwetherell.augmented_reality.data.LocalDataSource;
+import com.jwetherell.augmented_reality.data.NetworkDataSource;
+import com.jwetherell.augmented_reality.data.WikipediaDataSource;
+import com.jwetherell.augmented_reality.ui.Marker;
+import com.jwetherell.augmented_reality.widget.VerticalTextView;
 
 /**
  * This class extends the AugmentedReality and is designed to be an example on
@@ -74,8 +73,6 @@ public class Demo extends AugmentedReality {
         LocalDataSource localData = new LocalDataSource(this.getResources());
         ARData.addMarkers(localData.getMarkers());
 
-        NetworkDataSource twitter = new TwitterDataSource(this.getResources());
-        sources.put("twitter", twitter);
         NetworkDataSource wikipedia = new WikipediaDataSource(this.getResources());
         sources.put("wiki", wikipedia);
         NetworkDataSource googlePlaces = new GooglePlacesDataSource(this.getResources());
@@ -158,7 +155,6 @@ public class Demo extends AugmentedReality {
     private void updateData(final double lat, final double lon, final double alt) {
         try {
             exeService.execute(new Runnable() {
-
                 @Override
                 public void run() {
                     for (NetworkDataSource source : sources.values())
