@@ -77,7 +77,7 @@ public class Marker implements Comparable<Marker> {
     private PaintablePosition positionContainer = null;
 
     // Used to debug the touching mechanism
-    private static boolean debugTouchZone = false;
+    private static boolean debugTouchZone = true;
     private PaintableBox touchBox = null;
     private PaintablePosition touchPosition = null;
 
@@ -94,8 +94,7 @@ public class Marker implements Comparable<Marker> {
      * @param latitude
      *            Latitude of the Marker in decimal format (example 39.931269).
      * @param longitude
-     *            Longitude of the Marker in decimal format (example
-     *            -75.051261).
+     *            Longitude of the Marker in decimal format (example -75.051261).
      * @param altitude
      *            Altitude of the Marker in meters (>0 is above sea level).
      * @param color
@@ -270,8 +269,17 @@ public class Marker implements Comparable<Marker> {
         locationXyzRelativeToCameraView.get(locationArray);
         float x = locationArray[0];
         float y = locationArray[1];
-        float width = getWidth();
-        float height = getHeight();
+
+        // Adjust the center point because symbol my not be same size as text, making it off center
+        if (touchBox!=null)  {
+            float adjX = touchBox.getX();
+            float adjY = touchBox.getY();
+            x += adjX;
+            y += adjY;
+        }
+
+        float width = getWidth()+10;
+        float height = getHeight()+10;
         x -= width / 2;
         y -= height / 2;
 
@@ -349,8 +357,9 @@ public class Marker implements Comparable<Marker> {
     public synchronized boolean handleClick(float x, float y) {
         if (!isOnRadar || !isInView)
             return false;
-        Log.e("handleClick", "point (x="+x+" y="+y+")");
+
         boolean result = isPointOnMarker(x, y, this);
+        Log.e("handleClick", "point (x="+x+" y="+y+") isPointOnMarker="+result);
         return result;
     }
 
@@ -419,6 +428,7 @@ public class Marker implements Comparable<Marker> {
          * Log.w("isMarkerOnMarker", "ll (x="+(llX)+" y="+(llY)+")");
          * Log.w("isMarkerOnMarker", "lr (x="+(lrX)+" y="+(lrY)+")");
          */
+ 
         boolean upperLeftOfMarker = isPointOnMarker(ulX, ulY, this);
         if (upperLeftOfMarker)
             return true;
@@ -440,6 +450,41 @@ public class Marker implements Comparable<Marker> {
         return (reflect) ? marker.isMarkerOnMarker(this, false) : false;
     }
 
+    /*
+     * Determines what side of a line a point lies.
+     */
+    private static final byte side(float Ax, float Ay, float Bx, float By, float X, float Y) {
+        float result = (Bx-Ax)*(Y-Ay) - (By-Ay)*(X-Ax);
+        if (result<0) {
+            // below or right
+            return -1;
+        }
+        if (result>0) {
+            // above or left
+            return 1;
+        }
+        // on
+        return 0;
+    }
+
+    /*
+     * Determines if point is between two lines
+     */
+    private static final boolean between(float Ax, float Ay, 
+                                         float Bx, float By, 
+                                         float Cx, float Cy, 
+                                         float Dx, float Dy, 
+                                         float X, float Y) {
+        byte first = side(Ax, Ay, Bx, By, X, Y);
+        byte second = side(Cx, Cy, Dx, Dy, X, Y);
+        if (first==(second*-1)) return true;
+        if (first==0 && second>0) return true;
+        if (second==0 && first<0) return true;
+        return false;
+    }
+
+    private float[] temp = new float[]{0,0};
+
     /**
      * Determines if the point is on this Marker.
      * 
@@ -451,37 +496,51 @@ public class Marker implements Comparable<Marker> {
      *            Marker to determine if the point is on.
      * @return True if the point is on Marker.
      */
-    private synchronized boolean isPointOnMarker(float xPoint, float yPoint,
-            Marker marker) {
+    private synchronized boolean isPointOnMarker(float xPoint, float yPoint, Marker marker) {
         if (marker == null)
             return false;
 
-        marker.getScreenPosition().get(locationArray);
-        float x = locationArray[0];
-        float y = locationArray[1];
+        if (touchBox == null)
+            return false;
 
-        float width = marker.getWidth();
-        float height = marker.getHeight();
-        x -= width / 2;
-        y -= height / 2;
+        // UL
+        temp[0] = 0;
+        temp[1] = 0;
+        touchBox.matrix.mapPoints(temp);
+        Log.v("TAG", "UL x="+temp[0]+" y="+temp[1]);
+        float ulX = temp[0];
+        float ulY = temp[1];
 
-        float ulX = x;
-        float ulY = y;
+        // UR
+        temp[0] = touchBox.getWidth();
+        temp[1] = 0;
+        touchBox.matrix.mapPoints(temp);
+        Log.v("TAG", "UR x="+temp[0]+" y="+temp[1]);
+        float urX = temp[0];
+        float urY = temp[1];
 
-        float lrX = x;
-        float lrY = y;
-        lrX += width;
-        lrY += height;
+        // LL
+        temp[0] = 0;
+        temp[1] = touchBox.getHeight();
+        touchBox.matrix.mapPoints(temp);
+        Log.v("TAG", "LL x="+temp[0]+" y="+temp[1]);
+        float llX = temp[0];
+        float llY = temp[1];
 
-        /*
-         * Log.w("isPointOnMarker", "xPoint="+(xPoint)+" yPoint="+(yPoint));
-         * Log.w("isPointOnMarker", "name "+this.name); Log.w("isPointOnMarker",
-         * "ul (x="+(ulX)+" y="+(ulY)+")"); Log.w("isPointOnMarker",
-         * "lr (x="+(lrX)+" y="+(lrY)+")");
-         */
-
-        if (xPoint >= ulX && xPoint <= lrX && yPoint >= ulY && yPoint <= lrY)
-            return true;
+        // LR
+        temp[0] = touchBox.getWidth();
+        temp[1] = touchBox.getHeight();
+        touchBox.matrix.mapPoints(temp);
+        Log.v("TAG", "LR x="+temp[0]+" y="+temp[1]);
+        float lrX = temp[0];
+        float lrY = temp[1];
+ 
+        // Is the point between the top and bottom lines
+        boolean betweenTB = between(ulX, ulY, urX, urY, llX, llY, lrX, lrY, xPoint, yPoint);
+        // Is the point between the left and right lines
+        boolean betweenLR = between(ulX, ulY, llX, llY, urX, urY, lrX, lrY, xPoint, yPoint);
+        Log.v("TAG", "betweenTB="+betweenTB+" betweenLR="+betweenLR);
+        if (betweenTB && betweenLR) return true;
         return false;
     }
 
@@ -506,39 +565,12 @@ public class Marker implements Comparable<Marker> {
 
         // Draw the Icon and Text
         drawIcon(canvas);
+
         drawText(canvas);
 
         // Draw the exact position
         if (debugGpsPosition)
             drawPosition(canvas);
-    }
-
-    private synchronized void drawPosition(Canvas canvas) {
-        if (canvas == null)
-            throw new NullPointerException();
-
-        if (positionPoint == null)
-            positionPoint = new PaintablePoint(Color.MAGENTA, true);
-
-        getScreenPosition().get(locationArray);
-        float x = locationArray[0];
-        float y = locationArray[1];
-
-        float currentAngle = ARData.getOrientationAngle()+90;
-        currentAngle = 360 - currentAngle;
-        if (positionContainer == null)
-            positionContainer = new PaintablePosition(positionPoint, x, y, currentAngle, 1);
-        else
-            positionContainer.set(positionPoint, x, y, currentAngle, 1);
-
-        positionContainer.paint(canvas);
-/*
-        float[] pts = new float[]{0,0};
-        positionContainer.inverted.mapPoints(pts);
-        x = pts[0];
-        y = pts[1];
-        int i=0;
-*/
     }
 
     private synchronized void drawTouchZone(Canvas canvas) {
@@ -558,8 +590,8 @@ public class Marker implements Comparable<Marker> {
         float y = locationArray[1];
 
         // Adjust the center point of the touch box
-        float gpsHeight = gpsSymbol.getHeight();
-        float textHeight = textBox.getHeight();
+        float gpsHeight = (gpsSymbol!=null)?gpsSymbol.getHeight():Float.MAX_VALUE;
+        float textHeight = (textBox!=null)?textBox.getHeight():Float.MAX_VALUE;
         float touchHeight = touchBox.getHeight();
         boolean textBoxIsSmaller = false;
         float minHeight = gpsHeight;
@@ -640,6 +672,27 @@ public class Marker implements Comparable<Marker> {
         textContainer.paint(canvas);
     }
 
+    private synchronized void drawPosition(Canvas canvas) {
+        if (canvas == null)
+            throw new NullPointerException();
+
+        if (positionPoint == null)
+            positionPoint = new PaintablePoint(Color.MAGENTA, true);
+
+        getScreenPosition().get(locationArray);
+        float x = locationArray[0];
+        float y = locationArray[1];
+
+        float currentAngle = ARData.getOrientationAngle()+90;
+        currentAngle = 360 - currentAngle;
+        if (positionContainer == null)
+            positionContainer = new PaintablePosition(positionPoint, x, y, currentAngle, 1);
+        else
+            positionContainer.set(positionPoint, x, y, currentAngle, 1);
+
+        positionContainer.paint(canvas);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -659,7 +712,7 @@ public class Marker implements Comparable<Marker> {
         if (marker == null || name == null)
             throw new NullPointerException();
 
-        return name.equals(((Marker) marker).getName());
+        return name.equals(((Marker)marker).getName());
     }
 
     /**

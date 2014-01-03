@@ -3,6 +3,7 @@ package com.jwetherell.augmented_reality.ui.objects;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
@@ -18,10 +19,10 @@ public abstract class PaintableObject {
 
     protected float x = 0;
     protected float y = 0;
-/*
+
     public Matrix matrix = new Matrix();
     public Matrix inverted = new Matrix();
-*/
+
     public PaintableObject() {
         if (paint == null) {
             paint = new Paint();
@@ -41,6 +42,24 @@ public abstract class PaintableObject {
     public void setCoordinates(float x, float y) {
         this.x = x;
         this.y = y;
+    }
+
+    /**
+     * Get the X coordinate of the paintable object.
+     * 
+     * @return float x coordinate
+     */
+    public float getX() {
+        return x;
+    }
+
+    /**
+     * Get the Y coordinate of the paintable object.
+     * 
+     * @return float y coordinate
+     */
+    public float getY() {
+        return y;
     }
 
     /**
@@ -149,6 +168,9 @@ public abstract class PaintableObject {
     public void paintLine(Canvas canvas, float x1, float y1, float x2, float y2) {
         if (canvas == null) throw new NullPointerException();
 
+        canvas.getMatrix(matrix);
+        matrix.invert(inverted);
+
         canvas.drawLine(x1, y1, x2, y2, paint);
     }
 
@@ -170,6 +192,9 @@ public abstract class PaintableObject {
      */
     public void paintRect(Canvas canvas, float x, float y, float width, float height) {
         if (canvas == null) throw new NullPointerException();
+
+        canvas.getMatrix(matrix);
+        matrix.invert(inverted);
 
         canvas.drawRect(x, y, x + width, y + height, paint);
     }
@@ -193,6 +218,9 @@ public abstract class PaintableObject {
     public void paintRoundedRect(Canvas canvas, float x, float y, float width, float height) {
         if (canvas == null) throw new NullPointerException();
 
+        canvas.getMatrix(matrix);
+        matrix.invert(inverted);
+
         rect.set(x, y, x + width, y + height);
         canvas.drawRoundRect(rect, 15F, 15F, paint);
     }
@@ -213,6 +241,9 @@ public abstract class PaintableObject {
      */
     public void paintBitmap(Canvas canvas, Bitmap bitmap, float left, float top) {
         if (canvas == null || bitmap == null) throw new NullPointerException();
+
+        canvas.getMatrix(matrix);
+        matrix.invert(inverted);
 
         canvas.drawBitmap(bitmap, left, top, paint);
     }
@@ -236,6 +267,10 @@ public abstract class PaintableObject {
 
         canvas.save();
         canvas.translate(radius,radius);
+
+        canvas.getMatrix(matrix);
+        matrix.invert(inverted);
+
         canvas.drawCircle(x, y, radius, paint);
         canvas.restore();
     }
@@ -260,6 +295,9 @@ public abstract class PaintableObject {
      */
     public void paintText(Canvas canvas, float x, float y, CharSequence text, int start, int end) {
         if (canvas == null || text == null) throw new NullPointerException();
+
+        canvas.getMatrix(matrix);
+        matrix.invert(inverted);
 
         canvas.drawText(text, start, end, x, y, paint);
     }
@@ -289,10 +327,7 @@ public abstract class PaintableObject {
         canvas.translate(x,y);
         canvas.rotate(rotation);
         canvas.scale(scale, scale);
-/*
-        canvas.getMatrix(matrix);
-        matrix.invert(inverted);
-*/
+        // obj.paint will populate the matrices
         obj.paint(canvas);
         canvas.restore();
     }
