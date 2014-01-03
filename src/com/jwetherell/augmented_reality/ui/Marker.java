@@ -518,14 +518,10 @@ public class Marker implements Comparable<Marker> {
      * @return True if the point is on this Marker.
      */
     private synchronized boolean isPointOnMarker(float xPoint, float yPoint) {
-        if (isPointOnPaintable(xPoint, yPoint, gpsSymbol)) {
-            Log.v("TAG", "onGPS");
+        if (isPointOnPaintable(xPoint, yPoint, gpsSymbol))
             return true;
-        }
-        if (isPointOnPaintable(xPoint, yPoint, textBox)) {
-            Log.v("TAG", "onText");
+        if (isPointOnPaintable(xPoint, yPoint, textBox))
             return true;
-        }
         return false;
     }
 
