@@ -583,7 +583,7 @@ public class Marker implements Comparable<Marker> {
         if (textBoxIsSmaller) adjY *= -1;
         touchBox.setCoordinates(0, adjY);
 
-        float currentAngle = ARData.getOrientationAngle()+90;
+        float currentAngle = ARData.getDeviceOrientationAngle()+90;
         currentAngle = 360 - currentAngle;
         if (touchPosition == null)
             touchPosition = new PaintablePosition(touchBox, x, y, currentAngle, 1);
@@ -607,7 +607,7 @@ public class Marker implements Comparable<Marker> {
         // Adjust the symbol to be above
         gpsSymbol.setCoordinates(0, -gpsSymbol.getHeight()/2);
 
-        float currentAngle = ARData.getOrientationAngle()+90;
+        float currentAngle = ARData.getDeviceOrientationAngle()+90;
         currentAngle = 360 - currentAngle;
         if (symbolContainer == null)
             symbolContainer = new PaintablePosition(gpsSymbol, x, y, currentAngle, 1);
@@ -642,7 +642,7 @@ public class Marker implements Comparable<Marker> {
         // Adjust the text to be below
         textBox.setCoordinates(0, textBox.getHeight()/2);
 
-        float currentAngle = ARData.getOrientationAngle()+90;
+        float currentAngle = ARData.getDeviceOrientationAngle()+90;
         currentAngle = 360 - currentAngle;
         if (textContainer == null)
             textContainer = new PaintablePosition(textBox, x, y, currentAngle, 1);
@@ -663,7 +663,7 @@ public class Marker implements Comparable<Marker> {
         float x = locationArray[0];
         float y = locationArray[1];
 
-        float currentAngle = ARData.getOrientationAngle()+90;
+        float currentAngle = ARData.getDeviceOrientationAngle()+90;
         currentAngle = 360 - currentAngle;
         if (positionContainer == null)
             positionContainer = new PaintablePosition(positionPoint, x, y, currentAngle, 1);

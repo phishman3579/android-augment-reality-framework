@@ -100,7 +100,7 @@ public class Navigation {
 
         float x = 0;
         float y = 0;
-        int angle = ARData.getOrientationAngle();
+        int angle = ARData.getDeviceOrientationAngle();
         if (angle>=0 && angle<90) {
             x = (angle*unitPerDegree)-1;
             y = 1-(angle*unitPerDegree);
