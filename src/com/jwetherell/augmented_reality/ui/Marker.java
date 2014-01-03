@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.location.Location;
 import android.util.Log;
 
+import com.jwetherell.augmented_reality.activity.AugmentedReality;
 import com.jwetherell.augmented_reality.camera.CameraModel;
 import com.jwetherell.augmented_reality.common.Vector;
 import com.jwetherell.augmented_reality.data.ARData;
@@ -480,8 +481,11 @@ public class Marker implements Comparable<Marker> {
         // Adjust the symbol to be above
         gpsSymbol.setCoordinates(0, -gpsSymbol.getHeight()/2);
 
-        float currentAngle = ARData.getDeviceOrientationAngle()+90;
-        currentAngle = 360 - currentAngle;
+        float currentAngle = 0;
+        if (AugmentedReality.useMarkerAutoRotate) {
+            currentAngle = ARData.getDeviceOrientationAngle()+90;
+            currentAngle = 360 - currentAngle;
+        }
         if (symbolContainer == null)
             symbolContainer = new PaintablePosition(gpsSymbol, x, y, currentAngle, 1);
         else
@@ -515,8 +519,11 @@ public class Marker implements Comparable<Marker> {
         // Adjust the text to be below
         textBox.setCoordinates(0, textBox.getHeight()/2);
 
-        float currentAngle = ARData.getDeviceOrientationAngle()+90;
-        currentAngle = 360 - currentAngle;
+        float currentAngle = 0;
+        if (AugmentedReality.useMarkerAutoRotate) {
+            currentAngle = ARData.getDeviceOrientationAngle()+90;
+            currentAngle = 360 - currentAngle;
+        }
         if (textContainer == null)
             textContainer = new PaintablePosition(textBox, x, y, currentAngle, 1);
         else
@@ -536,8 +543,11 @@ public class Marker implements Comparable<Marker> {
         float x = locationArray[0];
         float y = locationArray[1];
 
-        float currentAngle = ARData.getDeviceOrientationAngle()+90;
-        currentAngle = 360 - currentAngle;
+        float currentAngle = 0;
+        if (AugmentedReality.useMarkerAutoRotate) {
+            currentAngle = ARData.getDeviceOrientationAngle()+90;
+            currentAngle = 360 - currentAngle;
+        }
         if (positionContainer == null)
             positionContainer = new PaintablePosition(positionPoint, x, y, currentAngle, 1);
         else

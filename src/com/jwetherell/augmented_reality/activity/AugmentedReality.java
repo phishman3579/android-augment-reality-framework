@@ -53,11 +53,13 @@ public class AugmentedReality extends SensorsActivity implements OnTouchListener
     public static final float TWENTY_PERCENT = 2f * TEN_PERCENT;
     public static final float EIGHTY_PERCENTY = 4f * TWENTY_PERCENT;
 
-    public static boolean ui_portrait = false;
-    public static boolean useCollisionDetection = false;
-    public static boolean useSmoothing = true;
+    public static boolean ui_portrait = false;  // Defaulted to LANDSCAPE use  
     public static boolean showRadar = true;
     public static boolean showZoomBar = true;
+    public static boolean useRadarAutoOrientate = true;
+    public static boolean useMarkerAutoRotate = true;
+    public static boolean useDataSmoothing = true;
+    public static boolean useCollisionDetection = false; // defaulted OFF
 
     /**
      * {@inheritDoc}

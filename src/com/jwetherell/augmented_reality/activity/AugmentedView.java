@@ -35,7 +35,7 @@ public class AugmentedView extends View {
         super(context);
         Log.v(TAG, "portrait              = "+AugmentedReality.ui_portrait);
         Log.v(TAG, "useCollisionDetection = "+AugmentedReality.useCollisionDetection);
-        Log.v(TAG, "useSmoothing          = "+AugmentedReality.useSmoothing);
+        Log.v(TAG, "useSmoothing          = "+AugmentedReality.useDataSmoothing);
         Log.v(TAG, "showRadar             = "+AugmentedReality.showRadar);
         Log.v(TAG, "showZoomBar           = "+AugmentedReality.showZoomBar);
     }
