@@ -34,8 +34,6 @@ In the source code I have also created an example that follows the strategy abov
 
 * WikipediaDataSource.java
 
-* BuzzDataSource.java
-
 * LocalDataSource.java
 
 You can use them as a reference to create your own augmented reality App based on this framework.
