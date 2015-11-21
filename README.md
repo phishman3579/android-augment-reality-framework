@@ -7,7 +7,8 @@ A framework for creating augmented reality Apps on Android
 
 All the pieces needed to create an augmented reality App on Android.
 
-* Created by Justin Wetherell
+Created by Justin Wetherell
+* For questions use: http://groups.google.com/forum/#!forum/android-augment-reality-framework
 * Google:   http://code.google.com/p/android-augment-reality-framework
 * Github:   http://github.com/phishman3579/android-augment-reality-framework
 * LinkedIn: http://www.linkedin.com/in/phishman3579
